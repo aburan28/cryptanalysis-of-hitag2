@@ -67,52 +67,6 @@ static u64 hitag2_round (u64 *state)
 	return f20 (x);
 }
 
-// Bitslice Hitag2 functions:
-
-#define ht2bs_4a(a,b,c,d)	(~(((a|b)&c)^(a|d)^b))
-#define ht2bs_4b(a,b,c,d)	(~(((d|c)&(a^b))^(d|a|b)))
-#define ht2bs_5c(a,b,c,d,e)	(~((((((c^e)|d)&a)^b)&(c^b))^(((d^e)|a)&((d^b)|c))))
-
-#define uf20bs				u32		// choose your own type/width
-
-static uf20bs f20bs (const uf20bs *x)
-{
-	return ht2bs_5c (
-		ht2bs_4a(x[ 1],x[ 2],x[ 4],x[ 5]),
-		ht2bs_4b(x[ 7],x[11],x[13],x[14]),
-		ht2bs_4b(x[16],x[20],x[22],x[25]),
-		ht2bs_4b(x[27],x[28],x[30],x[32]),
-		ht2bs_4a(x[33],x[42],x[43],x[45]));
-}
-
-static void hitag2bs_init (uf20bs *x, const uf20bs *key, const uf20bs *serial, const uf20bs *IV)
-{
-	u32					i, r;
-	
-	for (i = 0; i < 32; i++) x[i] = serial[i];
-	for (i = 0; i < 16; i++) x[32+i] = key[i];
-	
-	for (r = 0; r < 32; r++)
-	{
-		for (i = 0; i < 47; i++) x[i] = x[i+1];
-		x[47] = f20bs (x) ^ IV[i] ^ key[16+i];
-	}
-}
-
-static uf20bs hitag2bs_round (uf20bs *x)
-{
-	uf20bs				y;
-	u32					i;
-	
-	y = x[ 0] ^ x[ 2] ^ x[ 3] ^ x[ 6] ^ x[ 7] ^ x[ 8] ^ x[16] ^ x[22]
-	  ^ x[23] ^ x[26] ^ x[30] ^ x[41] ^ x[42] ^ x[43] ^ x[46] ^ x[47];
-	
-	for (i = 0; i < 47; i++) x[i] = x[i+1];
-	x[47] = y;
-	
-	return f20bs (x);
-}
-
 // "MIKRON"		=  O  N  M  I  K  R
 // Key			= 4F 4E 4D 49 4B 52		- Secret 48-bit key
 // Serial		= 49 43 57 69			- Serial number of the tag, transmitted in clear
@@ -123,21 +77,45 @@ static uf20bs hitag2bs_round (uf20bs *x)
 // The inverse of the first 4 bytes is sent to the tag to authenticate.
 // The rest is encrypted by XORing it with the subsequent keystream.
 
-static u32 hitag2_byte (u64 * x)
+static u64 hitag2_byte (u64 * x)
 {
-	u32					i, c;
+	u64 i, c;
 	
-	for (i = 0, c = 0; i < 8; i++) c += (u32) hitag2_round (x) << (i^7);
+	for (i = 0, c = 0; i < 8; i++) c += (u64) hitag2_round (x) << (7 - i);
 	return c;
+}
+
+static u64 hitag2_prefix(u64 * x)
+{
+	u64 i;
+	u64 prefix = 0;
+
+	for (i = 0; i < 6; i++) 
+	{
+		//prefix += (u64) hitag2_byte (x) << (5 - i)*8;
+		printf("%llx ", (u64) hitag2_byte (x) << (5 - i)*8);	
+	}
+	
+	return prefix;
 }
 
 int main (void)
 {
-	u32					i;
-	u64					state;
+	u32	i;
+	u64	initial_state;
+	u64	state;
 	
-	state = hitag2_init (rev64 (0x524B494D4E4FUL), rev32 (0x69574349), rev32 (0x72456E65));
+	state = hitag2_init (rev64 (0x524B494D4E4F), rev32 (0x69574349), rev32 (0x72456E65));
+	printf("Initial State: %lX\n", state);
+	initial_state = state;
+	
 	for (i = 0; i < 16; i++) printf ("%02X ", hitag2_byte (&state));
 	printf ("\n");
+	
+	state = initial_state;
+	printf("Initial State: %lX\n", state);
+	hitag2_prefix (&state);
+	//printf ("%llu ", hitag2_prefix (&state));
+	
 	return 0;
 }
