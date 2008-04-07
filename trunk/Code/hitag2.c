@@ -9,7 +9,7 @@
 
 #define u8				unsigned char
 #define u32				unsigned long
-#define u64				unsigned __int64
+#define u64				unsigned long long
 #define rev8(x)			((((x)>>7)&1)+((((x)>>6)&1)<<1)+((((x)>>5)&1)<<2)+((((x)>>4)&1)<<3)+((((x)>>3)&1)<<4)+((((x)>>2)&1)<<5)+((((x)>>1)&1)<<6)+(((x)&1)<<7))
 #define rev16(x)		(rev8 (x)+(rev8 (x>> 8)<< 8))
 #define rev32(x)		(rev16(x)+(rev16(x>>16)<<16))
@@ -27,9 +27,9 @@ static const u32 ht2_f4a = 0x2C79;		// 0010 1100 0111 1001
 static const u32 ht2_f4b = 0x6671;		// 0110 0110 0111 0001
 static const u32 ht2_f5c = 0x7907287B;	// 0111 1001 0000 0111 0010 1000 0111 1011
 
-static u32 f20 (const u64 x)
+static u64 f20 (const u64 x)
 {
-	u32					i5;
+	u64					i5;
 	
 	i5 = ((ht2_f4a >> i4 (x, 1, 2, 4, 5)) & 1)* 1
 	   + ((ht2_f4b >> i4 (x, 7,11,13,14)) & 1)* 2
@@ -42,8 +42,8 @@ static u32 f20 (const u64 x)
 
 static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 {
-	u32					i;
-	u64					x = ((key & 0xFFFF) << 32) + serial;
+	u32 i;
+	u64 x = ((key & 0xFFFF) << 32) + serial;
 	
 	for (i = 0; i < 32; i++)
 	{
@@ -55,7 +55,7 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 
 static u64 hitag2_round (u64 *state)
 {
-	u64					x = *state;
+	u64 x = *state;
 	
 	x = (x >>  1) +
 	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
@@ -92,13 +92,15 @@ static u64 hitag2_prefix(u64 * x)
 
 	for (i = 0; i < 6; i++) 
 	{
-		//prefix += (u64) hitag2_byte (x) << (5 - i)*8;
-		printf("%llx ", (u64) hitag2_byte (x) << (5 - i)*8);	
+		prefix += (u64) hitag2_byte (x) << (5 - i)*8;
+		//printf("%llx ", (u64) hitag2_byte (x) << (5 - i)*8);	
 	}
 	
 	return prefix;
 }
 
+
+/*
 int main (void)
 {
 	u32	i;
@@ -119,3 +121,4 @@ int main (void)
 	
 	return 0;
 }
+*/
