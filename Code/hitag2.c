@@ -3,8 +3,6 @@
 // No warranties or guarantees of any kind.
 // This code is released into the public domain by its author.
 
-#include <stdio.h>
-
 // Basic macros:
 
 #define u8				unsigned char
@@ -79,7 +77,8 @@ static u64 hitag2_round (u64 *state)
 
 static u64 hitag2_byte (u64 * x)
 {
-	u64 i, c;
+	u64 i;
+	u64 c;
 	
 	for (i = 0, c = 0; i < 8; i++) c += (u64) hitag2_round (x) << (7 - i);
 	return c;
@@ -99,6 +98,19 @@ static u64 hitag2_prefix(u64 * x)
 	return prefix;
 }
 
+static u64 hitag2_u64(u64 * x)
+{
+	u64 i;
+	u64 prefix = 0;
+
+	for (i = 0; i < 8; i++) 
+	{
+		prefix += (u64) hitag2_byte (x) << (7 - i)*8;
+	}
+	
+	return prefix;
+}
+
 
 /*
 int main (void)
@@ -111,7 +123,7 @@ int main (void)
 	printf("Initial State: %lX\n", state);
 	initial_state = state;
 	
-	for (i = 0; i < 16; i++) printf ("%02X ", hitag2_byte (&state));
+	for (i = 0; i < 16; i++) printf ("%X ", hitag2_byte (&state));
 	printf ("\n");
 	
 	state = initial_state;
