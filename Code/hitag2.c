@@ -98,6 +98,8 @@ static u64 hitag2_prefix(u64 * x)
 	return prefix;
 }
 
+
+
 static u64 hitag2_u64(u64 * x)
 {
 	u64 i;
@@ -113,6 +115,7 @@ static u64 hitag2_u64(u64 * x)
 
 
 /*
+
 int main (void)
 {
 	u32	i;
@@ -133,4 +136,5 @@ int main (void)
 	
 	return 0;
 }
+
 */
