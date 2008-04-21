@@ -6,20 +6,23 @@
 #include <stdio.h>
 #include <string.h> /* for memcmp */
 
+/* Item count is the number of prefix-state pairs we want to keep in the hashtable */
+/* would be 2^28, in our case */
 static const int ITEM_COUNT = 4000;
 
+typedef unsigned long long uint64_t;
 typedef unsigned int uint32_t;
 typedef unsigned short uint16_t;
 
 /*****************************************************************************/
 struct key
 {
-    uint32_t one_ip; uint32_t two_ip; uint16_t one_port; uint16_t two_port;
+    uint64_t k_y;
 };
 
 struct value
 {
-    char *id;
+    uint64_t *v_l;
 };
 
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
@@ -32,9 +35,11 @@ DEFINE_HASHTABLE_ITERATOR_SEARCH(search_itr_some, struct key);
 static unsigned int
 hashfromkey(void *ky)
 {
-    struct key *k = (struct key *)ky;
-    return (((k->one_ip << 17) | (k->one_ip >> 15)) ^ k->two_ip) +
-            (k->one_port * 17) + (k->two_port * 13 * 29);
+
+
+	struct key *k = (struct key *)ky;
+
+	return (k->k_y % ITEM_COUNT);
 }
 
 static int
@@ -66,13 +71,11 @@ main(int argc, char **argv)
             printf("ran out of memory allocating a key\n");
             return 1;
         }
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
-        
+
+        k->k_y = 0xcfccee40 + i;
+       
         v = (struct value *)malloc(sizeof(struct value));
-        v->id = "a value";
+        v->v_l = (uint64_t *)0xcfccee40 + i + 1;
         
         if (!insert_some(h,k,v)) exit(-1); /*oom*/
     }
@@ -89,12 +92,9 @@ main(int argc, char **argv)
     
     for (i = 0; i < ITEM_COUNT; i++)
     {
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
+	k->k_y = 0xcfccee40 + i;      
         
-        if (NULL == (found = search_some(h,k))) {
+	if (NULL == (found = search_some(h,k))) {
             printf("BUG: key not found\n");
         }
     }
@@ -127,11 +127,8 @@ main(int argc, char **argv)
     /* Try the search some method */
     for (i = 0; i < ITEM_COUNT; i++)
     {
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
-        
+	k->k_y = 0xcfccee40 + i;
+	        
         if (0 == search_itr_some(itr,h,k)) {
             printf("BUG: key not found searching with iterator");
         }
@@ -142,11 +139,8 @@ main(int argc, char **argv)
 
     for (i = 0; i < ITEM_COUNT; i++)
     {
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
-        
+	k->k_y = 0xcfccee40 + i;
+	        
         if (NULL == (found = remove_some(h,k))) {
             printf("BUG: key not found for removal\n");
         }
@@ -173,13 +167,11 @@ main(int argc, char **argv)
     for (i = 0; i < ITEM_COUNT; i++)
     {
         k = (struct key *)malloc(sizeof(struct key));
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
-        
+	
+	k->k_y = 0xcfccee40 + i;
+	        
         v = (struct value *)malloc(sizeof(struct value));
-        v->id = "a value";
+        v->v_l = (uint64_t *)0xcfccee40 + i + 1;
         
         if (!insert_some(h,k,v))
         {
@@ -201,11 +193,8 @@ main(int argc, char **argv)
     
     for (i = ITEM_COUNT - 1; i >= 0; i = i - 7)
     {
-        k->one_ip = 0xcfccee40 + i;
-        k->two_ip = 0xcf0cee67 - (5 * i);
-        k->one_port = 22 + (7 * i);
-        k->two_port = 5522 - (3 * i);
-        
+	k->k_y = 0xcfccee40 + i;
+	        
         if (0 == search_itr_some(itr, h, k)) {
             printf("BUG: key %u not found for search preremoval using iterator\n", i);
             return 1;
