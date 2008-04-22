@@ -17,7 +17,7 @@ u8 transition_matrix[48][48];
 u8 transition_matrix_2n[48][48];
 const u32 time_index = 20;
 u64 memory_complexity = 65536;	// 268435456 = 2^28
-u64 time_complexity = 65536;	// 1048576 = 2^20
+u64 time_complexity = 1048576;	// 1048576 = 2^20
 
 void square_matrix_2n();
 void compute_new_state(u64 *);
@@ -39,27 +39,35 @@ int main()
 	
 	for(i = 0; i < 47; i++)
 	{
-		transition_matrix[i][i + 1] = 1;
+		transition_matrix[i + 1][i] = 1;
 	}
 
 	/* tap bits 0,2,3,6,7,8,16,22,23,26,30,41,42,43,46,47 */
 
-	transition_matrix[47][0] = 1;
-	transition_matrix[47][2] = 1;
-	transition_matrix[47][3] = 1;
-	transition_matrix[47][6] = 1;
-	transition_matrix[47][7] = 1;
-	transition_matrix[47][8] = 1;
-	transition_matrix[47][16] = 1;
-	transition_matrix[47][22] = 1;
-	transition_matrix[47][23] = 1;
-	transition_matrix[47][26] = 1;
-	transition_matrix[47][30] = 1;
-	transition_matrix[47][41] = 1;
-	transition_matrix[47][42] = 1;
-	transition_matrix[47][43] = 1;
-	transition_matrix[47][46] = 1;
-	transition_matrix[47][47] = 1;
+	transition_matrix[0][47 - 0] = 1;
+	transition_matrix[0][47 - 2] = 1;
+	transition_matrix[0][47 - 3] = 1;
+	transition_matrix[0][47 - 6] = 1;
+	transition_matrix[0][47 - 7] = 1;
+	transition_matrix[0][47 - 8] = 1;
+	transition_matrix[0][47 - 16] = 1;
+	transition_matrix[0][47 - 22] = 1;
+	transition_matrix[0][47 - 23] = 1;
+	transition_matrix[0][47 - 26] = 1;
+	transition_matrix[0][47 - 30] = 1;
+	transition_matrix[0][47 - 41] = 1;
+	transition_matrix[0][47 - 42] = 1;
+	transition_matrix[0][47 - 43] = 1;
+	transition_matrix[0][47 - 46] = 1;
+	transition_matrix[0][47 - 47] = 1;
+
+	for(i = 0; i < 48; i++)
+	{
+		for(j = 0; j < 48; j++)
+		{
+			transition_matrix_2n[i][j] = transition_matrix[i][j];
+		}
+	}
 
 	for(i = 0; i < 48; i++)
 	{
@@ -81,12 +89,13 @@ int main()
 	compute_new_state(&state_1);
 	
 	// Run hitag2_round time_complexity number of times
-	for(j = 0; j < 2; j++)
+	for(j = 0; j < 2048; j++)
 	{
 		hitag2_round(&state_2);
 	}
 
 	// Check if state_1 is equal to state_2
+	printf("\nState 1: %12llx\nState 2: %12llx", state_1, state_2);
 }
 
 
@@ -103,24 +112,15 @@ void square_matrix_2n()
 	
 	u8 c_temp = 0;
 	u64 l_temp = 0;
+	u64 l_xor = 0;
 	u64 one = 1;
 	u64 zero = 0;
 	
 	u64 matrix_1[48];
 	u64 matrix_2[48];
 	
-	
-	for(i = 0; i < 48; i++)
-	{
-		for(j = 0; j < 48; j++)
-		{
-			transition_matrix_2n[i][j] = transition_matrix[i][j];
-		}
-	}
-
-
 	// For time_index number of times, square the matrix transition_matrix_2n
-	for(i = 0; i < 1; i++)
+	for(i = 0; i < 11; i++)
 	{
 		//convert the matrix into array of u64
 		for(j = 0; j < 48; j++)
@@ -146,7 +146,7 @@ void square_matrix_2n()
 		//print the u64 array conversion of transition_matrix_2n
 		for(j = 0; j < 48; j++)
 		{
-			printf("%llx \n", matrix_1[j]);
+			//printf("%llx ", matrix_1[j]);
 		}
 		
 		//transpose of the matrix transition_matrix_2n 
@@ -164,14 +164,16 @@ void square_matrix_2n()
 		}
 
 		//print the transpose matrix
+		printf("\n");
 		for(j = 0; j < 48; j++)
 		{
 			for(k = 0; k < 48; k++)
 			{
-				printf("%1x", transition_matrix_2n[j][k]);
+				//printf("%1x", transition_matrix_2n[j][k]);
 			}
-			printf("\n");
+			//printf("\n");
 		}
+		//printf("\n");
 
 		//convert the transposed matrix into u64 array
 		for(j = 0; j < 48; j++)
@@ -197,7 +199,7 @@ void square_matrix_2n()
 		//print the u64 array conversion of transpose of transition_matrix_2n
 		for(j = 0; j < 48; j++)
 		{
-			printf("%llx \n", matrix_2[j]);
+			//printf("%llx %llx\n", matrix_1[j], matrix_2[j]);
 		}
 		
 		//perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the matrix
@@ -209,36 +211,89 @@ void square_matrix_2n()
 				l_temp = matrix_1[j] & matrix_2[k];
 				
 				
-				for(count = 0; count < 47; count++)
+				l_xor = zero;
+		
+				for(count = 0; count < 48; count++)
 				{
-				
-					l_temp = l_temp ^ (l_temp >> 1);
-				 
+					l_xor = l_xor ^ (l_temp >> (count));
 				}
 				
-				transition_matrix_2n[j][k] = l_temp & 1;
+				transition_matrix_2n[j][k] = l_xor & one;
 			}
 		}
 		
-		//print the transpose matrix
+		//print the squared matrix
 		for(j = 0; j < 48; j++)
 		{
 			for(k = 0; k < 48; k++)
 			{
-				printf("%1x", transition_matrix_2n[j][k]);
+				//printf("%1x", transition_matrix_2n[j][k]);
 			}
-			printf("\n");
+			//printf("\n");
 		}
+		//printf("\n");
 
 	}
 }
 
 
 /***********************************************************************************************************/
-void compute_new_state()
+void compute_new_state(u64 * state_ptr)
 {
+	u32 j, k;
+	u64 l_temp;
+	u64 l_xor;
+	u64 one = 1;
+	u64 zero = 0;
+	
+	u64 matrix_2[48];
+	u64 state = *state_ptr;
+	u64 new_state = 0;
 
+	//convert the transition_matrix_2n matrix into u64 array
+	for(j = 0; j < 48; j++)
+	{
+		for(k = 0; k < 48; k++)
+		{
+			if(transition_matrix_2n[j][k] == 1)
+			{
+				l_temp = ((l_temp >> (47 - k)) ^ one) << (47 - k);
+			}
 
+			else if(transition_matrix_2n[j][k] == 0)
+			{
+				l_temp = ((l_temp >> (47 - k)) ^ zero) << (47 - k);
+			}
 
+		}
 
+		matrix_2[j] = l_temp;
+		l_temp = 0;		
+	}
+
+	//print transition_matrix_2n
+	for(j = 0; j < 48; j++)
+	{
+		//printf("%12llx \n", matrix_2[j]);
+	}
+
+	//printf("State: %12llx \n", state);
+
+	for(k = 0; k < 48; k++)
+	{
+		// AND of the two rows
+		l_temp = matrix_2[k] & state;
+		
+		l_xor = zero;
+		
+		for(j = 0; j < 48; j++)
+		{
+			l_xor = l_xor ^ (l_temp >> (j));
+		}
+
+		//printf("%x ",(l_xor & one));
+		new_state = new_state + ((l_xor & one) << (47 - k));
+	}
+
+	*state_ptr = new_state;	
 }
