@@ -11,21 +11,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> /* for memcmp */
+#include <math.h>
 #include "hitag2.c"
 
-u8 transition_matrix[48][48];
-u8 transition_matrix_2n[48][48];
-const u32 time_index = 20;
-u64 memory_complexity = 65536;	// 268435456 = 2^28
-u64 time_complexity = 1048576;	// 1048576 = 2^20
+u8 transition_matrix[48][48];		/* state transition matrix A */
+u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
 
-void square_matrix_2n();
-void compute_new_state(u64 *);
+u64 time_index = 14;
+u64 memory_complexity = 65536;	// 268435456 = 2^28
+u64 time_complexity = 16384;	// 1048576 = 2^20
+
+void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
+void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 
 int main()
 {
-	u32 i = 0;
-	u32 j = 0;
+	u64 i = 0;
+	u64 j = 0;
 	u64 state_1 = 0;
 	u64 state_2 = 0;
 	
@@ -80,6 +82,8 @@ int main()
 
 	// Initialize the state.
 	state_1 = state_2 = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
+	//state_1 = 0xcfc73b43b56aULL;
+	//state_2 = 0xcfc73b43b56aULL;
 	printf("\n Initial State: %llx", state_1);
 	
 	// Step 1: Compute transition_matrix_2n matrix
@@ -89,26 +93,25 @@ int main()
 	compute_new_state(&state_1);
 	
 	// Run hitag2_round time_complexity number of times
-	for(j = 0; j < 2048; j++)
+	for(j = 0; j < time_complexity; j++)
 	{
-		hitag2_round(&state_2);
+		hitag2_next_state(&state_2);
 	}
 
 	// Check if state_1 is equal to state_2
-	printf("\nState 1: %12llx\nState 2: %12llx", state_1, state_2);
+	printf("\nState 1: %llx\nState 2: %llx\n\n", state_1, state_2);
 }
 
 
 
 
 /***********************************************************************************************************/
-
 void square_matrix_2n()
 {
-	u32 i = 0;
-	u32 j = 0;
-	u32 k = 0;
-	u32 count = 0;
+	u64 i = 0;
+	u64 j = 0;
+	u64 k = 0;
+	u64 count = 0;
 	
 	u8 c_temp = 0;
 	u64 l_temp = 0;
@@ -120,7 +123,7 @@ void square_matrix_2n()
 	u64 matrix_2[48];
 	
 	// For time_index number of times, square the matrix transition_matrix_2n
-	for(i = 0; i < 11; i++)
+	for(i = 0; i < time_index; i++)
 	{
 		//convert the matrix into array of u64
 		for(j = 0; j < 48; j++)
@@ -136,7 +139,6 @@ void square_matrix_2n()
 				{
 					l_temp = ((l_temp >> (47 - k)) ^ zero) << (47 - k);
 				}
-
 			}
 
 			matrix_1[j] = l_temp;
@@ -218,21 +220,13 @@ void square_matrix_2n()
 					l_xor = l_xor ^ (l_temp >> (count));
 				}
 				
-				transition_matrix_2n[j][k] = l_xor & one;
+				transition_matrix_2n[j][k] = (u8) l_xor & one;
 			}
 		}
 		
-		//print the squared matrix
-		for(j = 0; j < 48; j++)
-		{
-			for(k = 0; k < 48; k++)
-			{
-				//printf("%1x", transition_matrix_2n[j][k]);
-			}
-			//printf("\n");
-		}
-		//printf("\n");
-
+		l_temp = 0;
+		l_xor = 0;
+		
 	}
 }
 
@@ -240,7 +234,7 @@ void square_matrix_2n()
 /***********************************************************************************************************/
 void compute_new_state(u64 * state_ptr)
 {
-	u32 j, k;
+	u64 j, k;
 	u64 l_temp;
 	u64 l_xor;
 	u64 one = 1;
@@ -249,6 +243,17 @@ void compute_new_state(u64 * state_ptr)
 	u64 matrix_2[48];
 	u64 state = *state_ptr;
 	u64 new_state = 0;
+
+	//print the squared matrix
+	for(j = 0; j < 48; j++)
+	{
+		for(k = 0; k < 48; k++)
+		{
+			printf("%1x", transition_matrix_2n[j][k]);
+		}
+		printf("\n");
+	}
+	printf("\n");
 
 	//convert the transition_matrix_2n matrix into u64 array
 	for(j = 0; j < 48; j++)

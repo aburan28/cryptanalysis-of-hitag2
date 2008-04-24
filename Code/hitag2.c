@@ -5,6 +5,18 @@
 
 // Basic macros:
 
+
+// "MIKRON"		=  O  N  M  I  K  R
+// Key			= 4F 4E 4D 49 4B 52		- Secret 48-bit key
+// Serial		= 49 43 57 69			- Serial number of the tag, transmitted in clear
+// Random		= 65 6E 45 72			- Random IV, transmitted in clear
+//~28~DC~80~31	= D7 23 7F CE			- Authenticator value = inverted first 4 bytes of the keystream
+
+// The code below must print out "D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6".
+// The inverse of the first 4 bytes is sent to the tag to authenticate.
+// The rest is encrypted by XORing it with the subsequent keystream.
+
+
 #define u8				unsigned char
 #define u32				unsigned long
 #define u64				unsigned long long
@@ -65,15 +77,18 @@ static u64 hitag2_round (u64 *state)
 	return f20 (x);
 }
 
-// "MIKRON"		=  O  N  M  I  K  R
-// Key			= 4F 4E 4D 49 4B 52		- Secret 48-bit key
-// Serial		= 49 43 57 69			- Serial number of the tag, transmitted in clear
-// Random		= 65 6E 45 72			- Random IV, transmitted in clear
-//~28~DC~80~31	= D7 23 7F CE			- Authenticator value = inverted first 4 bytes of the keystream
-
-// The code below must print out "D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6".
-// The inverse of the first 4 bytes is sent to the tag to authenticate.
-// The rest is encrypted by XORing it with the subsequent keystream.
+void hitag2_next_state (u64 *state)
+{
+	u64 x = *state;
+	
+	x = (x >>  1) +
+	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
+	  ^ (x >>  7) ^ (x >>  8) ^ (x >> 16) ^ (x >> 22)
+	  ^ (x >> 23) ^ (x >> 26) ^ (x >> 30) ^ (x >> 41)
+	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
+	
+	*state = x;
+}
 
 static u64 hitag2_byte (u64 * x)
 {
@@ -98,8 +113,6 @@ static u64 hitag2_prefix(u64 * x)
 	return prefix;
 }
 
-
-
 static u64 hitag2_u64(u64 * x)
 {
 	u64 i;
@@ -112,29 +125,3 @@ static u64 hitag2_u64(u64 * x)
 	
 	return prefix;
 }
-
-
-/*
-
-int main (void)
-{
-	u32	i;
-	u64	initial_state;
-	u64	state;
-	
-	state = hitag2_init (rev64 (0x524B494D4E4F), rev32 (0x69574349), rev32 (0x72456E65));
-	printf("Initial State: %lX\n", state);
-	initial_state = state;
-	
-	for (i = 0; i < 16; i++) printf ("%X ", hitag2_byte (&state));
-	printf ("\n");
-	
-	state = initial_state;
-	printf("Initial State: %lX\n", state);
-	hitag2_prefix (&state);
-	//printf ("%llu ", hitag2_prefix (&state));
-	
-	return 0;
-}
-
-*/
