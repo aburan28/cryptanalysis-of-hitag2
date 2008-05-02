@@ -1,5 +1,5 @@
 /*
-	This program is used to generate the memory data for the time-memory tradeoff attacks
+	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
 	Used parameters:
 	Key	= 4F 4E 4D 49 4B 52
 	Serial	= 49 43 57 69
@@ -14,7 +14,7 @@
 #include <math.h>		/* for power function */
 #include "hitag2.c"		/* for hitag2 stream cipher operations */
 #include "hashtable.h"		/* for hashtable */
-
+#include <time.h>
 
 void prepare_keystream(u64 *);
 
@@ -24,7 +24,7 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 22;
+u32 memory_index = 18;
 u32 time_index = 26;
 
 u64 memory_complexity;
@@ -67,6 +67,8 @@ DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
 int main()
 {
+	time_t time1, time2;
+	int sec_diff = 0;
 	u64 * c_keystream;
 	u64 keystream = 0;
 	u64 prefix = 0;
@@ -82,10 +84,22 @@ int main()
 	
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
 	
+	/* Initializing the matrices */
+	printf("\n\nInitializing matrices ...");
+	time(&time1);
 	initialize_matrix();
+	time(&time2);
+	printf("\nCurrent Time: %s", ctime(&time1));
+	sec_diff = difftime(time2,time1);
+	printf("\nTIME for initializing matrix: %d ", sec_diff);
 	
 	/* Prepare the hashtable */
+	printf("\n\nPreparing Hashtable ...");
+	time(&time1);
 	h = hash_table_setup();
+	time(&time2);
+	sec_diff = difftime(time2,time1);
+	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
 		
 	/* Check the size of the hashtable matches the memory_complexity */
 	if (memory_complexity != hashtable_count(h)) 
@@ -95,14 +109,20 @@ int main()
     	}
 	
 	/* Prepare a long keystream */
+	printf("\n\nPreparing Keystream ...");
+	time(&time1);
 	prepare_keystream(c_keystream);
 	
 	keystream = c_keystream[0];
 	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + (time_complexity/64 - 1)), 
 			*(c_keystream + (time_complexity/64)));
-	
-	printf("\nStarting Attack ...");
+	time(&time2);
+	sec_diff = difftime(time2,time1);
+	printf("\nTIME for preparing keystream: %d ", sec_diff);
 
+	/* Starting Attack */
+	printf("\n\nAttacking ...");
+	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
 	if (NULL == k) 
 	{
@@ -139,6 +159,10 @@ int main()
 	}
 	
 	printf("\nNo Internal State Found");
+	
+	time(&time2);
+	sec_diff = difftime(time2,time1);
+	printf("\nTIME for attack: %d", sec_diff);
 	
 	hashtable_destroy(h, 1);
 	free(k);
