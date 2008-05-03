@@ -68,12 +68,13 @@ DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 int main()
 {
 	time_t time1, time2;
-	int sec_diff = 0;
+	u32 sec_diff = 0;
 	u64 * c_keystream;
 	u64 keystream = 0;
 	u64 prefix = 0;
 	u64 i = 0;
 	u32 j = 0;
+	u32 matched = 0;
 
 	struct value *found;
 	struct key * k;
@@ -114,7 +115,7 @@ int main()
 	prepare_keystream(c_keystream);
 	
 	keystream = c_keystream[0];
-	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + (time_complexity/64 - 1)), 
+	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream++), *(c_keystream + (time_complexity/64 - 1)), 
 			*(c_keystream + (time_complexity/64)));
 	time(&time2);
 	sec_diff = difftime(time2,time1);
@@ -154,12 +155,14 @@ int main()
 			
 			// Find the Key for the Internal State
 			
-			exit(0);
+			matched = 1;
+			break;
 		}
 	}
-	
-	printf("\nNo Internal State Found");
-	
+		
+	if(matched == 0)
+		printf("\n\nNo Internal State found ...\n");
+
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for attack: %d", sec_diff);
@@ -292,11 +295,11 @@ void initialize_matrix()
 	{
 		for(j = 0; j < 48; j++)
 		{
-			printf("%1x", transition_matrix[i][j]);
+			//printf("%1x", transition_matrix[i][j]);
 		}
-		printf("\n");
+		//printf("\n");
 	}
-	printf("\n");
+	//printf("\n");
 	
 	square_matrix_2n();
 
@@ -305,11 +308,11 @@ void initialize_matrix()
 	{
 		for(j = 0; j < 48; j++)
 		{
-			printf("%1x", transition_matrix_2n[i][j]);
+			//printf("%1x", transition_matrix_2n[i][j]);
 		}
-		printf("\n");
+		//printf("\n");
 	}
-	printf("\n");
+	//printf("\n");
 }
 
 /***********************************************************************************************************/
