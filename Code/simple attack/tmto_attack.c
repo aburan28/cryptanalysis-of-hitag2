@@ -24,7 +24,7 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 20;
+u32 memory_index = 22;
 u32 time_index = 26;
 
 u64 memory_complexity;
@@ -75,7 +75,6 @@ int main()
 	u64 i = 0;
 	u32 j = 0;
 	u32 matched = 0;
-	u64 temp_state = 0x58b70a590f25ULL;
 
 	struct value *found;
 	struct key * k;
@@ -115,11 +114,8 @@ int main()
 	time(&time1);
 	prepare_keystream(c_keystream);
 	
-	printf("Prefix for State 58b70a590f25 is: %llX", hitag2_prefix(&temp_state));
-	
 	keystream = *c_keystream;
-	printf("\nKeystream: %llX %llX ... %llX %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + 2), *(c_keystream + (time_complexity/64 - 1)), 
-			*(c_keystream + (time_complexity/64)));
+
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
@@ -152,7 +148,8 @@ int main()
 		
 		if(found != NULL)
 		{
-			printf("\nMatch Found! Current State: %llx  Prefix: %llx\n", found->value, prefix);
+			printf("\nMatch Found! Current State: %llx  ", found->value);
+			printf("Prefix: %llx\n", prefix);
 			
 			// Find the Initial State.
 			
@@ -196,8 +193,8 @@ struct hashtable * hash_table_setup()
 	h = create_hashtable(memory_complexity, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 	
-	// Initialize the state. This can be done also by randomly assigning a value to the state.
-	state = hitag2_init (rev64 (0x524B494D4E4EULL), rev32 (0x69574349), rev32 (0x72456E65));
+	// Initialize the state, to some random value.
+	state = 0x69574349F4ACULL;
 
 	for(i = 0; i < memory_complexity; i++)
 	{
