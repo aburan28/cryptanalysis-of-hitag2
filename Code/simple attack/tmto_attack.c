@@ -24,7 +24,7 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 18;
+u32 memory_index = 16;
 u32 time_index = 26;
 
 u64 memory_complexity;

@@ -18,7 +18,7 @@
 
 
 #define u8				unsigned char
-#define u32				unsigned long
+#define u32				unsigned int
 #define u64				unsigned long long
 #define rev8(x)			((((x)>>7)&1)+((((x)>>6)&1)<<1)+((((x)>>5)&1)<<2)+((((x)>>4)&1)<<3)+((((x)>>3)&1)<<4)+((((x)>>2)&1)<<5)+((((x)>>1)&1)<<6)+(((x)&1)<<7))
 #define rev16(x)		(rev8 (x)+(rev8 (x>> 8)<< 8))
@@ -107,7 +107,6 @@ static u64 hitag2_prefix(u64 * x)
 	for (i = 0; i < 6; i++) 
 	{
 		prefix += (u64) hitag2_byte (x) << (5 - i)*8;
-		//printf("%llx ", (u64) hitag2_byte (x) << (5 - i)*8);	
 	}
 	
 	return prefix;
