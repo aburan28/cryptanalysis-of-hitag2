@@ -115,7 +115,7 @@ int main()
 	prepare_keystream(c_keystream);
 	
 	keystream = c_keystream[0];
-	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream++), *(c_keystream + (time_complexity/64 - 1)), 
+	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + (time_complexity/64 - 1)), 
 			*(c_keystream + (time_complexity/64)));
 	time(&time2);
 	sec_diff = difftime(time2,time1);
