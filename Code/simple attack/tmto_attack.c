@@ -24,7 +24,7 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 16;
+u32 memory_index = 20;
 u32 time_index = 26;
 
 u64 memory_complexity;
@@ -75,6 +75,7 @@ int main()
 	u64 i = 0;
 	u32 j = 0;
 	u32 matched = 0;
+	u64 temp_state = 0x58b70a590f25ULL;
 
 	struct value *found;
 	struct key * k;
@@ -114,8 +115,10 @@ int main()
 	time(&time1);
 	prepare_keystream(c_keystream);
 	
+	printf("Prefix for State 58b70a590f25 is: %llX", hitag2_prefix(&temp_state));
+	
 	keystream = *c_keystream;
-	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + (time_complexity/64 - 1)), 
+	printf("\nKeystream: %llX %llX ... %llX %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + 2), *(c_keystream + (time_complexity/64 - 1)), 
 			*(c_keystream + (time_complexity/64)));
 	time(&time2);
 	sec_diff = difftime(time2,time1);
@@ -136,8 +139,8 @@ int main()
 	{
 		prefix = keystream >> 16;
 
-		printf("\nCurrent Prefix: %llX", prefix);
-    
+		//printf("\nCurrent Prefix: %llX", prefix);
+    		
 		k->key = prefix;
         
 		/* Call the hashtable method with key */
