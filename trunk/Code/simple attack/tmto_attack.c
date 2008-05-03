@@ -114,7 +114,7 @@ int main()
 	time(&time1);
 	prepare_keystream(c_keystream);
 	
-	keystream = c_keystream[0];
+	keystream = *c_keystream;
 	printf("\nKeystream: %llX %llX ... %llX %llX", *c_keystream, *(c_keystream + 1), *(c_keystream + (time_complexity/64 - 1)), 
 			*(c_keystream + (time_complexity/64)));
 	time(&time2);
@@ -136,7 +136,7 @@ int main()
 	{
 		prefix = keystream >> 16;
 
-		//printf("\nCurrent Prefix: %llX", prefix);
+		printf("\nCurrent Prefix: %llX", prefix);
     
 		k->key = prefix;
         
@@ -230,6 +230,7 @@ struct hashtable * hash_table_setup()
 	return h;
 }
 
+/* Specifically for 64-bit architecture */
 void prepare_keystream(u64 * c_keystream)
 {
 	u64 state = 0;
