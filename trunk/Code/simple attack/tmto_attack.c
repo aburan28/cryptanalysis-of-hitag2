@@ -72,7 +72,7 @@ int main()
 	u64 * c_keystream;
 	u64 keystream = 0;
 	u64 prefix = 0;
-	u64 i = 0;
+	u32 i = 0;
 	u32 j = 0;
 	u32 matched = 0;
 	u64 found_current_state = 0;
