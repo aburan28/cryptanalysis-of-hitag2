@@ -75,6 +75,8 @@ int main()
 	u64 i = 0;
 	u32 j = 0;
 	u32 matched = 0;
+	u64 found_current_state = 0;
+	u64 found_initial_state = 0;
 
 	struct value *found;
 	struct key * k;
@@ -84,6 +86,18 @@ int main()
 	time_complexity = pow(2,time_index);
 	
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
+	
+	keystream = 0x69574349F4ACULL;
+	printf("\n\nInitiai State: %llx", keystream);
+	hitag2_next_state(&keystream);
+	hitag2_next_state(&keystream);
+	hitag2_next_state(&keystream);
+	printf("\n\nNew State: %llx", keystream);
+	hitag2_rev_round(&keystream);
+	hitag2_rev_round(&keystream);
+	hitag2_rev_round(&keystream);
+	printf("\n\nReverse State: %llx", keystream);
+	
 	
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
@@ -148,11 +162,19 @@ int main()
 		
 		if(found != NULL)
 		{
-			printf("\nMatch Found! Current State: %llx  ", found->value);
+			found_current_state = found->value;
+			found_initial_state = found_current_state;
+
+			printf("\nMatch Found! Current State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
-			
+			printf("Percentage of the worst case time: %d\n", i*100/time_complexity);
+
 			// Find the Initial State.
+			for(j = 0; j < i; j++)
+				hitag2_rev_round(&found_initial_state);
 			
+			printf("\nFound Initial State: %llx", found_initial_state);
+
 			// Find the Key for the Internal State
 			
 			matched = 1;
@@ -377,7 +399,6 @@ void square_matrix_2n()
 		}
 
 		//print the transpose matrix
-		printf("\n");
 		for(j = 0; j < 48; j++)
 		{
 			for(k = 0; k < 48; k++)

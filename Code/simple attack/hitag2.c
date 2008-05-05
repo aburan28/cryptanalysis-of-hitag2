@@ -63,6 +63,19 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 	return x;
 }
 
+void hitag2_rev_round (u64 *state)
+{
+	u64 x = *state;
+	
+	x = (x <<  1) +
+	(((x >>  47) ^ (x >>  1) ^ (x >>  2) ^ (x >>  5)
+	  ^ (x >>  6) ^ (x >>  7) ^ (x >> 15) ^ (x >> 21)
+	  ^ (x >> 22) ^ (x >> 25) ^ (x >> 29) ^ (x >> 40)
+	  ^ (x >> 41) ^ (x >> 42) ^ (x >> 45) ^ (x >> 46)) & 1);
+	
+	*state = x;
+}
+
 static u64 hitag2_round (u64 *state)
 {
 	u64 x = *state;
