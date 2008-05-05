@@ -73,7 +73,7 @@ void hitag2_rev_round (u64 *state)
 	  ^ (x >> 22) ^ (x >> 25) ^ (x >> 29) ^ (x >> 40)
 	  ^ (x >> 41) ^ (x >> 42) ^ (x >> 45) ^ (x >> 46)) & 1);
 	
-	*state = x;
+	*state = x & 0xFFFFFFFFFFFF;
 }
 
 static u64 hitag2_round (u64 *state)

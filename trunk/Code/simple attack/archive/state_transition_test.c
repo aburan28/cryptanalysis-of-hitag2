@@ -21,7 +21,7 @@ int main()
 	printf("\nEnter the current state:");
 	scanf("%llu", &current_state);
 	printf("\nEnter the complexity:");
-	scanf("%llu", &complexity);
+	scanf("%d", &complexity);
 
 	initial_state = current_state;
         for(j = 0; j < complexity; j++)
