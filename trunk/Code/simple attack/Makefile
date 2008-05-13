@@ -7,6 +7,9 @@ all: tmto_attack old_tmto_attack
 tmto_attack.o:	tmto_attack.c
 	gcc -g -Wall -O -c tmto_attack.c -o tmto_attack.o
 
+#hitag2.o:	hitag2.c
+#	gcc -g -Wall -O -c hitag2.c -o hitag2.o
+
 old_tmto_attack: hashtable_powers.o tmto_attack.o
 	gcc -g -Wall -O -o old_tmto_attack hashtable_powers.o tmto_attack.o
 

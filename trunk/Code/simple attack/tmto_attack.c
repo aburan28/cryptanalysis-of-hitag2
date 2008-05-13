@@ -8,6 +8,7 @@
 	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
 */	
 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
@@ -24,8 +25,8 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 22;
-u32 time_index = 26;
+u32 memory_index = 23;
+u32 time_index = 25;
 
 u64 memory_complexity;
 u64 time_complexity;
@@ -86,18 +87,6 @@ int main()
 	time_complexity = pow(2,time_index);
 	
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
-	
-	keystream = 0x69574349F4ACULL;
-	printf("\n\nInitiai State: %llx", keystream);
-	hitag2_next_state(&keystream);
-	hitag2_next_state(&keystream);
-	hitag2_next_state(&keystream);
-	printf("\n\nNew State: %llx", keystream);
-	hitag2_rev_round(&keystream);
-	hitag2_rev_round(&keystream);
-	hitag2_rev_round(&keystream);
-	printf("\n\nReverse State: %llx", keystream);
-	
 	
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
@@ -167,11 +156,11 @@ int main()
 
 			printf("\nMatch Found! Current State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
-			printf("Percentage of the worst case time: %d\n", i*100/time_complexity);
+			printf("\nPercentage of the worst case time: %f ", (i*100.00)/time_complexity);
 
 			// Find the Initial State.
 			for(j = 0; j < i; j++)
-				hitag2_rev_round(&found_initial_state);
+				hitag2_prev_state(&found_initial_state);
 			
 			printf("\nFound Initial State: %llx", found_initial_state);
 
@@ -216,7 +205,7 @@ struct hashtable * hash_table_setup()
 	if (NULL == h) exit(-1); /* exit on error*/
 	
 	// Initialize the state, to some random value.
-	state = 0x69574349F4ACULL;
+	state = 0x69574AD004ACULL;
 
 	for(i = 0; i < memory_complexity; i++)
 	{

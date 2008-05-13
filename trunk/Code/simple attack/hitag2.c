@@ -63,7 +63,7 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 	return x;
 }
 
-void hitag2_rev_round (u64 *state)
+void hitag2_prev_state (u64 *state)
 {
 	u64 x = *state;
 	
@@ -74,20 +74,6 @@ void hitag2_rev_round (u64 *state)
 	  ^ (x >> 41) ^ (x >> 42) ^ (x >> 45) ^ (x >> 46)) & 1);
 	
 	*state = x & 0xFFFFFFFFFFFF;
-}
-
-static u64 hitag2_round (u64 *state)
-{
-	u64 x = *state;
-	
-	x = (x >>  1) +
-	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
-	  ^ (x >>  7) ^ (x >>  8) ^ (x >> 16) ^ (x >> 22)
-	  ^ (x >> 23) ^ (x >> 26) ^ (x >> 30) ^ (x >> 41)
-	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
-	
-	*state = x;
-	return f20 (x);
 }
 
 void hitag2_next_state (u64 *state)
@@ -101,6 +87,21 @@ void hitag2_next_state (u64 *state)
 	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
 	
 	*state = x;
+}
+
+
+static u64 hitag2_round (u64 *state)
+{
+	u64 x = *state;
+	
+	x = (x >>  1) +
+	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
+	  ^ (x >>  7) ^ (x >>  8) ^ (x >> 16) ^ (x >> 22)
+	  ^ (x >> 23) ^ (x >> 26) ^ (x >> 30) ^ (x >> 41)
+	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
+	
+	*state = x;
+	return f20 (x);
 }
 
 static u64 hitag2_byte (u64 * x)
