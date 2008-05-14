@@ -2,7 +2,7 @@ tmto_adv_attack: hashtable.o tmto_adv_attack.o
 	gcc -g -Wall -O -lm -o tmto_adv_attack hashtable.o tmto_adv_attack.o
 
 tmto_simple_attack: hashtable.o tmto_simple_attack.o 
-	gcc -g -Wall -O -lm -o tmto_attack hashtable.o tmto_attack.o
+	gcc -g -Wall -O -lm -o tmto_simple_attack hashtable.o tmto_simple_attack.o
 
 all: tmto_simple_attack tmto_adv_attack
 
