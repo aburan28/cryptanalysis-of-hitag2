@@ -1,14 +1,16 @@
+tmto_adv_attack: hashtable.o tmto_adv_attack.o 
+	gcc -g -Wall -O -lm -o tmto_adv_attack hashtable.o tmto_adv_attack.o
 
-tmto_attack: hashtable.o tmto_attack.o 
+tmto_simple_attack: hashtable.o tmto_simple_attack.o 
 	gcc -g -Wall -O -lm -o tmto_attack hashtable.o tmto_attack.o
 
-all: tmto_attack old_tmto_attack
+all: tmto_simple_attack tmto_adv_attack
 
-tmto_attack.o:	tmto_attack.c
-	gcc -g -Wall -O -c tmto_attack.c -o tmto_attack.o
+tmto_simple_attack.o:	tmto_simple_attack.c
+	gcc -g -Wall -O -c tmto_simple_attack.c -o tmto_simple_attack.o
 
-#hitag2.o:	hitag2.c
-#	gcc -g -Wall -O -c hitag2.c -o hitag2.o
+tmto_adv_attack.o:	tmto_adv_attack.c
+	gcc -g -Wall -O -c tmto_adv_attack.c -o tmto_adv_attack.o
 
 old_tmto_attack: hashtable_powers.o tmto_attack.o
 	gcc -g -Wall -O -o old_tmto_attack hashtable_powers.o tmto_attack.o
@@ -23,4 +25,4 @@ tidy:
 	rm *.o
 
 clean: tidy
-	rm -f tmto_attack old_tmto_attack
+	rm -f tmto_simple_attack tmto_adv_attack old_tmto_attack
