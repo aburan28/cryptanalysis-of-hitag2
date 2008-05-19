@@ -78,6 +78,7 @@ int main()
 	u32 matched = 0;
 	u64 found_current_state = 0;
 	u64 found_initial_state = 0;
+	u64 found_key = 0;
 
 	struct value *found;
 	struct key * k;
@@ -85,6 +86,13 @@ int main()
 
 	memory_complexity = pow(2,memory_index);
 	time_complexity = pow(2,time_index);
+
+	found_initial_state = hitag2_init(rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
+	printf("\nFound Initial State: %llx", found_initial_state);
+	found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
+	printf("\nFound Key: %llx", found_key);
+	printf("\nFound Key: %llx", rev64(found_key));
+
 	
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
 	
@@ -165,6 +173,9 @@ int main()
 			printf("\nFound Initial State: %llx", found_initial_state);
 
 			// Find the Key for the Internal State
+			found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
+			printf("\nFound Key: %llx", found_key);
+			printf("\nFound Key: %llx", rev64(found_key));
 			
 			matched = 1;
 			break;
@@ -213,7 +224,7 @@ struct hashtable * hash_table_setup()
 		pre_state = state;
 		
 		//call hitag function - get 48 bits prefix (in u64 format)
-		prefix = hitag2_prefix(&state);
+		prefix = hitag2_prefix(&state, 48);
 		
 		//save prefix and state in the hash table
 		k = (struct key *)malloc(sizeof(struct key));
@@ -252,7 +263,7 @@ void prepare_keystream(u64 * c_keystream)
 
 	for(;i < time_complexity/64 + 1; i++)
 	{
-		*c_keystream = (u64) hitag2_u64(&state); 
+		*c_keystream = (u64) hitag2_prefix(&state, 64); 
 		c_keystream++;
 	}
 	printf("\nKeystream made available ...");
