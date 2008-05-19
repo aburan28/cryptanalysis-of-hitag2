@@ -3,7 +3,8 @@
 	Used parameters:
 	Key	= 4F 4E 4D 49 4B 52
 	Serial	= 49 43 57 69
-	Random	= 65 6E 45 72
+	
+	Available Keystream: 32 bit tags
 	
 	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
 */	
@@ -17,7 +18,7 @@
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
 
-void prepare_keystream(u64 *);
+void prepare_tags(u64 *);
 
 struct hashtable * hash_table_setup(void);
 
@@ -27,6 +28,7 @@ void compute_new_state(u64 *);		/* computes the new state from the new transitio
 	
 u32 memory_index = 23;
 u32 time_index = 25;
+u32 prefix_bits = 32;
 
 u64 memory_complexity;
 u64 time_complexity;
@@ -70,7 +72,7 @@ int main()
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
-	u64 * c_keystream;
+	u64 * c_tags;
 	u64 keystream = 0;
 	u64 prefix = 0;
 	u32 i = 0;
@@ -86,8 +88,9 @@ int main()
 	memory_complexity = pow(2,memory_index);
 	time_complexity = pow(2,time_index);
 	
-	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
+	c_tags = (u64 *)malloc(sizeof(u64) * time_complexity * 2);
 	
+	printf("\nReverse: %d %llx", 0x524B494DULL, &time_index);
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
 	time(&time1);
@@ -113,12 +116,9 @@ int main()
     	}
 	
 	/* Prepare a long keystream */
-	printf("\n\nPreparing Keystream ...");
+	printf("\n\nPreparing tags of length %d bits...", &prefix_bits);
 	time(&time1);
-	prepare_keystream(c_keystream);
-	
-	keystream = *c_keystream;
-
+	prepare_tags(c_tags);
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
@@ -136,7 +136,7 @@ int main()
 	/* Start searching prefixes in the hashtable */
 	for(i = 0, j = 0; i < time_complexity; i++)
 	{
-		prefix = keystream >> 16;
+		prefix = *c_tags;
 
 		//printf("\nCurrent Prefix: %llX", prefix);
     		
@@ -145,30 +145,22 @@ int main()
 		/* Call the hashtable method with key */
 		found = search_some(h,k);
 
-		/* Shift the keystream by 1 bit for computing the next prefix */
-		if((i % 64) == 0) c_keystream++;
-		keystream = (keystream << 1) ^ ((* c_keystream >> (63 - (i % 64))) & 1);
-		
 		if(found != NULL)
 		{
 			found_current_state = found->value;
 			found_initial_state = found_current_state;
 
-			printf("\nMatch Found! Current State: %llx  ", found_current_state);
+			printf("\nA Tag Found! State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
-			printf("\nPercentage of the worst case time: %f ", (i*100.00)/time_complexity);
-
-			// Find the Initial State.
-			for(j = 0; j < i; j++)
-				hitag2_prev_state(&found_initial_state);
-			
-			printf("\nFound Initial State: %llx", found_initial_state);
 
 			// Find the Key for the Internal State
+
 			
 			matched = 1;
 			break;
 		}
+
+		c_tags = c_tags + 2;
 	}
 		
 	if(matched == 0)
@@ -207,13 +199,17 @@ struct hashtable * hash_table_setup()
 	// Initialize the state, to some random value.
 	state = 0x69574AD004ACULL;
 
+	/* It is important how we setup the hash table for this attack 
+	 * One way could be to store states which are at a fixed distance from each other 
+	 * Other way could be to store a consecutive set of states along with their tags */
+	 
 	for(i = 0; i < memory_complexity; i++)
 	{
 		// Save the starting state
 		pre_state = state;
 		
-		//call hitag function - get 48 bits prefix (in u64 format)
-		prefix = hitag2_prefix(&state);
+		//call hitag function - get 'prefix_bits' number of bits of keystream (in u64 format)
+		prefix = hitag2_prefix(&state, prefix_bits);
 		
 		//save prefix and state in the hash table
 		k = (struct key *)malloc(sizeof(struct key));
@@ -241,21 +237,47 @@ struct hashtable * hash_table_setup()
 	return h;
 }
 
-/* Specifically for 64-bit architecture */
-void prepare_keystream(u64 * c_keystream)
+u64 get_random(u32 bits)
+{
+	u32 i = 0;
+	u64 random_number = 0;
+	u64 random_bit = 0;
+	time_t seconds;
+	
+	time(&seconds);
+	
+	srand((unsigned int) seconds);
+
+	for(i = 0; i < bits; i++)
+	{	
+		random_bit = rand() % 2;
+		random_number = (random_number << 1) ^ random_bit;
+	}
+	
+	printf("\nRandom Number: %llx", random_number)
+	return random_number; 
+}
+
+
+void prepare_tags(u64 * c_tags)
 {
 	u64 state = 0;
 	u64 i = 0;
+	u64 iv = 0;
 	
-	// Initial State which needs to be determined..
-	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
-
-	for(;i < time_complexity/64 + 1; i++)
+	for(;i < time_complexity; i++)
 	{
-		*c_keystream = (u64) hitag2_u64(&state); 
-		c_keystream++;
+		iv = get_random(32);
+		
+		state = hitag2_init (rev64(0x524B494D4E4FULL), rev32(0x69574349), rev32(iv));
+
+		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
+		c_tags++;
+		*c_tags = (u64) iv; 
+		c_tags++;
 	}
-	printf("\nKeystream made available ...");
+	
+	printf("\nTags made available ...");
 }
 
 void initialize_matrix()

@@ -63,6 +63,25 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 	return x;
 }
 
+static u64 hitag2_find_key(u64 state, const u32 serial, const u32 IV)
+{
+	u32 last_bit = 0;
+	u32 i = 31;
+	u64 key = 0;
+	
+	for (i = 31; i > -1; i--)
+	{
+		last_bit = (state >> 47);
+		state = (state << 1) + (u64) ((serial >> i) & 1);
+		key += (last_bit ^ f20(state) ^ (IV >> i)) << (i + 16);
+		printf(" %d ", i);
+	}
+	
+	key = key + (state >> 32);
+	
+	return key;
+}
+
 void hitag2_prev_state (u64 *state)
 {
 	u64 x = *state;
@@ -113,27 +132,14 @@ static u64 hitag2_byte (u64 * x)
 	return c;
 }
 
-static u64 hitag2_prefix(u64 * x)
+static u64 hitag2_prefix(u64 * x, u32 bits)
 {
 	u64 i;
 	u64 prefix = 0;
 
-	for (i = 0; i < 6; i++) 
+	for (i = 0; i < (bits/8); i++) 
 	{
-		prefix += (u64) hitag2_byte (x) << (5 - i)*8;
-	}
-	
-	return prefix;
-}
-
-static u64 hitag2_u64(u64 * x)
-{
-	u64 i;
-	u64 prefix = 0;
-
-	for (i = 0; i < 8; i++) 
-	{
-		prefix += (u64) hitag2_byte (x) << (7 - i)*8;
+		prefix += (u64) hitag2_byte (x) << ((bits/8) - 1 - i)*8;
 	}
 	
 	return prefix;
