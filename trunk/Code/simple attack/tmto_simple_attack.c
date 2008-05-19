@@ -66,6 +66,7 @@ DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
+
 int main()
 {
 	time_t time1, time2;
@@ -87,13 +88,6 @@ int main()
 	memory_complexity = pow(2,memory_index);
 	time_complexity = pow(2,time_index);
 
-	found_initial_state = hitag2_init(rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
-	printf("\nFound Initial State: %llx", found_initial_state);
-	found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
-	printf("\nFound Key: %llx", found_key);
-	printf("\nFound Key: %llx", rev64(found_key));
-
-	
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
 	
 	/* Initializing the matrices */
@@ -172,7 +166,7 @@ int main()
 			
 			printf("\nFound Initial State: %llx", found_initial_state);
 
-			// Find the Key for the Internal State
+			// Find the Key
 			found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
 			printf("\nFound Key: %llx", found_key);
 			printf("\nFound Key: %llx", rev64(found_key));

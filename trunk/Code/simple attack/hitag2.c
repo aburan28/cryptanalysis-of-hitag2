@@ -63,21 +63,22 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 	return x;
 }
 
+
 static u64 hitag2_find_key(u64 state, const u32 serial, const u32 IV)
 {
-	u32 last_bit = 0;
-	u32 i = 31;
+	u64 last_bit = 0;
+	int i = 31;
 	u64 key = 0;
 	
-	for (i = 31; i > -1; i--)
+	for (i = 31; i >= 0; i--)
 	{
 		last_bit = (state >> 47);
+		
+		key = key + (((last_bit ^ f20(state) ^ (IV >> i)) & 1) << (i + 16));
 		state = (state << 1) + (u64) ((serial >> i) & 1);
-		key += (last_bit ^ f20(state) ^ (IV >> i)) << (i + 16);
-		printf(" %d ", i);
 	}
 	
-	key = key + (state >> 32);
+	key = (key ^ (state >> 32) & 0xFFFF);
 	
 	return key;
 }
