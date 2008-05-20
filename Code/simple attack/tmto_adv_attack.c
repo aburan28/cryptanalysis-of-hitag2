@@ -26,8 +26,8 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 23;
-u32 time_index = 25;
+u32 memory_index = 16;
+u32 time_index = 22;
 u32 prefix_bits = 32;
 
 u64 memory_complexity;
@@ -80,6 +80,8 @@ int main()
 	u32 matched = 0;
 	u64 found_current_state = 0;
 	u64 found_initial_state = 0;
+	u64 found_key = 0;
+	u32 iv = 0;
 
 	struct value *found;
 	struct key * k;
@@ -116,7 +118,7 @@ int main()
     	}
 	
 	/* Prepare a long keystream */
-	printf("\n\nPreparing tags of length %d bits...", &prefix_bits);
+	printf("\n\nPreparing tags of length %d bits ...", prefix_bits);
 	time(&time1);
 	prepare_tags(c_tags);
 	time(&time2);
@@ -137,7 +139,8 @@ int main()
 	for(i = 0, j = 0; i < time_complexity; i++)
 	{
 		prefix = *c_tags;
-
+		iv = *(c_tags + 1);
+		
 		//printf("\nCurrent Prefix: %llX", prefix);
     		
 		k->key = prefix;
@@ -150,14 +153,12 @@ int main()
 			found_current_state = found->value;
 			found_initial_state = found_current_state;
 
-			printf("\nA Tag Found! State: %llx  ", found_current_state);
-			printf("Prefix: %llx\n", prefix);
+			printf("\nA Tag Found! State: %llx for Tag: %llx", found_current_state, prefix);
 
 			// Find the Key for the Internal State
-
-			
+			found_key = hitag2_find_key(found_current_state, 0x69574349, iv);
+			printf("Found Key: %llx\n", found_key);			
 			matched = 1;
-			break;
 		}
 
 		c_tags = c_tags + 2;
@@ -215,7 +216,7 @@ struct hashtable * hash_table_setup()
 		k = (struct key *)malloc(sizeof(struct key));
 		if (NULL == k) 
 		{
-			printf("\nError: Could not allocate memory for Prefix");
+			printf("\nError: Could not allocate memory for Prefix ...");
 			exit(1);
 		}
 
@@ -224,7 +225,7 @@ struct hashtable * hash_table_setup()
 		v->value = pre_state;
 		if (!insert_some(h,k,v)) 
 		{
-			printf("\nError: Could not allocate memory for State");
+			printf("\nError: Could not allocate memory for State ...");
 			exit(-1); /*oom*/
 		}
 		
@@ -237,7 +238,7 @@ struct hashtable * hash_table_setup()
 	return h;
 }
 
-u64 get_random(u32 bits)
+u64 get_random(u32 bits, u32 counter)
 {
 	u32 i = 0;
 	u64 random_number = 0;
@@ -246,7 +247,7 @@ u64 get_random(u32 bits)
 	
 	time(&seconds);
 	
-	srand((unsigned int) seconds);
+	srand(counter);
 
 	for(i = 0; i < bits; i++)
 	{	
@@ -254,7 +255,7 @@ u64 get_random(u32 bits)
 		random_number = (random_number << 1) ^ random_bit;
 	}
 	
-	printf("\nRandom Number: %llx", random_number)
+	//printf("\nRandom Number: %llx", random_number);
 	return random_number; 
 }
 
@@ -267,9 +268,9 @@ void prepare_tags(u64 * c_tags)
 	
 	for(;i < time_complexity; i++)
 	{
-		iv = get_random(32);
+		iv = get_random(32, i);
 		
-		state = hitag2_init (rev64(0x524B494D4E4FULL), rev32(0x69574349), rev32(iv));
+		state = hitag2_init(0x524B494D4E4FULL, 0x69574349, iv);
 
 		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
 		c_tags++;
