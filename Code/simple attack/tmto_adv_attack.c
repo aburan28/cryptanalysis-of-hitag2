@@ -26,7 +26,7 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 16;
+u32 memory_index = 18;
 u32 time_index = 22;
 u32 prefix_bits = 32;
 
@@ -123,7 +123,7 @@ int main()
 	prepare_tags(c_tags);
 	time(&time2);
 	sec_diff = difftime(time2,time1);
-	printf("\nTIME for preparing keystream: %d ", sec_diff);
+	printf("\nTIME for preparing tags: %d ", sec_diff);
 
 	/* Starting Attack */
 	printf("\n\nAttacking ...");
@@ -238,16 +238,11 @@ struct hashtable * hash_table_setup()
 	return h;
 }
 
-u64 get_random(u32 bits, u32 counter)
+u64 get_random(u32 bits)
 {
 	u32 i = 0;
 	u64 random_number = 0;
 	u64 random_bit = 0;
-	time_t seconds;
-	
-	time(&seconds);
-	
-	srand(counter);
 
 	for(i = 0; i < bits; i++)
 	{	
@@ -265,16 +260,24 @@ void prepare_tags(u64 * c_tags)
 	u64 state = 0;
 	u64 i = 0;
 	u64 iv = 0;
+
+	time_t seconds;
+	
+	time(&seconds);
+	
+	srand(seconds);
 	
 	for(;i < time_complexity; i++)
 	{
-		iv = get_random(32, i);
+		iv = get_random(32);
 		
 		state = hitag2_init(0x524B494D4E4FULL, 0x69574349, iv);
 
 		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
+		//printf("\nNew Tag: %llx ", *c_tags);
 		c_tags++;
 		*c_tags = (u64) iv; 
+		//printf(" New IV: %llx", *c_tags);
 		c_tags++;
 	}
 	
