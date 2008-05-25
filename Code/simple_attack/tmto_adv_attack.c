@@ -26,8 +26,8 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 	
-u32 memory_index = 18;
-u32 time_index = 22;
+u32 memory_index = 23;
+u32 time_index = 26;
 u32 prefix_bits = 32;
 
 u64 memory_complexity;
@@ -87,18 +87,19 @@ int main()
 	struct key * k;
 	struct hashtable *h;
 
+	time(&time1);
+	printf("\nCurrent Time: %s", ctime(&time1));
+	
 	memory_complexity = pow(2,memory_index);
 	time_complexity = pow(2,time_index);
 	
 	c_tags = (u64 *)malloc(sizeof(u64) * time_complexity * 2);
 	
-	printf("\nReverse: %d %llx", 0x524B494DULL, &time_index);
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
 	time(&time1);
 	initialize_matrix();
 	time(&time2);
-	printf("\nCurrent Time: %s", ctime(&time1));
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for initializing matrix: %d ", sec_diff);
 	
@@ -154,7 +155,7 @@ int main()
 			found_initial_state = found_current_state;
 
 			printf("\nA Tag Found! State: %llx for Tag: %llx", found_current_state, prefix);
-
+			//printf("%llx ", prefix);
 			// Find the Key for the Internal State
 			found_key = hitag2_find_key(found_current_state, 0x69574349, iv);
 			printf("Found Key: %llx\n", found_key);			
@@ -238,6 +239,19 @@ struct hashtable * hash_table_setup()
 	return h;
 }
 
+/*
+u64 get_random()
+{
+	u64 random_number = 0;
+
+	random_number = rand() % 4294967295;
+	if(random_number == 0)
+		random_number = get_random();
+	
+	return random_number; 
+}
+*/
+
 u64 get_random(u32 bits)
 {
 	u32 i = 0;
@@ -246,14 +260,12 @@ u64 get_random(u32 bits)
 
 	for(i = 0; i < bits; i++)
 	{	
-		random_bit = rand() % 2;
+		random_bit = rand() % 65535;
 		random_number = (random_number << 1) ^ random_bit;
 	}
 	
-	//printf("\nRandom Number: %llx", random_number);
 	return random_number; 
 }
-
 
 void prepare_tags(u64 * c_tags)
 {
@@ -269,7 +281,17 @@ void prepare_tags(u64 * c_tags)
 	
 	for(;i < time_complexity; i++)
 	{
+		
+		// Reseed 
+/*		if(i % 2048 == 0)
+		{
+			time(&seconds);
+	
+			srand(seconds*(i%2048));
+		}	
+*/	
 		iv = get_random(32);
+		//printf("\n%llx ", iv);	
 		
 		state = hitag2_init(0x524B494D4E4FULL, 0x69574349, iv);
 
