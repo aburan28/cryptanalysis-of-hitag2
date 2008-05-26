@@ -1,0 +1,43 @@
+% abstract.tex (Abstract)
+
+\addcontentsline{toc}{chapter}{Abstract}
+
+\chapter*{Abstract}
+Solving systems of linear equations is a common computational problem well
+known to mathematicians, scientists and engineers.  Several algorithms exist 
+for solving this problem.  However, when the equations contain {\it interval 
+coefficients\/} (i.e., intervals in which the desired coefficient values are 
+known to lie), the problem may not be solvable in any reasonable sense.  In 
+fact, it has been shown that the general problem of solving systems of linear 
+equations with interval coefficients is NP-{\it hard}, i.e., extremely difficult
+and (it is believed) unsolvable; thus, no feasible algorithm can ever be 
+developed that will solve all particular cases of this problem.
+
+It turns out, though, that the widths of the interval coefficients are quite 
+small in a large number of the linear systems having interval coefficients.  
+This becomes readily apparent when we learn that the intervals typically come 
+from measurements.
+
+Any measurement of a physical quantity is limited
+by the precision and accuracy of the measuring device.  To be of practical
+use, the measuring devices used in science and industry must be
+reasonably accurate.  This implies that, for the most part, the actual values
+associated with measurements lie within relatively narrow intervals.  Indeed,
+manufacturers often guarantee the error of their instruments to be very small.
+
+Thus, we desire to look only at {\it narrow-interval\/} coefficients when 
+considering the development of an algorithm for solving linear systems with 
+interval coefficients.  As there already exists an algorithm that solves 
+most such systems, developing such an algorithm seems indeed promising.
+Therefore, the goal of this thesis is to answer the following question:
+
+\begin{quote}
+{\it Can a feasible algorithm be developed for the general problem of
+solving systems of linear equations with narrow-interval coefficients?}
+\end{quote}
+
+\noindent
+We show here that this problem, that of solving systems of linear 
+equations with narrow-interval coefficients, is NP-hard; thus, we do not
+consider it possible to develop a feasible algorithm that will solve all 
+particular cases of this problem.
