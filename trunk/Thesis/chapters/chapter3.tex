@@ -1,0 +1,111 @@
+% chap3.tex (Definitions and Theorem)
+
+\chapter{Solving Interval Linear Systems Is NP-Hard: Known Result}
+
+In this chapter we will define formally what it means to solve a system of
+interval linear equations and present a negative result related to such
+systems that was first discovered by Kreinovich, Lakeyev and Noskov in the
+early 1990's.
+
+\section{Definitions}
+
+\begin{definition}
+{\rm An expression of the form
+\begin{equation}
+  \sum_{j=1}^n [a_j^-,a_j^+] x_j = [b^-,b^+] \label{intlineq}
+\end{equation}
+is called an {\em interval linear equation\/} with $n$ unknowns,
+$x_1,\ldots,x_n$.}
+\end{definition}
+
+\begin{definition} \label{solutiondef}
+{\rm Let
+\begin{equation}
+  \sum_{j=1}^n [a_{ij}^-, a_{ij}^+] x_j = [b_i^-, b_i^+] \label{d1}
+\end{equation}
+for $i=1,\ldots,m$ be a {\em system of interval linear equations}.  The
+tuple $(x_1,\ldots,x_n)$ is called a {\em solution\/} of the system (\ref{d1})
+if there exist values $a_{ij}\in[a_{ij}^-,a_{ij}^+]$ and $b_i\in[b_i^-,b_i^+]$
+such that
+$$
+  \sum_{j=1}^n a_{ij} x_j = b_i
+$$
+for all $i=1,\ldots,m$.}
+\end{definition}
+
+\begin{definition}\label{solvingdef}
+{\rm By {\em solving\/} a system (\ref{d1}) of interval linear equations, we
+mean computing the bounds $x_j^-$ and $x_j^+$ where
+$$
+  x_j^-=\min\{x_j|(x_1,\ldots,x_n)
+   {\rm\ is\ a\ solution\ to\ system\ (\ref{d1})}\}
+$$
+and
+$$
+  x_j^+=\max\{x_j|(x_1,\ldots,x_n)
+   {\rm\ is\ a\ solution\ to\ system\ (\ref{d1})}\}
+$$
+for all $j=1,\ldots,n$.}
+\end{definition}
+
+To clarify the problem, consider a (hypothetical) feasible algorithm that can
+be used to solve any system of interval linear equations.  Such an algorithm
+would require the following input to be given:
+\begin{itemize}
+\item the number of equations $m$,
+\item the number of unknowns $n$,
+\item the endpoints $a_{ij}^-$ and $a_{ij}^+$ for all $i=1,\ldots,m$ and
+      $j=1,\ldots,n$, and
+\item the endpoints $b_i^-$ and $b_i^+$ for all $i=1,\ldots,m$.
+\end{itemize}
+Such input would define a particular system of the form (\ref{d1}).  For the
+algorithm to be feasible it must be able, given any particular system
+defined by the input, to compute in polynomial time the following output:
+\begin{itemize}
+\item the endpoints $x_j^-$ and $x_j^+$ such that
+$$
+  x_j^-=\min\{x_j|(x_1,\ldots,x_n)
+   {\rm\ is\ a\ solution\ to\ the\ given\ system}\}
+$$
+and
+$$
+  x_j^+=\max\{x_j|(x_1,\ldots,x_n)
+   {\rm\ is\ a\ solution\ to\ the\ given\ system}\}
+$$
+for all $j=1,\ldots,n$.
+\end{itemize}
+
+\section{Theorem}
+
+\begin{theorem}
+The problem of solving systems of interval linear equations is computationally
+intractable (\/{\rm NP}-hard). \label{t1}
+\end{theorem}
+
+\medskip
+
+\noindent
+This theorem was proven (see~\cite{Kreinovich1993}) in 1993 by Kreinovich,
+Lakeyev and Noskov by a reduction from SAT\footnote{Recall from chapter
+\ref{NP-HARD-CHAP} that SAT is the problem of satisfiability of Boolean
+formulas.}.
+
+\section{What If Intervals Are Narrow?}
+The proof of theorem \ref{t1} uses intervals that are of type $[0,1]$ that
+correspond, in measurement terms, to measuring a value of magnitude $0.5$ 
+with an absolute accuracy of $0.5$, or a relative accuracy of 
+$100\%$. Such measurements, though possible, are not very accurate. 
+Most measuring devices of practical use in science and industry are far more
+accurate, and hence, intervals are much narrower.  The natural question is:
+
+
+\begin{quote}
+{\it If we restrict ourselves to systems with narrow intervals only, will the
+problem of solving systems of interval linear equations still be\/
+{\rm NP}-hard?}
+\end{quote}
+
+\noindent
+This question was first analyzed by Lakeyev and Kreinovich in 1995 
+(see~\cite{Lakeyev1995}).  In the next chapter we will present the result of 
+that analysis.
