@@ -1,4 +1,80 @@
 \chapter{Introduction}
 
-\section{}
+\paragraph{Chapter overview}
+
+
+\section{Cryptography}
+
+Cryptography is the mathematical science of protecting secret information by transforming it into a form which is illegible. Generally, the original secret information is called the plaintext while the transformed information is called ciphertext. Once the plaintext is transformed into ciphertext, it can be sent over an insecure channel to its destination. At the destination, the reverse transformation takes place yielding back the original information. Transformation of plaintext to ciphertext is referred to as encryption, while the reverse process is called decryption.
+
+% symmetric and asymmetric key cryptosystems
+
+Symmetric key cryptosystems are classified into two types, based on the manner in which plaintext is used by the encryption algorithm. As mentioned earlier, these types are block ciphers and stream ciphers. Block ciphers divide the plaintext into blocks of data, and each such block is then encrypted. 
+
+% explain block cipher
+
+% explain stream cipher
+
+An important point where stream cipher differs from block cipher is the usage of the key in encryption or decryption. While block ciphers use the secret key directly for encryption and decryption, in stream ciphers the secret key is used indirectly. The secret key is used to initialize a pseudo-random number generator, which is the most important component of the stream cipher design. 
+
+
+
+\section{Stream cipher}
+
+\subsection{One-time pads} 
+
+Before we explain the working of stream ciphers, it is important that we understand the motivation for the design of stream ciphers. An inspiration behind practical stream ciphers of today has been the one-time pad, which is also known as the Vernam cipher. In the one-time pad, the length of the key is required to be equal to or greater than the length of the plaintext. Each plaintext bit is operated with the corresponding key bit using the \emph{exclusive-or} (or \emph{xor}) operation, thus resulting in one bit of the ciphertext. So, if $p_i$ represents the $i^{th}$ bit of the plaintext, and $k_i$ represents the $i^{th}$ bit of the key, then the $i^{th}$ bit of the ciphertext is given by $c_i$ = $p_i \oplus k_i$. The corresponding decryption takes place as $p_i$ = $c_i \oplus k_i$. This is shown in the figure ?.
+
+The key bits are required to be completely random, without any statistical correlation between them. With this pre-condition, there is no way that an adversary could determine the secret key just by knowing the ciphertext. Since the key is derived from a truly random source, there could be several combinations of the plaintext and the key which result in the given ciphertext. The adversary would, in such a scenario, never be able to determine which of the specific combination is the right one, even with infinite computing power at hand.
+% more on this
+Shannon in 1975, used his notion of information theory to formally prove that one-time pads are unbreakable, and termed them as having perfect secrecy.
+
+But for practical purposes, one-time pads have several weaknesses. These are explained in the following two points.
+\begin{itemize}
+\item The length of the key has to at least be equal to the length of the plaintext, if not greater than it, such that all the plaintext bits are encrypted. Thus, in order to encrypt large number of plaintext bits, large number of `random' key bits would have to be generated. Managing such a huge set of key bits is not practical, since the storage and transfer need to be carried out securely. 
+
+\item In one-time pads, based on their name, a same key cannot be used for more than one computations. If the same key is used for encrypting two different plaintext messages, the chances that the key being broken are extremely high. The chances of the key being broken is precisely zero when the key is used just for one encryption round and is derived from a true random source. But, the same chances are extremely high if the key is reused. 
+\end{itemize}
+
+Considering the above points, rather than transmitting the key then, it is a better idea to transmit the plaintext itself through the secure channel, since the length of the key is equal to the plaintext and the key can just be used once. Clearly, one-time pads are not good enough for being deployed in practical systems, but they reveal a strong design basis for stream ciphers. The component missing between one-time pads and stream ciphers is the pseudo-random sequence generator, which is discussed next. 
+
+% still, one-time pad is useful. explain. 
+
+\subsection{Pseudo-random sequence generators}
+
+Pseudo-random sequence generator (PRSG) is used to derive a seemingly random sequence of bits called the \emph{keystream}, using a small initial seed value. PRSG's are finite state machines having an internal state, which is initialized using the secret key, along with some more initialization parameters if required. A linear update function is used to derive the next state using the current state. In addition, a linear or non-linear output function is used to generate an output bit from the current state. A stream of these output bits (occuring as the PRSG changes states) constitutes the keystream, which is used in stream ciphers. It is important to note that the keystream is not truly random, but as the name of the generator suggests, it is seemingly random. 
+
+%-----
+% figure PRSG
+%-----
+
+\paragraph{Use in stream cipher construction:} 
+Stream ciphers use secret keys of fixed length independent of the length of plaintext. Typically the key lengths are 128, 256 or 512 bits, which are considered secure by the computational power existing today. % check this and need a reference here %
+The key is used to create the keystream, which replaces the long secret key in the one-time pads. The trade-off here is that the keystream is not truly random, since it is derived using the secret key and a pseudo-random bit generator. As a result, the perfect secrecy of one-time pads does not apply to stream ciphers, but at the same time, the strength of the pseudo-random sequence generator becomes extremely important in determining how strong the stream cipher cryptographically is.
+
+An overview of a stream cipher design is shown in figure ?. The secret key is used to initialize the internal state of the pseudo-random sequence generator. Once the initial state is prepared, the pseudo-random sequence generator is ready to generate a stream of random looking bits or the keystream. Bits of the plaintext are consumed alongwith corresponding bits from the keystream to generate a stream of encrypted bits. In effect, the plaintext and the keystream are used to produce the ciphertext.
+
+At the receiver end, the pseudo-random sequence generator is initialized using the shared secret key and the additional parameters which were used at the sender end. Any change in the initialization of the pseudo-random bit generator would result in a different keystream being produced, which would lead to incorrect decryption of the received ciphertext. Using the keystream, the ciphertext is decrypted to give the plaintext. 
+
+% security of PRSG %
+As briefly mentioned before, the security of the stream cipher much depends on the security properties of PRSG. The output sequence is required to behave as a true random sequence. The major considerations in achieving this requirement are mentioned below.
+\begin{enumerate}
+\item The period of the keystream should be large. This becomes extremely important when the length of the plaintext is large. If the keystream repeats, the same sequence would then be encrypting different parts of the plaintext. If the attacker has knowledge of some initial part of the plaintext, then the initial keystream encrypting that part can be recovered. This repeating keystream can further be used to decrypt part of the ciphertext which the attacker does not know. Even if no knowledge of plaintext is available to the attacker, certain properties about the plaintext can be derived from the two ciphertexts which are encrypted using the same keystream.
+
+On the other hand, the requirement on how large the period should be depends on the particular application.
+% reference robshaw
+\item The 
+\end{enumerate}
+
+\subsection{Linear feedback shift registers} 
+
+The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. 
+% reason why LFSR are widely used, and why are we more interested in them %
+
+
+
+
+\subsection{Examples}
+
+\section{The HiTag2 Stream Cipher}
 
