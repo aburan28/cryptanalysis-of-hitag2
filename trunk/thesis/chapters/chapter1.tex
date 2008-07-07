@@ -68,10 +68,27 @@ On the other hand, the requirement on how large the period should be depends on 
 
 \subsection{Linear feedback shift registers} 
 
-The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. 
+The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. It is important to note that LFSR provides only the update function of the PRSG. The output function of the PRSG needs to be implemented on top of the LFSR.
 % reason why LFSR are widely used, and why are we more interested in them %
+% more info on other generators %
 
+A LFSR consists of two important components. These are explained below. 
+\begin{enumerate}
 
+\item \emph{Shift Register.} A shift register holds a fixed number of bits, and shifts each of them into corresponding adjacent positions (all towards a particular direction), upon the arrival of a clock cycle. If the direction of the shift is considered to be rightwards, then in every clock cycle, there is a new bit on the laftmost position of the register, and the rightmost bit is excluded from the register. Consider the figure ??.  If the $n$ bits of the shift register are represented by $s_0$, $s_1$, $s_2$ $\ldots$ $s_{n-1}$, then on every clock cycle, we have the following transformations: $s_{out}$ = $s_{n-1}$, $s_{n-1}$ = $s_{n-2}$ \ldots $s_2$ = $s_1$, $s_1$ = $s_0$, $s_0$ = $s_{new}$; where $s_{out}$ is the bit which is excluded and $s_{new}$ is the new bit. If $s_{new}$ is not defined, it could be be set to a default value like $0$. What is done with the $s_{out}$ bit depends on the application. 
+
+The use of a shift register has been to convert serial or sequential data into parallel data, and vice versa. A sequence of bits can be stored in the shift register over a period of $n$ clock cycles, and retrieved in a parallel form, at the end of the $n'th$ clock cycle. The other way round, a parallel stream of bits could be fed into the shift register in one cycle, and retrieved sequentially over $n$ clock cycles. 
+
+\item \emph{Linear feedback.} A feedback function defines the $s_{new}$ bit as a function of the $n$ bits of the shift register. If the function is linear, it would be called \emph{linear feedback function}. Linearity is included in the design by the use of $xor$ as the feedback function. Other boolean functions which are linear are negation, logical biconditional, tautology, and contradiction. According to [Wikipedia], 
+\begin{quote}
+A Boolean function is linear if A) In every row of the truth table in which the value of the function is 'T', there are an even number of 'T's assigned to the arguments of the function; and in every row in which the truth value of the function is 'F', there are an odd number of 'T's assigned to arguments; or B) In every row in which the truth value of the function is 'T', there are an odd number of 'T's assigned to the arguments and in every row in which the function is 'F' there is an even number of 'T's assigned to arguments.
+\end{quote}
+
+One way of incorporating feedback, as mentioned above, is to define $s_{new}$ as a function of the $n$ bits of the shift register. An LFSR based on such a function is called \emph{Fibonacci LFSR}. A different type of LFSR is called \emph{Galois LFSR} which implements the linear function within the shift register. Thus, the shift register no longer shifts bits directly to adjacent positions, but does applies a function on some of the bits before shifting them. Such an LFSR can be seen in figure ??. It is important to note here that we are going to concentrate more on Fibonacci LFSR's in this thesis. As a result, we would intend to refer to a Fibonacci LFSR when we speak of LFSR, in the remaining part of this thesis.
+ 
+\end{enumerate}
+
+A simple example of an LFSR is shown in figure ??. Let us examine the linear feedback function more closely now. As we can see, certain selected bits from the shift register are xor'd, and the resulting bit is assigned to the leftmost bit in the next clock cycle. As a result, the internal state of the LFSR is changed. If we number the bits as \emph{1, 2,} $\ldots$ $, n$, then the bits 11, 13, 14 and 16 are used in the feedback function and thus referred to as \emph{tap bits} or $taps$ of the LFSR. In other words, the outputs that effect the input of the LFSR are called $taps$.
 
 
 \subsection{Examples}
