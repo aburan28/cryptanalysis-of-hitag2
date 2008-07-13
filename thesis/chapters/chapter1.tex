@@ -42,15 +42,22 @@ Considering the above points, rather than transmitting the key then, it is a bet
 
 \subsection{Pseudo-random sequence generators}
 
-Pseudo-random sequence generator (PRSG) is used to derive a seemingly random sequence of bits called the \emph{keystream}, using a small initial seed value. PRSG's are finite state machines having an internal state, which is initialized using the secret key, along with some more initialization parameters if required. A linear update function is used to derive the next state using the current state. In addition, a linear or non-linear output function is used to generate an output bit from the current state. A stream of these output bits (occuring as the PRSG changes states) constitutes the keystream, which is used in stream ciphers. It is important to note that the keystream is not truly random, but as the name of the generator suggests, it is seemingly random. 
+Pseudo-random sequence generator (PRSG) is used to derive a seemingly random sequence of bits called the \emph{keystream}, using a small initial seed value. PRSG's are finite state machines having an internal state, which is initialized using the secret key, along with some more initialization parameters if required. There are two important functions part of the PRSG. These are:
+\begin{itemize}
+\item A linear \emph{update function} is used to derive the next state using the current state.
+\item A linear or non-linear \emph{output function} is used to generate an output bit from the current state. 
+\end{itemize}
+
+A stream of these output bits (occuring as the PRSG changes states) constitutes the keystream, which is used in stream ciphers. It is important to note that the keystream is not truly random, but as the name of the generator suggests, it is pseudo or seemingly random. 
 
 %-----
 % figure PRSG
 %-----
 
-\paragraph{Use in stream cipher construction:} 
+\paragraph{Use in stream cipher construction:}
+\label{para:stream-construction} 
 Stream ciphers use secret keys of fixed length independent of the length of plaintext. Typically the key lengths are 128, 256 or 512 bits, which are considered secure by the computational power existing today. % check this and need a reference here %
-The key is used to create the keystream, which replaces the long secret key in the one-time pads. The trade-off here is that the keystream is not truly random, since it is derived using the secret key and a pseudo-random bit generator. As a result, the perfect secrecy of one-time pads does not apply to stream ciphers, but at the same time, the strength of the pseudo-random sequence generator becomes extremely important in determining how strong the stream cipher cryptographically is.
+The key is used to create the keystream, which replaces the long secret key in the one-time pads. The trade-off here is that the keystream is not truly random, since it is derived using the secret key and a pseudo-random bit generator. As a result, the perfect secrecy of one-time pads does not apply to stream ciphers, but at the same time, the strength of the pseudo-random sequence generator becomes extremely important in determining how strong the stream cipher is cryptographically.
 
 An overview of a stream cipher design is shown in figure ?. The secret key is used to initialize the internal state of the pseudo-random sequence generator. Once the initial state is prepared, the pseudo-random sequence generator is ready to generate a stream of random looking bits or the keystream. Bits of the plaintext are consumed alongwith corresponding bits from the keystream to generate a stream of encrypted bits. In effect, the plaintext and the keystream are used to produce the ciphertext.
 
@@ -68,30 +75,59 @@ On the other hand, the requirement on how large the period should be depends on 
 
 \subsection{Linear feedback shift registers} 
 
-The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. It is important to note that LFSR provides only the update function of the PRSG. The output function of the PRSG needs to be implemented on top of the LFSR.
+The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. It is important to note that LFSR provides only the \emph{update function} of the PRSG. The \emph{output function} of the PRSG needs to be implemented on top of the LFSR.
 % reason why LFSR are widely used, and why are we more interested in them %
 % more info on other generators %
 
 A LFSR consists of two important components. These are explained below. 
 \begin{enumerate}
 
-\item \emph{Shift Register.} A shift register holds a fixed number of bits, and shifts each of them into corresponding adjacent positions (all towards a particular direction), upon the arrival of a clock cycle. If the direction of the shift is considered to be rightwards, then in every clock cycle, there is a new bit on the laftmost position of the register, and the rightmost bit is excluded from the register. Consider the figure ??.  If the $n$ bits of the shift register are represented by $s_0$, $s_1$, $s_2$ $\ldots$ $s_{n-1}$, then on every clock cycle, we have the following transformations: $s_{out}$ = $s_{n-1}$, $s_{n-1}$ = $s_{n-2}$ \ldots $s_2$ = $s_1$, $s_1$ = $s_0$, $s_0$ = $s_{new}$; where $s_{out}$ is the bit which is excluded and $s_{new}$ is the new bit. If $s_{new}$ is not defined, it could be be set to a default value like $0$. What is done with the $s_{out}$ bit depends on the application. 
+\item \emph{Shift Register.} A shift register holds a fixed number of bits, and shifts each of them into corresponding adjacent positions (all towards a particular direction), upon the arrival of a clock cycle. If the direction of the shift is considered to be rightwards, then in every clock cycle, there is a new bit on the leftmost position of the register, and the rightmost bit is excluded from the register. Consider the figure ??.  If the $n$ bits of the shift register are represented by $s_0$, $s_1$, $s_2$ $\ldots$ $s_{n-1}$, then on every clock cycle, we have the following transformations: $s_{out}$ = $s_{n-1}$, $s_{n-1}$ = $s_{n-2}$ $\ldots$ $s_2$ = $s_1$, $s_1$ = $s_0$, $s_0$ = $s_{new}$; where $s_{out}$ is the bit which is excluded and $s_{new}$ is the new bit. What is done with the $s_{new}$ and $s_{out}$ bits depends on the application using the shift register. 
 
-The use of a shift register has been to convert serial or sequential data into parallel data, and vice versa. A sequence of bits can be stored in the shift register over a period of $n$ clock cycles, and retrieved in a parallel form, at the end of the $n'th$ clock cycle. The other way round, a parallel stream of bits could be fed into the shift register in one cycle, and retrieved sequentially over $n$ clock cycles. 
+For example, one of the uses of shift registers has been in the conversion of sequential (or serial) data to parallel data, and vice versa. A sequence of bits can be stored in the shift register over a period of $n$ clock cycles, and retrieved in a parallel form in the $(n+1)'th$ clock cycle. In this case, $s_{new}$ bits are taken from the input sequential stream and $s_{out}$ bits are not used. For parallel-to-sequential data conversion, a parallel stream of bits could be fed into the shift register in one cycle, and retrieved sequentially over the next $n$ clock cycles. The bit $s_{new}$, in this case, may be set to a default value like \emph{0} (since it is not being used later) and $s_{out}$ would hold bits of the sequential output stream. 
 
-\item \emph{Linear feedback.} A feedback function defines the $s_{new}$ bit as a function of the $n$ bits of the shift register. If the function is linear, it would be called \emph{linear feedback function}. Linearity is included in the design by the use of $xor$ as the feedback function. Other boolean functions which are linear are negation, logical biconditional, tautology, and contradiction. According to [Wikipedia], 
+%-----
+% figure serial-to-parallel and parallel-to-serial conversion
+%-----
+
+\item \emph{Linear feedback.} A feedback function defines the $s_{new}$ bit as a function of the $n$ bits of the shift register. If the function is linear, it would be called \emph{linear feedback function}. Linearity is incorporated in the design by the use of $xor$ as the feedback function. Other boolean functions which are linear are negation, logical biconditional, tautology, and contradiction. According to [Wikipedia], 
 \begin{quote}
 A Boolean function is linear if A) In every row of the truth table in which the value of the function is 'T', there are an even number of 'T's assigned to the arguments of the function; and in every row in which the truth value of the function is 'F', there are an odd number of 'T's assigned to arguments; or B) In every row in which the truth value of the function is 'T', there are an odd number of 'T's assigned to the arguments and in every row in which the function is 'F' there is an even number of 'T's assigned to arguments.
 \end{quote}
 
-One way of incorporating feedback, as mentioned above, is to define $s_{new}$ as a function of the $n$ bits of the shift register. An LFSR based on such a function is called \emph{Fibonacci LFSR}. A different type of LFSR is called \emph{Galois LFSR} which implements the linear function within the shift register. Thus, the shift register no longer shifts bits directly to adjacent positions, but does applies a function on some of the bits before shifting them. Such an LFSR can be seen in figure ??. It is important to note here that we are going to concentrate more on Fibonacci LFSR's in this thesis. As a result, we would intend to refer to a Fibonacci LFSR when we speak of LFSR, in the remaining part of this thesis.
- 
+One way of designing feedback, as mentioned above, is to define $s_{new}$ as a function of the $n$ bits of the shift register. An LFSR based on such a function is called \emph{Fibonacci LFSR}. A different type of LFSR, called \emph{Galois LFSR}, implements the linear function between some specific bits of the shift register. Thus, the shift register no longer shifts bits directly to adjacent positions, but does apply a function on some of the bits before shifting them. Such an LFSR can be seen in figure ??. It is important to note here that we are going to concentrate only on Fibonacci LFSR's in this thesis. As a result, in the remaining part of this thesis, the use of LFSR would refer to a Fibonacci LFSR, unless otherwise quoted.
+
+%-----
+% figure Galois LFSR
+%-----
+
 \end{enumerate}
 
-A simple example of an LFSR is shown in figure ??. Let us examine the linear feedback function more closely now. As we can see, certain selected bits from the shift register are xor'd, and the resulting bit is assigned to the leftmost bit in the next clock cycle. As a result, the internal state of the LFSR is changed. If we number the bits as \emph{1, 2,} $\ldots$ $, n$, then the bits 11, 13, 14 and 16 are used in the feedback function and thus referred to as \emph{tap bits} or $taps$ of the LFSR. In other words, the outputs that effect the input of the LFSR are called $taps$.
+A simple example of an LFSR is shown in figure ??. Let us examine the linear feedback function more closely now. As we can see, certain selected bits from the shift register are xor'd, and the resulting bit is assigned to the leftmost bit in the next clock cycle. As a result, the internal state of the LFSR is changed. If we number the bits as \emph{1, 2,} $\ldots$ $, n$, then the bits 11, 13, 14 and 16 are used in the feedback function. These bits are referred to as \emph{tap sequence} or $taps$ of the LFSR. In general, the outputs that effect the input of the LFSR are called $taps$.
 
+\paragraph{Maximal length tap sequence:} Based on this tap sequence, the complete cycle of various states of the LFSR is determined. Depending on the initial state, the LFSR would run through a set of states, and then return back to the initial state. This forms a cycle of states, which depends on the intial state chosen. In order to use the LFSR for generating a pseudo-random sequence, we want to have the longest cycle of the LFSR states. In other words, we want the LFSR to traverse through all possible states, which is equal to $2^n$, where $n$ is the number of bits in the shift register. This is important since it is desired that the pseudo-random sequence has a large period, as mentioned in the requirements for PSRG in section \ref{para:stream-construction}.
+
+It should also be noted that, if the LFSR is in a state where all the bits are \textbf{0}, then the next state would also be the same. This condition occurs because the \textit{xor} of any number of \textbf{0}'s is always \textbf{0}. Such a state is called the \textit{trivial state}. As a result, no cycle is formed if this state is the initial state or an existing cycle is terminated if this state occurs in between the transitions. Hence the maximum number of different states in the LFSR becomes $2^n-1$. A tap sequence which generates a transition of states such that the period of the LFSR is $2^n-1$, is called the maximal length tap sequence. The first requirement the LFSR should satisfy is to contain a maximal length tap sequence, as this would guarantee that its period is the largest possible. The next step is to determine if a given tap sequence is a maximal length tap sequence or not. 
+
+\paragraph{Polynomial representation of tap sequence:} Once we have a tap sequence, we can express it in the form of a polynomial with mod 2 coffecients. For the example shown in figure ??, the polynomial representation of the tap sequence is
+\begin{equation*}
+\begin{center}
+p(x) = $x^{16}$ + $x^{14}$ + $x^{13}$ + $x^{11}$ + 1
+\end{center}
+\end{equation*}
+
+The powers of $x$ represent the tap bits. The \textbf{1} in the end, is a result of $x^0$ and represents the $s_{new}$ bit, since $s_{new}$ can be interpreted to be existing at the \textbf{0}'th position of the shift register. $s_{new}$ becomes $s_1$ in the next clock cycle, so in the current clock cycle, $s_{new}$ is $s_0$, which theoretically exists.
+
+We now discuss the properties which the polynomial representation should satisfy, in order to  a maximal length LFSR. These are the properties of a \textit{primitive polynomial} in algebra. In other words, if the polynomial representing the LFSR is a primitive polynomial, then the the polynomial represents a maximal length LFSR. 
+
+% properties of primitive polynomials %
 
 \subsection{Examples}
 
 \section{The HiTag2 Stream Cipher}
 
+% background of hitag2, how it was secret and later released %
+
+% explanation of the cipher %
+
+% a basic cryptanalysis of the cipher - maximal period? linearity? %
