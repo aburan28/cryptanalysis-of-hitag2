@@ -1,304 +1,55 @@
-% chap2.tex (Definitions)
+\chapter{Time-memory tradeoff}
 
-\chapter{NP-Hard Problems}\label{NP-HARD-CHAP}
-
-In this chapter we provide a brief introduction to the theory of
-NP-completeness and provide the notation and definitions necessary to
-accurately describe what we mean when we say that a problem is NP-hard.
-The theory of NP-completeness was first developed by Cook (see
-\cite{Cook1971}) and Karp (see \cite{Karp1972}), and later, independently
-by Levin (see \cite{Levin1973}).  We also provide here the theorems that
-form the basis for the proof of the main result of this thesis.  This material
-is inspired by the well-known book {\it Computers and Intractability: A Guide
-to the Theory of\/ {\rm NP}-Completeness\/} by M.~R.~Garey and D~.S.~Johnson
-(see \cite{Garey1979}).  Material on NP-completeness can also be found in
-basic textbook on theory of computation.
-
-\section{What Is a Problem?}
-
-Informally, a {\em problem\/} is a general {\em proposition\/} (i.e., question
-proposed) for which we desire a satisfactory {\em solution}.
-Usually, a problem possesses one or more {\em parameters\/} (i.e., free
-variables) whose values are left unspecified.  We describe a problem by
-defining:
-\begin{itemize}
-\item the problem parameters, and
-\item the properties of a desired solution.
-\end{itemize}
-For example, finding the prime factors of a natural number $n>1$ is a
-problem called {\em prime factorization}.  The problem is defined as follows:
-\begin{enumerate}
-\item There is one parameter, a natural number $n>1$.
-\item A solution is the set $\{p_1,\ldots,p_n\}$ of all prime numbers $p_i$
-      such that
-      $$
-        n=p_1^{m_1}\cdot\ldots\cdot p_n^{m_n}\mbox{\ \ \ \ \ \ \ \ \ \ }
-      $$
-      where $n>1$, $m_i>0$, and $n$ and $m_i$ are natural numbers.
-\end{enumerate}
-
-In order to specify a particular {\em instance\/} of the problem, we need to
-specify the values of all problem parameters.  For example, we can specify an
-instance of the prime factorization problem by providing the parameter $n=60$.  
-Since $60=2^2\cdot 3\cdot 5$, the solution to this instance of the problem is 
-$\{2,3,5\}$.
-
-Informally, a {\em decision problem\/} is any general problem with only two
-possible solutions: ``yes'' or ``no.''  For any decision problem $\Pi$, we
-denote by $D_\Pi$ the {\em set of all instances of\/} $\Pi$, and by
-$Y_\Pi\subseteq D_\Pi$ we denote the {\em set of ``yes'' instances of\/} $\Pi$
-(i.e., instances of $\Pi$ where the solution is ``yes'').
-For example, the problem of determining whether a number is prime is a
-decision problem whereas prime factorization is not.
-
-\begin{definition}
-{\rm A {\em search problem\/} $\Pi$ consists of a set $D_\Pi$ of finite
-objects called {\em instances\/} and, for each instance $I\in D_\Pi$, a set
-$S_\Pi[I]$ of finite objects called {\em solutions\/} for $I$.}
-\end{definition}
-
-\begin{definition}
-{\rm An algorithm is said to {\em solve\/} a search problem $\Pi$ if, given
-as input any instance $I\in D_\Pi$, it returns ``no'' as a solution whenever
-$S_\Pi[I]=\emptyset$, and some solution $s\in S_\Pi[I]$ otherwise.}
-\end{definition}
-
-\begin{definition}
-{\rm A {\em decision problem\/} $\Pi$ is a search problem where
-$$
-  S_\Pi[I]=\left\{ \begin{array}{ll}
-                     \{\mbox{``yes''}\} & \mbox{if $I\in Y_\Pi$} \\
-                     \emptyset         & \mbox{otherwise.}
-                   \end{array}
-\right.
-$$}
-\end{definition}
-
-\begin{definition}
-{\rm For any alphabet $\Sigma$, a subset of strings $L\subseteq\Sigma^*$ is
-called a {\em language over the alphabet $\Sigma$}.}
-\end{definition}
-
-\begin{definition}
-{\rm An {\em encoding scheme\/} $e$ for a problem $\Pi$ is a fixed method for
-mapping each instance~$I$ of $\Pi$ to some appropriate string $x\in\Sigma^*$
-for some fixed alphabet~$\Sigma$.}
-\end{definition}
-
-\noindent
-{\em Example}. Consider the decision problem of determining whether a given
-number $n$ is prime.  Specifying the value of $n$ provides a particular
-instance of this problem.  Let us now look at two different possible encoding
-schemes for the problem:
-\begin{enumerate}
-\item An encoding scheme $e_{asc}$ that maps any instance of the problem to
-      an ASCII character file (i.e., one long string of ASCII characters that
-      is, e.g., the source code for a computer program representing this
-      instance).
-\item An encoding scheme $e_{bin}$ that maps the same instance to a binary
-      file (i.e., one long string of 0's and 1's that is, e.g., the object
-      code for a the computer program representing this instance).
-\end{enumerate}
-Notice that both encoding schemes provide a method of representing the same
-instances of the same problem, even though they use different alphabets.
-
-Since it is easy to translate any reasonable encoding into
-any other reasonable encoding, we will not concern ourselves with any
-particular encoding scheme in the contents of this thesis.  We require only
-that an encoding scheme be reasonable (e.g., is easily decoded, does not
-excessively pad, does not provide problem solution as part of the encoding,
-etc.) (For a more detailed discussion of what is meant by ``reasonable'' see
-\cite{Garey1979}).
-
-\begin{definition}
-{\rm For any decision problem $\Pi$ and for any encoding scheme $e$ for $\Pi$
-that (for some fixed alphabet~$\Sigma$) maps to $\Sigma^*$, the {\em language
-$L$ associated with $\Pi$ and $e$\/} is the set of ``yes'' instances of $\Pi$
-encoded under $e$, i.e.,
-$$
-  L[\Pi,e]=\{x\in\Sigma^*|\mbox{$x$ is the encoding under $e$ of an instance
-   $I\in Y_\Pi$}\}.
-$$}
-\end{definition}
-
-\section{Turing Machines}
-
-We now need to discuss the models of computation that we will be using,
-namely Turing machines.  For a formal definition, the reader is referred to
-any basic textbook on theory of computation.  Informally, a Turing machine is
-a computing device that has one read/write tape (memory) and a finite
-control (the program). The machine accesses the tape with a read/write head
-positioned on the tape.  In one step, the program can read the symbol at the
-current position, optionally write a symbol, and optionally move the head
-backward or forward one position.
-The result of any computation is the contents of the tape when the Turing
-machine reaches a halt state.  If the Turing machine only gives ``yes'' or
-``no'' answers, then the {\em set accepted by the Turing machine\/} is the
-set of inputs that lead the machine to a ``yes'' answer.  The {\em time\/}
-taken by a Turing machine on given input $x$ is defined to be the number of
-steps the Turing machine takes to reach a halt state, starting with $x$ on
-the tape.
-
-A nondeterministic Turing machine is one that (possibly) has
-more than one next configuration from the current configuration.
-This leads to many possible computations from the same initial
-configuration, usually modelled as a {\em tree of possible
-computations}.
-The language $L$ accepted by a nondeterministic Turing machine is the set of
-all strings $x$ such that the Turing machine has at least one possible
-computation that leads to a ``yes'' answer with $x$ as its input.
-The {\em time\/} taken by a nondeterministic Turing machine with given input
-$x$ is defined to be the number of steps it takes in the longest possible
-computation for $x$ before reaching a halt state.
-(There are actually many ways to define time for a nondeterministic Turing
-machine, but for our purposes, all are equivalent.)
-
-An oracle Turing machine is a Turing machine with the added capability that
-it can query an {\em oracle\/} in order to determine set membership.  To be
-more precise, let us start by choosing a set $A$ to be used as the oracle.
-The oracle Turing machine has a special query tape where it can write strings
-that are queries to the oracle.  After writing a string $x$ on the query tape,
-the oracle Turing machine enters a special state $q_?$ called the {\em query
-state\/} from which it goes automatically to a new state, either $q_{no}$ or
-$q_{yes}$ depending on whether $x \in A$.  This sequence of state
-transformations is defined to be only one step in a computational process.
-A common way of looking at an oracle Turing machine is to see an oracle query
-as if the program calls a hypothetical procedure that determines membership
-in $A$, but only gets charged one step for the call.
-An oracle Turing machine can be deterministic or
-nondeterministic and its time is defined in like fashion.
-
-\section{The Classes P and NP}
-
-The complexity classes P and NP are based on polynomial-time bounded
-deterministic and nondeterministic Turing machines.  By {\em polynomial
-time\/} we mean that the number of steps is bounded by some polynomial of the
-input size; therefore, a polynomial-time bounded Turing machine is one in
-which the number of steps required before reaching a halt state is bounded by
-a polynomial of the input size.
-
-\begin{definition}
-{\rm The {\em class\/} P is the set of all languages $L$ such that there
-exists a polynomial-time deterministic Turing machine accepting $L$.}
-\end{definition}
-
-\begin{definition}
-{\rm The {\em class\/} NP is the set of all languages $L$ such that there
-exists a polynomial-time nondeterministic Turing machine accepting $L$.}
-\end{definition}
-
-The class NP was first defined by Cook in the early 1970's (see
-\cite{Cook1971}).  With its introduction came one of the most important open
-problems in theoretical computer science: whether P=NP.
-Most computer scientists believe that P$\neq$NP.
-One reason for this is that simulating a nondeterministic
-Turing machine with a deterministic Turing machine appears to require
-exploring the whole tree of possible computations, which would require an
-exponential amount of time in (at least) some cases.  However, no proof that
-P$\neq$NP is known, nor does it seem likely that one will be found in the
-near future.
-
-\section{NP-Complete, NP-Hard, and Reductions}
-
-One important notion about the class NP is the existence of {\em complete\/}
-problems. Crudely speaking, complete problems for a class are the hardest
-problems in the class.  Thus, NP-complete problems are the hardest problems
-in the class NP.  Also of importance is the notion of NP-hardness.
-Informally, NP-hard problems are problems that are at least as hard as
-NP-complete problems. Cook (see \cite{Cook1971}) proved that the problem of
-satisfiability of Boolean formulas (known as SAT) is an NP-complete problem,
-and Karp (see \cite{Karp1972}) showed that many other important problems
-are also NP-complete by use of {\em reductions\/} (generically denoted
-as $\leq_r$).  Completeness is formally defined in terms of reductions.
-We will now define two types of reductions, both dealing with the notion of
-polynomial time.  The {\em time\/} that an algorithm (e.g., a reduction)
-requires in order to solve a problem is defined to be the number of steps as
-a function of the size of the input. The size here, of course, depends on the
-encoding scheme chosen. Recall that polynomial time means that the number of
-steps is bounded by some polynomial of the input size. As an example, if we
-say that an $n^3$ algorithm $\cal U$ exists for solving a problem $\Pi$ of
-size $n$, we mean that $\cal U$ will take no more than $n^3$ steps in order
-to solve $\Pi$.  Therefore, we say that $\cal U$ is a polynomial-time
-algorithm.  Though not explicitly stated as being algorithms, the following
-two definitions refer to polynomial-time algorithms.
-
-\begin{definition}
-{\rm A {\em polynomial-time many-one reduction\/} $\leq^p_m$ (or
-{\em polynomial transformation\/}) from a language $L_1\subseteq\Sigma^*_1$
-to a language $L_2\subseteq\Sigma^*_2$ (denoted $L_1\leq^p_m L_2$) is a
-polynomial-time computable function $f:\Sigma^*_1\rightarrow\Sigma^*_2$ such
-that
-$$
-  \forall x\in\Sigma^*_1\ (x\in L_1 \Longleftrightarrow f(x)\in L_2).
-$$}
-\end{definition}
-
-\begin{definition}
-{\rm A {\em polynomial-time Turing reduction\/} $\leq^p_T$ from a language
-$L_1\subseteq\Sigma^*_1$ to a language $L_2\subseteq\Sigma^*_2$ (denoted
-$L_1\leq^p_T L_2$) is a polynomial-time oracle Turing machine that accepts
-$L_1$ using $L_2$ as its oracle.}
-\end{definition}
-
-We now are ready to formally define NP-hardness and NP-completeness.  In the
-following, $\leq^p_r$ stands for either many-one or Turing polynomial-time
-reductions.
-
-\begin{definition}
-{\rm A language $L$ is NP-{\em hard under $\leq^p_r$ reductions\/}
-(alternatively, \mbox{$\leq^p_r$-{\em hard}} {\em for\/} NP) if
-$$
-  \forall L^\prime\in {\rm NP}\ (L^\prime\leq^p_r L).
-$$}
-\end{definition}
-
-\begin{definition}
-{\rm A language $L$ is NP-{\em complete under $\leq^p_r$ reductions\/}
-(alternatively, \mbox{$\leq^p_r$-{\em complete for\/}} NP) if $L\in$ NP and
-$L$ is NP-hard under $\leq^p_r$ reductions.}
-\end{definition}
-
-The following theorem says that unless P=NP, no one will ever be able to 
-find a polynomial-time algorithm to solve any NP-hard problem.
-
-\begin{theorem}
-If a language $L$ is\/ {\rm NP}-hard under Turing reductions and $L\in$
-{\rm P}, then\/ {\rm P=NP}.\\[1pc]
-{\rm\bf Corollary} If a language $L$ is\/ {\rm NP}-hard under many-one
-reductions and $L\in$ {\rm P}, then\/ {\rm P=NP}.
-\end{theorem}
-
-Thus, if someone some day finds a polynomial-time algorithm
-for any NP-hard problem, then this algorithm could be used to solve any
-NP-complete problem in polynomial time, which would solve many important
-open problems (and would also be very useful).  However, the current
-wisdom is that this will never be possible.  This means that proving that a
-problem is NP-hard is strong evidence that no polynomial-time algorithm
-exists for that problem.  For this reason, NP-hard problems are said to be
-{\em computationally intractable}.
-
-Once we have a collection of problems that are proven to be NP-hard,
-these problems can be used to prove other problems are NP-hard as well via
-reductions.  This is the method most used to prove NP-hardness, and it is
-precisely how we prove our main result.
-This method is formalized by the following theorem:
-
-\begin{theorem}
-If $L$ is\/ {\rm NP}-hard under $\leq^p_r$ reductions and
-$L \leq^p_r L^\prime$ then $L^\prime$ is\/ {\rm NP}-hard under
-$\leq^p_r$ reductions.
-\end{theorem}
-
-It should be noted that NP-completeness is usually defined using many-one
-reductions, but philosophically, it may make more sense to define
-NP-completeness using Turing reductions.  This distinction is important
-because definitions based on different reductions are believed not to be
-identical; however, since many-one reductions are a special case of Turing
-reductions, proving that a language is many-one-hard for NP implies that it
-is Turing-hard for NP.
+\paragraph{Summary}
 
 
-%%% Local Variables: 
-%%% mode: latex
-%%% TeX-master: "thesis"
-%%% End: 
+\section{Time-memory tradeoff attack}
+
+A brute-force attack on a block cipher would be to try out all the possible keys that could be used to encrypt certain known (or chosen) or unknown plaintext. The key which decrypts the ciphertext to give the known plaintext or most sensible plaintext (if it is unknown) is then the original key. Though very simple in theory, brute-force attacks require a very long time to break ciphers in practice. There is no storage required during this attack, but the time required to break the cipher is very long. Though modern computers have advanced tremendously in their computational speed over the last some years, design of new ciphers have incorporated longer key sizes to protect against brute-force attacks, thus not making brute-forcing any practical.
+
+For example, in order to break a 32 bit key, we would need to carry out $2^{32}$ computations on available ciphertext. Using a 2GHz processor (which is quite common today for personal use), we can run $2^{31}$ clock cycles in one second. Since one encryption would take a fixed number of clock cycles, say a modest $2^2$ cycles, by simple calculation, we can have a brute-force attack on the cipher in $2^3$ seconds, or 8 seconds. As can be seen, this is a dismally weak key size. For a key size of 48 bits, the brute-force would take $2^{19}$ seconds which is 524288 seconds, or just more than 6 days. In modern ciphers, the key sizes starting from 128 bits in length are considered safe. AES uses a minimum key size of 128 bits, which can be extended to use 256 bits. 
+
+Brute-force attacks are just one side of the coin. The other way of breaking a cipher in a known (or chosen) plaintext attack is to precompute ciphertexts corresponding to all the possible keys and to store the (key, ciphertext) pair in a table in memory. During the attack, the attacker just needs to do a table lookup for the available ciphertext, and get the corresponding key. Again, the concept is quite straightforward theoretically, but it also faces the same problem as brute-force attacks, but from a different perspective. A table lookup takes constant time, so practically the attack time is very less. But, the amount of precomputed data is tremendous and the attacker would need very large amount of memory to save this data for the attack phase. 
+
+Let us take the weaker case of a 32 bit key, which is far from use in today's ciphers. For each of $2^{32}$ possible keys, we need to store 32 bits of key and 32 bits of ciphertext (assuming the plaintext is 32 bits, which could very well be more). This amounts to 64 bits or 8 bytes of data for every possible key. $2^{32}$ such entries would require $2^{32}$ * 8 bytes which is 32 gigabytes. For a random access memory, 32 GB is a high requirement. For higher key sizes, this requirement gets impossible to even think of.
+
+The technique of time-memory tradeoff is a way between the above two extreme and practically difficult ideas. TMTO solves our problem by using memory in order to reduce the time taken for attack. As a result, with considerable precomputation, the attack time can be reduced and thus the computational resources required. It brings both the parameters, time and memory, within reachable domains. Before we go into more details of the working of time-memory tradeoff attacks on ciphers, we would take a simple example of a general application of such tradeoffs.
+
+\paragraph{Simple example of time-memory tradeoff:} Consider the problem of finding the number of \textbf{1}'s in the binary expansion of a non-negative integer $x$. The simplest algorithm to solve this problem would over 32 operations, shift the integer rightwards by one bit (except for the first operation) and add the values of all the least significant bits. The sum would then be the \emph{result}. The pseudo-code for this is:
+
+\begin{verbatim}
+// ones_count(x)
+t = 0
+for i = 0 to len(x) - 1
+    t = t + (x >> i) & 1
+next i
+return t
+\end{verbatim}
+
+Here, $>>$ denotes the right shift operation and \& denotes bitwise AND operation. This algorithm performs 32 operations (which is based on the number of times it loops) and has nearly no memory requirement. The other approach to solve this problem would be to store the required \emph{result} for each of the possible $2^{32}$ integers in memory. This way, just one memory lookup is required to find the result for $x$. While we need to have a memory of the order of $2^{32}$. One middle way between both these approaches would be to store the \textit{result} for all possible 8 bit numbers, rather than doing it for all 32 bit numbers. Then the memory required would be of the order of $2^{8}$. We break the 32 bit integer into four bytes, and add the stored \textit{result} for each of the bytes, by looking up in the table. If $y_1$, $y_2$, $y_3$ and $y_4$ are the four bytes, such that $y_4$ = ($x$ $\&$ $0$x$FF$), $y_3$ = ($(x >> 8)$ $\&$ $0$x$FF$), $y_2$ = ($(x >> 8)$ $\&$ $0$x$FF$) and $y_1$ = ($(x >> 8)$ $\&$ $0$x$FF$), and if p is the array which stores the \textit{result} for all possible bytes, then the \textit{result} for $x$ can simply be calculated by
+
+\begin{verbatim}
+t = p[y1] + p[y2] + p[y3] + p[y4]
+\end{verbatim}
+
+The number of operations in this case is 4, as the pre-computed table is looked up four times. This is just one way of realizing a middle way in between the extreme cases of time and memory. If the algorithm stores 4 bit values, with their corresponding \textit{result}, then the number of operations would be 8. Hence a optimum combination of memory and time can be selected depending on the resources at hand. 
+
+\section{Birthday paradox}
+% what the simple birthday paradox is %
+
+% generalize it in terms of n %
+
+% introduce birthday attack, define scenario (then take hash as example) %
+
+% what is the variant of birthday paradox %
+
+% meet in the middle attack on DES by diffie hellman %
+% meet in the middle attack is a TMTO attack, which uses the variant of borthday paradox %
+% a TMTO attack would always use variant of birthday attack %
+
+\section{Simple TMTO attack on stream ciphers}
+
+\section{Simple TMTO for HiTag2}
+
+\section{Another TMTO for HiTag2}
+
