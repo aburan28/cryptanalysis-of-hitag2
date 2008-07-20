@@ -35,6 +35,37 @@ t = p[y1] + p[y2] + p[y3] + p[y4]
 The number of operations in this case is 4, as the pre-computed table is looked up four times. This is just one way of realizing a middle way in between the extreme cases of time and memory. If the algorithm stores 4 bit values, with their corresponding \textit{result}, then the number of operations would be 8. Hence a optimum combination of memory and time can be selected depending on the resources at hand. 
 
 \section{Birthday paradox}
+\label{sec:bday-paradox}
+Birthday paradox (or birthday problem or surprise, as it is also called), refers to the fact that in a room of 24 people, two people have the same date of birth with probability greater than one-half. While there are 365 different possible dates of birth, the birthday paradox looks surprising and non-intuituve at the first glance. But, the figure has been derived from probability theory and is proved. 
+
+A generalized definition of the birthday paradox for can be formulated as follows: given $n$ random integers where each could have $m$ different possible values, the probability that two of them would have the same value is just more than \textbf{0.5} if,
+
+\begin{equation*}
+\begin{center}
+\large{
+$n$ = $\sqrt{\frac{\Pi}{\large{2}} \times m}$
+}
+\end{center}
+\end{equation*}
+
+If we replace $m$ by 365, then it can be easily checked that $n$ comes out to be 23.94, which can be taken as 24. The general birthday paradox is used in cryptography in determining the collisions in hash functions. Consider a hash function $H$ with output of $h$ bits. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, there are 50\% chances of finding a collision after the hash function hash produced outputs for $2^{n/2}$ random inputs.
+
+A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now, then just 17 people are required to be present in each group, so that two people from different groups share the same birthday. The answer is somewhat more complicated to calculate than the previous case. However, this case deals with the size of both the groups being the same. 
+
+We are interested in the more general case dealing with two groups having different number of random elements, say $n_1$ and $n_2$. The groups contain integers, with both the groups having the same range $m$ for all the integers. Then, for there to be a common integer between the groups, the following relation must be satisfied,
+
+\begin{equation*}
+\begin{center}
+\large{
+$n_1 \times n_2}$ $\geq$ $m$
+}
+\end{center}
+\end{equation*}
+
+% Add the case of handbook statement, with or without replacements?
+% also briefly how this paradox would be applied to the TMTO?
+
+-------------
 % what the simple birthday paradox is %
 
 % generalize it in terms of n %
@@ -44,12 +75,41 @@ The number of operations in this case is 4, as the pre-computed table is looked 
 % what is the variant of birthday paradox %
 
 % meet in the middle attack on DES by diffie hellman %
-% meet in the middle attack is a TMTO attack, which uses the variant of borthday paradox %
 % a TMTO attack would always use variant of birthday attack %
 
-\section{Simple TMTO attack on stream ciphers}
+% Question - How can the variant of the birthday problem be derived from the birthday problem?
+% Question - Probability of one-half on 23, or is it one? root(pi * m / 2)
+% Question - Is meet in the middle attack a TMTO attack? (I think NO!)
+--------------
 
-\section{Simple TMTO for HiTag2}
 
-\section{Another TMTO for HiTag2}
+\section{Babbage-Golic attack}
+Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack on block ciphers was published by Hellman in 1980. In contrast, the first and the simplest TMTO attacks on stream ciphers were published by Babbage \cite{} and Golic \cite{} independent of each other, in 1995 and 1997 respectively. We would call this as the BG attack and we explain it here. 
+
+As discussed in section \ref{}, PRSG generates a long keystream using a short secret key, and the bits of the plaintext are xor'ed with this keystream to give the ciphertext bits. In this way, a stream cipher is produced. A simple model of the PRSG taken from \cite{} is shown in figure ??. The initial state of the PSRG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function or the state transition function, while the downward arrow represents the output function of the PRSG.
+
+If the size of each state is $n$ bits, then the maximum number of different states would be $2^n$. As a result, we have $2^n$ different keystream bits, before the keystream starts repeating due to repeating states. The keystream bits are represented by $k_0$, $k_1$ $\ldots$, $k_{m-1}$, where $m$ = $2^{n} - 1$ (which excludes the trivial state containing all \textbf{0}'s). The goal of the attacker is to find at least one value of the internal state which occurs during the generation of the keystream. The attacker could then move the PRSG forward to generate more keystream (if the keystream is limited). The found internal state could also be used to run the PRSG backwards and find the initial state. From the initial state, finding the key is not a difficult task if the initialization algorithm and other parameters are known.\\
+
+\textit{\textbf{Prefix of the output sequence of states.}} If the current state of the PRSG is $S_r$, then an infinite output sequence can be generated by clocking the PRSG from that state. The first $p$ bits of this output sequence is called the prefix of state $S_r$ and would be represented by the bits $k_r$, $k_{r+1}$ $\ldots$, $k_{r+p-1}$. Each of the $2^n$ possible states of the PRSG would have such output sequence and thus prefixes, which usually are unique to that particular state if $p$ is greater than or equal to $n$ \cite{}. If the size of the prefix is less than $n$, then there would be many states which could possibly generate this prefix. For example, if the size of the state is 48 bits and we consider prefixes of size 32 bits, then the total number of states which generate this prefix is about $2^{48} \times 2^{-32}$ = $2^{16}$. If the size of the prefixes is increased to 48 bits which is also the size of the state, then there is usually just one state generating the prefix. An advantage of this property is taken in the BG attack.\\
+
+\textit{\textbf{The attack.}} We would have two phases in the attack just as in any TMTO attack. The first phase is the precomputation phase and the second phase is the attack phase. During the precomputation phase, the attacker would randomly select $n_1$ values out of the $2^n$ values the PRSG state could have. For each of these states, the prefix is computed, and the (prefix, state) pair stored in memory. The data structure that needs to be used for storing the pairs is a hash table. More details about hash tables are provided in section ??.
+
+During the attack phase, the attacker is assumed to have access to some part of the initial keystream. In practice, the attacker would have access to the ciphertext bits. But, we assume that the attacker knows the plaintext bits before hand by some means, and thus the keystream is calculated in the following manner, $k_i$ = $p_i \oplus c_i$, as also mentioned in chapter \ref{chapter:intro}. The attacker then selects overlapping subsequences of size $n$ from the keystream, and tries to find a match in the hash table. The first subsequence would be $k_0$, $k_1$ $\ldots$, $k_{n-1}$ corresponding to state $S_0$, the second subsequence would be $k_1$, $k_2$ $\ldots$, $k_{n}$ corresponding to state $S_1$, and so on. If such a prefix exists in the memory, then the current state is determined from the matched (prefix, state) pair.\\
+
+\textit{\textbf{Analysis of the attack.}} Let us assume that the attacker tries $n_2$ prefixes during the attack phase, before the first hit is observed. Then, we can apply the birthday paradox here, in order to find the approximate value of $n_2$. According to the variant of the birthday paradox, explained in section \ref{sec:bday-paradox}, we have the following condition:
+
+\begin{equation*}
+\begin{center}
+\large{
+$n_1 \times n_2}$ $\geq$ $2^n$
+}
+\end{center}
+\end{equation*}
+
+Also, for sufficient number of prefixes to be available, the keystream should have a length of at least $(n_2 + n - 1)$ bits. In such a case, the attacker would have exactly $n_2$ prefixes of length $n$ each to search in the memory.
+
+
+\section{Babbage-Golic attack on HiTag2}
+
+\section{Variant of Babbage-Golic attack on HiTag2}
 
