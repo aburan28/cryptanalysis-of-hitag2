@@ -84,9 +84,16 @@ $n_1 \times n_2}$ $\geq$ $m$
 
 
 \section{Babbage-Golic attack}
-Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack on block ciphers was published by Hellman in 1980. In contrast, the first and the simplest TMTO attacks on stream ciphers were published by Babbage \cite{} and Golic \cite{} independent of each other, in 1995 and 1997 respectively. We would call this as the BG attack and we explain it here. 
+Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack on block ciphers was published by Hellman in 1980. In contrast, the first and the simplest TMTO attack on stream ciphers was published by Babbage \cite{babbage} and Golic \cite{golic}, independent of each other in 1995 and 1997 respectively. We would call this as the BG attack and explain it here. 
 
-As discussed in section \ref{}, PRSG generates a long keystream using a short secret key, and the bits of the plaintext are xor'ed with this keystream to give the ciphertext bits. In this way, a stream cipher is produced. A simple model of the PRSG taken from \cite{} is shown in figure ??. The initial state of the PSRG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function or the state transition function, while the downward arrow represents the output function of the PRSG.
+As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a short secret key, to which the bits of the plaintext are xor'ed giving the ciphertext bits. In this way, a stream cipher is produced. A simple model of the PRSG taken from \cite{babbage} is shown in figure \ref{fig:psrg-model}. The initial state of the PRSG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function or the state transition function, while the downward arrow represents the output function of the PRSG.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=3in]{./figures/prsgmodel.png}
+	\caption{Model of pseudo-random sequence generator (PRSG)}	
+	\label{fig:psrg-model}
+\end{figure}
 
 If the size of each state is $n$ bits, then the maximum number of different states would be $2^n$. As a result, we have $2^n$ different keystream bits, before the keystream starts repeating due to repeating states. The keystream bits are represented by $k_0$, $k_1$ $\ldots$, $k_{m-1}$, where $m$ = $2^{n} - 1$ (which excludes the trivial state containing all \textbf{0}'s). The goal of the attacker is to find at least one value of the internal state which occurs during the generation of the keystream. The attacker could then move the PRSG forward to generate more keystream (if the keystream is limited). The found internal state could also be used to run the PRSG backwards and find the initial state. From the initial state, finding the key is not a difficult task if the initialization algorithm and other parameters are known.\\
 
@@ -97,12 +104,9 @@ If the size of each state is $n$ bits, then the maximum number of different stat
 During the attack phase, the attacker is assumed to have access to some part of the initial keystream. In practice, the attacker would have access to the ciphertext bits. But, we assume that the attacker knows the plaintext bits before hand by some means, and thus the keystream is calculated in the following manner, $k_i$ = $p_i \oplus c_i$, as also mentioned in chapter \ref{chapter:intro}. The attacker then selects overlapping subsequences of size $n$ from the keystream, and tries to find a match in the hash table. The first subsequence would be $k_0$, $k_1$ $\ldots$, $k_{n-1}$ corresponding to state $S_0$, the second subsequence would be $k_1$, $k_2$ $\ldots$, $k_{n}$ corresponding to state $S_1$, and so on. If such a prefix exists in the memory, then the current state is determined from the matched (prefix, state) pair.\\
 
 \textit{\textbf{Analysis of the attack.}} Let us assume that the attacker tries $n_2$ prefixes during the attack phase, before the first hit is observed. Then, we can apply the birthday paradox here, in order to find the approximate value of $n_2$. According to the variant of the birthday paradox, explained in section \ref{sec:bday-paradox}, we have the following condition:
-
 \begin{equation*}
 \begin{center}
-\large{
-$n_1 \times n_2}$ $\geq$ $2^n$
-}
+\large{$n_1 \times n_2$ $\geq$ $2^n$}
 \end{center}
 \end{equation*}
 
