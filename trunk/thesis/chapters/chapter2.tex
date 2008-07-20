@@ -104,6 +104,7 @@ If the size of each state is $n$ bits, then the maximum number of different stat
 During the attack phase, the attacker is assumed to have access to some part of the initial keystream. In practice, the attacker would have access to the ciphertext bits. But, we assume that the attacker knows the plaintext bits before hand by some means, and thus the keystream is calculated in the following manner, $k_i$ = $p_i \oplus c_i$, as also mentioned in chapter \ref{chapter:intro}. The attacker then selects overlapping subsequences of size $n$ from the keystream, and tries to find a match in the hash table. The first subsequence would be $k_0$, $k_1$ $\ldots$, $k_{n-1}$ corresponding to state $S_0$, the second subsequence would be $k_1$, $k_2$ $\ldots$, $k_{n}$ corresponding to state $S_1$, and so on. If such a prefix exists in the memory, then the current state is determined from the matched (prefix, state) pair.\\
 
 \textit{\textbf{Analysis of the attack.}} Let us assume that the attacker tries $n_2$ prefixes during the attack phase, before the first hit is observed. Then, we can apply the birthday paradox here, in order to find the approximate value of $n_2$. According to the variant of the birthday paradox, explained in section \ref{sec:bday-paradox}, we have the following condition:
+
 \begin{equation*}
 \begin{center}
 \large{$n_1 \times n_2$ $\geq$ $2^n$}
