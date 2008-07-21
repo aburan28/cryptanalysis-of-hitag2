@@ -308,15 +308,16 @@ void initialize_matrix()
 		}
 	}
 
+	printf("\n");
 	for(i = 0; i < 48; i++)
 	{
 		for(j = 0; j < 48; j++)
 		{
-			//printf("%1x", transition_matrix[i][j]);
+			printf("%1x", transition_matrix[i][j]);
 		}
-		//printf("\n");
+		printf("\n");
 	}
-	//printf("\n");
+	printf("\n");
 	
 	square_matrix_2n();
 
@@ -325,7 +326,7 @@ void initialize_matrix()
 	{
 		for(j = 0; j < 48; j++)
 		{
-			//printf("%1x", transition_matrix_2n[i][j]);
+			//rintf("%1x", transition_matrix_2n[i][j]);
 		}
 		//printf("\n");
 	}
