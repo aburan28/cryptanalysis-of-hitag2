@@ -112,11 +112,10 @@ A simple example of an LFSR is shown in figure ??. Let us examine the linear fee
 It should also be noted that, if the LFSR is in a state where all the bits are \textbf{0}, then the next state would also be the same. This condition occurs because the \textit{xor} of any number of \textbf{0}'s is always \textbf{0}. Such a state is called the \textit{trivial state}. As a result, no cycle is formed if this state is the initial state or an existing cycle is terminated if this state occurs in between the transitions. Hence the maximum number of different states in the LFSR becomes $2^n-1$. A tap sequence which generates a transition of states such that the period of the LFSR is $2^n-1$, is called the maximal length tap sequence. The first requirement the LFSR should satisfy is to contain a maximal length tap sequence, as this would guarantee that its period is the largest possible. The next step is to determine if a given tap sequence is a maximal length tap sequence or not. 
 
 \paragraph{Polynomial representation of tap sequence:} Once we have a tap sequence, we can express it in the form of a polynomial with mod 2 coffecients. For the example shown in figure ??, the polynomial representation of the tap sequence is
-\begin{equation*}
+
 \begin{center}
 p(x) = $x^{16}$ + $x^{14}$ + $x^{13}$ + $x^{11}$ + 1
 \end{center}
-\end{equation*}
 
 The powers of $x$ represent the tap bits. The \textbf{1} in the end, is a result of $x^0$ and represents the $s_{new}$ bit, since $s_{new}$ can be interpreted to be existing at the \textbf{0}'th position of the shift register. $s_{new}$ becomes $s_1$ in the next clock cycle, so in the current clock cycle, $s_{new}$ is $s_0$, which theoretically exists.
 
@@ -127,6 +126,7 @@ We now discuss the properties which the polynomial representation should satisfy
 \subsection{Some stream ciphers}
 
 \section{The HiTag2 stream cipher}
+\label{sec:hitag2}
 
 % background of hitag2, how it was secret and later released %
 

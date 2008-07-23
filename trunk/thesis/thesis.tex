@@ -7,13 +7,15 @@
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{amsfonts}
 \usepackage{graphicx}
+\usepackage{placeins}
+\usepackage{url}
 
 \hypersetup{
-    bookmarks=true,         % show bookmarks bar?
+%    bookmarks=true,         % show bookmarks bar?
     unicode=false,          % non-Latin characters in Acrobat’s bookmarks
     pdftoolbar=true,        % show Acrobat’s toolbar?
     pdfmenubar=true,        % show Acrobat’s menu?
-    pdffitwindow=false,      % page fit to window when opened
+    pdffitwindow=false,     % page fit to window when opened
     pdfnewwindow=true,      % links in new window
     colorlinks=false,       % false: boxed links; true: colored links
     linkcolor=red,          % color of internal linksline-numbers
@@ -23,8 +25,8 @@
 }
 
 \lstset{ 
-language=C,                % choose the language of the code
-basicstyle=\small,       % the size of the fonts that are used for the code
+language=C,                			% choose the language of the code
+basicstyle=\small,       				% the size of the fonts that are used for the code
 showstringspaces=false,         % underline spaces within strings
 numbers=left,                   % where to put the line-numbers
 numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
@@ -44,7 +46,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 %% make the title page %%
 
 \include{./startups/acknowledgement}
-\include{./startups/preface}
+%\include{./startups/preface}
 \include{./startups/abstract}
 
 
