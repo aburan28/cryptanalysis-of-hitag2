@@ -217,7 +217,7 @@ The entire precomputation phase would require $2^n/q$ states. Thus, if we have t
 From \cite{erik-discussions}, there is a better solution for computing the states for the precomputation phase. Instead of performing matrix multiplication by multiplying with $U$ each time, a repeated square of $U$ can be performed yielding an efficient algorithm. The square of $U$ is first computed, which is squared to compute $U^4$, which is again squared to compute $U^8$, and so on. If $\log_2{q}$ is an integer, then the squaring is repeated for $\log_2{q}$ number of times, as shown below.
 
 \begin{center}
-\large{$S_{current + q}$ = $(((U^2)^2) \underbrace{\dotsc}_{\log_2{q}})^2 . S_{current}$}\\
+\large{$S_{current + q}$ = $\underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{q}} . S_{current}$}\\
 \end{center}
 \label{eq:state-trans}
 
