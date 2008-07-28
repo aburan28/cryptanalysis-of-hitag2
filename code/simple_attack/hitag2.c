@@ -40,13 +40,13 @@ static const u32 ht2_f5c = 0x7907287B;	// 0111 1001 0000 0111 0010 1000 0111 101
 static u64 f20 (const u64 x)
 {
 	u64					i5;
-	
+
 	i5 = ((ht2_f4a >> i4 (x, 1, 2, 4, 5)) & 1)* 1
 	   + ((ht2_f4b >> i4 (x, 7,11,13,14)) & 1)* 2
 	   + ((ht2_f4b >> i4 (x,16,20,22,25)) & 1)* 4
 	   + ((ht2_f4b >> i4 (x,27,28,30,32)) & 1)* 8
 	   + ((ht2_f4a >> i4 (x,33,42,43,45)) & 1)*16;
-	
+
 	return (ht2_f5c >> i5) & 1;
 }
 
@@ -54,7 +54,7 @@ static u64 hitag2_init (const u64 key, const u32 serial, const u32 IV)
 {
 	u32 i;
 	u64 x = ((key & 0xFFFF) << 32) + serial;
-	
+
 	for (i = 0; i < 32; i++)
 	{
 		x >>= 1;
@@ -69,43 +69,43 @@ static u64 hitag2_find_key(u64 state, const u32 serial, const u32 IV)
 	u64 last_bit = 0;
 	int i = 31;
 	u64 key = 0;
-	
+
 	for (i = 31; i >= 0; i--)
 	{
 		last_bit = (state >> 47);
-		
+
 		key = key + (((last_bit ^ f20(state) ^ (IV >> i)) & 1) << (i + 16));
 		state = (state << 1) + (u64) ((serial >> i) & 1);
 	}
-	
-	key = (key ^ (state >> 32) & 0xFFFF);
-	
+
+	key = (key ^ ((state >> 32) & 0xFFFF));
+
 	return key;
 }
 
 void hitag2_prev_state (u64 *state)
 {
 	u64 x = *state;
-	
+
 	x = (x <<  1) +
 	(((x >>  47) ^ (x >>  1) ^ (x >>  2) ^ (x >>  5)
 	  ^ (x >>  6) ^ (x >>  7) ^ (x >> 15) ^ (x >> 21)
 	  ^ (x >> 22) ^ (x >> 25) ^ (x >> 29) ^ (x >> 40)
 	  ^ (x >> 41) ^ (x >> 42) ^ (x >> 45) ^ (x >> 46)) & 1);
-	
-	*state = x & 0xFFFFFFFFFFFF;
+
+	*state = (x & 0xFFFFFFFFFFFF);
 }
 
 void hitag2_next_state (u64 *state)
 {
 	u64 x = *state;
-	
+
 	x = (x >>  1) +
 	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
 	  ^ (x >>  7) ^ (x >>  8) ^ (x >> 16) ^ (x >> 22)
 	  ^ (x >> 23) ^ (x >> 26) ^ (x >> 30) ^ (x >> 41)
 	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
-	
+
 	*state = x;
 }
 
@@ -113,13 +113,13 @@ void hitag2_next_state (u64 *state)
 static u64 hitag2_round (u64 *state)
 {
 	u64 x = *state;
-	
+
 	x = (x >>  1) +
 	 ((((x >>  0) ^ (x >>  2) ^ (x >>  3) ^ (x >>  6)
 	  ^ (x >>  7) ^ (x >>  8) ^ (x >> 16) ^ (x >> 22)
 	  ^ (x >> 23) ^ (x >> 26) ^ (x >> 30) ^ (x >> 41)
 	  ^ (x >> 42) ^ (x >> 43) ^ (x >> 46) ^ (x >> 47)) & 1) << 47);
-	
+
 	*state = x;
 	return f20 (x);
 }
@@ -128,7 +128,7 @@ static u64 hitag2_byte (u64 * x)
 {
 	u64 i;
 	u64 c;
-	
+
 	for (i = 0, c = 0; i < 8; i++) c += (u64) hitag2_round (x) << (7 - i);
 	return c;
 }
@@ -138,10 +138,10 @@ static u64 hitag2_prefix(u64 * x, u32 bits)
 	u64 i;
 	u64 prefix = 0;
 
-	for (i = 0; i < (bits/8); i++) 
+	for (i = 0; i < (bits/8); i++)
 	{
 		prefix += (u64) hitag2_byte (x) << ((bits/8) - 1 - i)*8;
 	}
-	
+
 	return prefix;
 }
