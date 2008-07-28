@@ -119,7 +119,7 @@ int main()
 	/* generate 'r' hashtables to store endpoints of each table */
 	for(current_r = 0; current_r < r; current_r++)
 	{
-		hashtable_array[current_r] = single_hash_table_setup(current_r);
+		hashtable_array[current_r] = (struct hashtable *) single_hash_table_setup(current_r + 1);
 		
 		/* Check the size of the hashtable matches the memory_complexity */
 		if (m != hashtable_count(h)) 
