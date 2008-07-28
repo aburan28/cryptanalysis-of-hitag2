@@ -4,9 +4,9 @@
 	Key	= 4F 4E 4D 49 4B 52
 	Serial	= 49 43 57 69
 	Random	= 65 6E 45 72
-	
+
 	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
-*/	
+*/
 
 
 #include <stdio.h>
@@ -24,7 +24,7 @@ struct hashtable * hash_table_setup(void);
 void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
-	
+
 u32 memory_index = 23;
 u32 time_index = 25;
 
@@ -89,7 +89,7 @@ int main()
 	time_complexity = pow(2,time_index);
 
 	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
-	
+
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
 	time(&time1);
@@ -98,7 +98,7 @@ int main()
 	printf("\nCurrent Time: %s", ctime(&time1));
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for initializing matrix: %d ", sec_diff);
-	
+
 	/* Prepare the hashtable */
 	printf("\n\nPreparing Hashtable ...");
 	time(&time1);
@@ -106,19 +106,19 @@ int main()
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
-		
+
 	/* Check the size of the hashtable matches the memory_complexity */
-	if (memory_complexity != hashtable_count(h)) 
+	if (memory_complexity != hashtable_count(h))
 	{
 		printf("\nError: Size of Hashtable not correct ...");
         	return 1;
     	}
-	
+
 	/* Prepare a long keystream */
 	printf("\n\nPreparing Keystream ...");
 	time(&time1);
 	prepare_keystream(c_keystream);
-	
+
 	keystream = *c_keystream;
 
 	time(&time2);
@@ -129,28 +129,28 @@ int main()
 	printf("\n\nAttacking ...");
 	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
-	if (NULL == k) 
+	if (NULL == k)
 	{
 		printf("\nError: Ran out of memory allocating a key ...");
         	return 1;
     	}
-	
+
 	/* Start searching prefixes in the hashtable */
 	for(i = 0, j = 0; i < time_complexity; i++)
 	{
 		prefix = keystream >> 16;
 
 		//printf("\nCurrent Prefix: %llX", prefix);
-    		
+
 		k->key = prefix;
-        
+
 		/* Call the hashtable method with key */
 		found = search_some(h,k);
 
 		/* Shift the keystream by 1 bit for computing the next prefix */
 		if((i % 64) == 0) c_keystream++;
 		keystream = (keystream << 1) ^ ((* c_keystream >> (63 - (i % 64))) & 1);
-		
+
 		if(found != NULL)
 		{
 			found_current_state = found->value;
@@ -163,34 +163,34 @@ int main()
 			// Find the Initial State.
 			for(j = 0; j < i; j++)
 				hitag2_prev_state(&found_initial_state);
-			
+
 			printf("\nFound Initial State: %llx", found_initial_state);
 
 			// Find the Key
 			found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
 			printf("\nFound Key: %llx", found_key);
 			printf("\nFound Key: %llx", rev64(found_key));
-			
+
 			matched = 1;
 			break;
 		}
 	}
-		
+
 	if(matched == 0)
 		printf("\n\nNo Internal State found ...\n");
 
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for attack: %d", sec_diff);
-	
+
 	hashtable_destroy(h, 1);
 	free(k);
 	free(found);
-}	
+}
 
 /****************************************************************************************************
  * Hash Table functions
-****************************************************************************************************/ 
+****************************************************************************************************/
 
 struct hashtable * hash_table_setup()
 {
@@ -200,15 +200,15 @@ struct hashtable * hash_table_setup()
 
 	u64 state = 0;
 	u64 pre_state = 0;
-			
+
 	u64 i = 0;
 	u64 prefix = 0;
-	
+
 	printf("\nCreating the Hashtable ...");
 	// initialize the hash table
 	h = create_hashtable(memory_complexity, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
-	
+
 	// Initialize the state, to some random value.
 	state = 0x69574AD004ACULL;
 
@@ -216,13 +216,13 @@ struct hashtable * hash_table_setup()
 	{
 		// Save the starting state
 		pre_state = state;
-		
+
 		//call hitag function - get 48 bits prefix (in u64 format)
 		prefix = hitag2_prefix(&state, 48);
-		
+
 		//save prefix and state in the hash table
 		k = (struct key *)malloc(sizeof(struct key));
-		if (NULL == k) 
+		if (NULL == k)
 		{
 			printf("\nError: Could not allocate memory for Prefix");
 			exit(1);
@@ -231,12 +231,12 @@ struct hashtable * hash_table_setup()
 		k->key = prefix;
 		v = (struct value *)malloc(sizeof(struct value));
 		v->value = pre_state;
-		if (!insert_some(h,k,v)) 
+		if (!insert_some(h,k,v))
 		{
 			printf("\nError: Could not allocate memory for State");
 			exit(-1); /*oom*/
 		}
-		
+
 		//State transition function
 		state = pre_state;
 		compute_new_state(&state);
@@ -251,13 +251,13 @@ void prepare_keystream(u64 * c_keystream)
 {
 	u64 state = 0;
 	u64 i = 0;
-	
+
 	// Initial State which needs to be determined..
 	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
 
 	for(;i < time_complexity/64 + 1; i++)
 	{
-		*c_keystream = (u64) hitag2_prefix(&state, 64); 
+		*c_keystream = (u64) hitag2_prefix(&state, 64);
 		c_keystream++;
 	}
 	printf("\nKeystream made available ...");
@@ -267,7 +267,7 @@ void initialize_matrix()
 {
 	u64 i = 0;
 	u64 j = 0;
-	
+
 	for(i = 0; i < 48; i++)
 	{
 		for(j = 0; j < 48; j++)
@@ -275,7 +275,7 @@ void initialize_matrix()
 			transition_matrix[i][j] = 0;
 		}
 	}
-	
+
 	for(i = 0; i < 47; i++)
 	{
 		transition_matrix[i + 1][i] = 1;
@@ -318,7 +318,7 @@ void initialize_matrix()
 		printf("\n");
 	}
 	printf("\n");
-	
+
 	square_matrix_2n();
 
 	//print the squared matrix
@@ -340,16 +340,16 @@ void square_matrix_2n()
 	u64 j = 0;
 	u64 k = 0;
 	u64 count = 0;
-	
+
 	u8 c_temp = 0;
 	u64 l_temp = 0;
 	u64 l_xor = 0;
 	u64 one = 1;
 	u64 zero = 0;
-	
+
 	u64 matrix_1[48];
 	u64 matrix_2[48];
-	
+
 	// For time_index number of times, square the matrix transition_matrix_2n
 	for(i = 0; i < time_index; i++)
 	{
@@ -362,7 +362,7 @@ void square_matrix_2n()
 				{
 					l_temp = ((l_temp >> (47 - k)) ^ one) << (47 - k);
 				}
-				
+
 				else if(transition_matrix_2n[j][k] == 0)
 				{
 					l_temp = ((l_temp >> (47 - k)) ^ zero) << (47 - k);
@@ -370,16 +370,16 @@ void square_matrix_2n()
 			}
 
 			matrix_1[j] = l_temp;
-			l_temp = 0;	
+			l_temp = 0;
 		}
-		
+
 		//print the u64 array conversion of transition_matrix_2n
 		for(j = 0; j < 48; j++)
 		{
 			//printf("%llx ", matrix_1[j]);
 		}
-		
-		//transpose of the matrix transition_matrix_2n 
+
+		//transpose of the matrix transition_matrix_2n
 		for(j = 0; j < 48; j++)
 		{
 			for(k = 0; k < 48; k++)
@@ -413,7 +413,7 @@ void square_matrix_2n()
 				{
 					l_temp = ((l_temp >> (47 - k)) ^ one) << (47 - k);
 				}
-				
+
 				else if(transition_matrix_2n[j][k] == 0)
 				{
 					l_temp = ((l_temp >> (47 - k)) ^ zero) << (47 - k);
@@ -422,7 +422,7 @@ void square_matrix_2n()
 			}
 
 			matrix_2[j] = l_temp;
-			l_temp = 0;		
+			l_temp = 0;
 		}
 
 		//print the u64 array conversion of transpose of transition_matrix_2n
@@ -430,7 +430,7 @@ void square_matrix_2n()
 		{
 			//printf("%llx %llx\n", matrix_1[j], matrix_2[j]);
 		}
-		
+
 		//perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the matrix
 		for(j = 0; j < 48; j++)
 		{
@@ -438,22 +438,22 @@ void square_matrix_2n()
 			{
 				// AND of the two rows
 				l_temp = matrix_1[j] & matrix_2[k];
-				
-				
+
+
 				l_xor = zero;
-		
+
 				for(count = 0; count < 48; count++)
 				{
 					l_xor = l_xor ^ (l_temp >> (count));
 				}
-				
+
 				transition_matrix_2n[j][k] = (u8) l_xor & one;
 			}
 		}
-		
+
 		l_temp = 0;
 		l_xor = 0;
-		
+
 	}
 }
 
@@ -466,7 +466,7 @@ void compute_new_state(u64 * state_ptr)
 	u64 l_xor;
 	u64 one = 1;
 	u64 zero = 0;
-	
+
 	u64 matrix_2[48];
 	u64 state = *state_ptr;
 	u64 new_state = 0;
@@ -489,7 +489,7 @@ void compute_new_state(u64 * state_ptr)
 		}
 
 		matrix_2[j] = l_temp;
-		l_temp = 0;		
+		l_temp = 0;
 	}
 
 	//print transition_matrix_2n
@@ -504,9 +504,9 @@ void compute_new_state(u64 * state_ptr)
 	{
 		// AND of the two rows
 		l_temp = matrix_2[k] & state;
-		
+
 		l_xor = zero;
-		
+
 		for(j = 0; j < 48; j++)
 		{
 			l_xor = l_xor ^ (l_temp >> (j));
@@ -516,5 +516,5 @@ void compute_new_state(u64 * state_ptr)
 		new_state = new_state + ((l_xor & one) << (47 - k));
 	}
 
-	*state_ptr = new_state;	
+	*state_ptr = new_state;
 }
