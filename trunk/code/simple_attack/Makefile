@@ -1,6 +1,6 @@
-all: tmto_simple_attack tmto_adv_attack tmdto_attack
+#all: tmto_simple_attack tmto_adv_attack tmdto_attack
 
-tmdto_attack: hashtable.o tmdto_attack.o 
+tmdto_attack: hashtable.o tmdto_attack.o
 	gcc -g -Wall -O -lm -o tmdto_attack hashtable.o tmdto_attack.o
 
 tmto_adv_attack: hashtable.o tmto_adv_attack.o 
