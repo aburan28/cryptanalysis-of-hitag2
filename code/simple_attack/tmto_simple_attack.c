@@ -1,13 +1,14 @@
 /*
-	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
-	Used parameters:
-	Key	= 4F 4E 4D 49 4B 52
-	Serial	= 49 43 57 69
-	Random	= 65 6E 45 72
-
-	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
-*/
-
+ *	This program is used to execute a Babbage-Golic time-memory
+ *	tradeoff attack on the HiTag2 stream cipher
+ *
+ *	HiTag2 parameters:
+ *	Key	= 4F 4E 4D 49 4B 52
+ *	Serial	= 49 43 57 69
+ *	Random	= 65 6E 45 72
+ *
+ *	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -25,15 +26,15 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 
-u32 memory_index = 23;
-u32 time_index = 25;
+u32 M;					/* memory for precomputation phase */
+u32 T;					/* time for attack phase */
+u32 P;					/* time for precomputation phase */
+u32 D;					/* length of data available (bits)*/
 
-u64 memory_complexity;
-u64 time_complexity;
+u32 random_memory;			/* '1' if the memory setup is random, else '0' */
 
 u8 transition_matrix[48][48];		/* state transition matrix A */
 u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
-
 
 /*****************************************************************************/
 struct key
@@ -46,13 +47,12 @@ struct value
     u64 value;
 };
 
-
 static unsigned int
 hashfromkey(void *ky)
 {
 	struct key *k = (struct key *)ky;
 
-	return (k->key % memory_complexity);
+	return (k->key % M);
 }
 
 static int
@@ -66,6 +66,30 @@ DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
+void initialize()
+{
+	M = pow(2,25);
+	T = pow(2,23);
+	D = T;
+	P = M;
+
+	random_memory = 1;
+}
+
+u64 get_random(u32 bits)
+{
+	u32 i = 0;
+	u64 random_number = 0;
+	u64 random_bit = 0;
+
+	for(i = 0; i < bits; i++)
+	{
+		random_bit = rand() % 65535;
+		random_number = (random_number << 1) ^ random_bit;
+	}
+
+	return random_number;
+}
 
 int main()
 {
@@ -81,41 +105,50 @@ int main()
 	u64 found_initial_state = 0;
 	u64 found_key = 0;
 
-	struct value *found;
-	struct key * k;
-	struct hashtable *h;
+	struct value *found = NULL;
+	struct key * k = NULL;
+	struct hashtable *h = NULL;
 
-	memory_complexity = pow(2,memory_index);
-	time_complexity = pow(2,time_index);
+	initialize();
 
-	c_keystream = (u64 *)malloc(sizeof(u64) * (time_complexity/64 + 1));
+	c_keystream = (u64 *)malloc(sizeof(u64) * (T/64 + 1));
 
-	/* Initializing the matrices */
-	printf("\n\nInitializing matrices ...");
-	time(&time1);
-	initialize_matrix();
-	time(&time2);
-	printf("\nCurrent Time: %s", ctime(&time1));
-	sec_diff = difftime(time2,time1);
-	printf("\nTIME for initializing matrix: %d ", sec_diff);
+	if(random_memory == 0)
+	{
+		/* Initializing the matrices */
+		printf("\n\nInitializing matrices ...");
+		fflush(stdout);
+		time(&time1);
+		initialize_matrix();
+		time(&time2);
+		printf("\nCurrent Time: %s", ctime(&time1));
+		fflush(stdout);
+		sec_diff = difftime(time2,time1);
+		printf("\nTIME for initializing matrix: %d ", sec_diff);
+		fflush(stdout);
+	}
 
 	/* Prepare the hashtable */
 	printf("\n\nPreparing Hashtable ...");
+	fflush(stdout);
 	time(&time1);
 	h = hash_table_setup();
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
+	fflush(stdout);
 
-	/* Check the size of the hashtable matches the memory_complexity */
-	if (memory_complexity != hashtable_count(h))
+	/* Check the size of the hashtable matches the M */
+	if (M != hashtable_count(h))
 	{
 		printf("\nError: Size of Hashtable not correct ...");
-        	return 1;
-    	}
+		fflush(stdout);
+		return 1;
+	}
 
 	/* Prepare a long keystream */
 	printf("\n\nPreparing Keystream ...");
+	fflush(stdout);
 	time(&time1);
 	prepare_keystream(c_keystream);
 
@@ -124,19 +157,22 @@ int main()
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
+	fflush(stdout);
 
 	/* Starting Attack */
 	printf("\n\nAttacking ...");
+	fflush(stdout);
 	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
 	if (NULL == k)
 	{
 		printf("\nError: Ran out of memory allocating a key ...");
+		fflush(stdout);
         	return 1;
     	}
 
 	/* Start searching prefixes in the hashtable */
-	for(i = 0, j = 0; i < time_complexity; i++)
+	for(i = 0, j = 0; i < T; i++)
 	{
 		prefix = keystream >> 16;
 
@@ -158,18 +194,21 @@ int main()
 
 			printf("\nMatch Found! Current State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
-			printf("\nPercentage of the worst case time: %f ", (i*100.00)/time_complexity);
+			printf("\nPercentage of the worst case time: %f ", (i*100.00)/T);
+			fflush(stdout);
 
 			// Find the Initial State.
 			for(j = 0; j < i; j++)
 				hitag2_prev_state(&found_initial_state);
 
 			printf("\nFound Initial State: %llx", found_initial_state);
+			fflush(stdout);
 
 			// Find the Key
 			found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
 			printf("\nFound Key: %llx", found_key);
 			printf("\nFound Key: %llx", rev64(found_key));
+			fflush(stdout);
 
 			matched = 1;
 			break;
@@ -178,14 +217,18 @@ int main()
 
 	if(matched == 0)
 		printf("\n\nNo Internal State found ...\n");
+		fflush(stdout);
 
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for attack: %d", sec_diff);
+	fflush(stdout);
 
 	hashtable_destroy(h, 1);
 	free(k);
 	free(found);
+
+	return 0;
 }
 
 /****************************************************************************************************
@@ -204,63 +247,98 @@ struct hashtable * hash_table_setup()
 	u64 i = 0;
 	u64 prefix = 0;
 
-	printf("\nCreating the Hashtable ...");
 	// initialize the hash table
-	h = create_hashtable(memory_complexity, hashfromkey, equalkeys);
+	h = create_hashtable(M, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 
 	// Initialize the state, to some random value.
 	state = 0x69574AD004ACULL;
 
-	for(i = 0; i < memory_complexity; i++)
+	if(random_memory == 0)
 	{
-		// Save the starting state
-		pre_state = state;
 
-		//call hitag function - get 48 bits prefix (in u64 format)
-		prefix = hitag2_prefix(&state, 48);
-
-		//save prefix and state in the hash table
-		k = (struct key *)malloc(sizeof(struct key));
-		if (NULL == k)
+		for(i = 0; i < P; i++)
 		{
-			printf("\nError: Could not allocate memory for Prefix");
-			exit(1);
-		}
+			// Save the starting state
+			pre_state = state;
 
-		k->key = prefix;
-		v = (struct value *)malloc(sizeof(struct value));
-		v->value = pre_state;
-		if (!insert_some(h,k,v))
+			//call hitag function - get 48 bits prefix (in u64 format)
+			prefix = hitag2_prefix(&state, 48);
+
+			//save prefix and state in the hash table
+			k = (struct key *)malloc(sizeof(struct key));
+			if (NULL == k)
+			{
+				printf("\nError: Could not allocate memory for Prefix");
+				fflush(stdout);
+				exit(1);
+			}
+
+			k->key = prefix;
+			v = (struct value *)malloc(sizeof(struct value));
+			v->value = pre_state;
+			if (!insert_some(h,k,v))
+			{
+				printf("\nError: Could not allocate memory for State");
+				fflush(stdout);
+				exit(-1); /*oom*/
+			}
+
+			//State transition function
+			state = pre_state;
+
+			compute_new_state(&state);
+		}
+	}
+	else
+	{
+		for(i = 0; i < P; i++)
 		{
-			printf("\nError: Could not allocate memory for State");
-			exit(-1); /*oom*/
-		}
+			state = get_random(48);
+			//call hitag function - get 48 bits prefix (in u64 format)
+			prefix = hitag2_prefix(&state, 48);
 
-		//State transition function
-		state = pre_state;
-		compute_new_state(&state);
+			//save prefix and state in the hash table
+			k = (struct key *)malloc(sizeof(struct key));
+			if (NULL == k)
+			{
+				printf("\nError: Could not allocate memory for Prefix");
+				fflush(stdout);
+				exit(1);
+			}
+
+			k->key = prefix;
+			v = (struct value *)malloc(sizeof(struct value));
+			v->value = pre_state;
+			if (!insert_some(h,k,v))
+			{
+				printf("\nError: Could not allocate memory for State");
+				fflush(stdout);
+				exit(-1); /*oom*/
+			}
+		}
 	}
 
-	printf("\nCreation of Hashtable complete ...");
+	printf("\nPreparation of Hashtable complete ...");
+	fflush(stdout);
 	return h;
 }
 
-/* Specifically for 64-bit architecture */
 void prepare_keystream(u64 * c_keystream)
 {
-	u64 state = 0;
 	u64 i = 0;
+	u64 state = 0;
 
 	// Initial State which needs to be determined..
 	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
 
-	for(;i < time_complexity/64 + 1; i++)
+	for(;i < D/64 + 1; i++)
 	{
 		*c_keystream = (u64) hitag2_prefix(&state, 64);
 		c_keystream++;
 	}
 	printf("\nKeystream made available ...");
+	fflush(stdout);
 }
 
 void initialize_matrix()
@@ -309,15 +387,19 @@ void initialize_matrix()
 	}
 
 	printf("\n");
+	fflush(stdout);
 	for(i = 0; i < 48; i++)
 	{
 		for(j = 0; j < 48; j++)
 		{
 			printf("%1x", transition_matrix[i][j]);
+			fflush(stdout);
 		}
 		printf("\n");
+		fflush(stdout);
 	}
 	printf("\n");
+	fflush(stdout);
 
 	square_matrix_2n();
 
@@ -326,7 +408,7 @@ void initialize_matrix()
 	{
 		for(j = 0; j < 48; j++)
 		{
-			//rintf("%1x", transition_matrix_2n[i][j]);
+			//printf("%1x", transition_matrix_2n[i][j]);
 		}
 		//printf("\n");
 	}
@@ -351,7 +433,7 @@ void square_matrix_2n()
 	u64 matrix_2[48];
 
 	// For time_index number of times, square the matrix transition_matrix_2n
-	for(i = 0; i < time_index; i++)
+	for(i = 0; i < T; i++)
 	{
 		//convert the matrix into array of u64
 		for(j = 0; j < 48; j++)
@@ -462,8 +544,8 @@ void square_matrix_2n()
 void compute_new_state(u64 * state_ptr)
 {
 	u64 j, k;
-	u64 l_temp;
-	u64 l_xor;
+	u64 l_temp = 0;
+	u64 l_xor = 0;
 	u64 one = 1;
 	u64 zero = 0;
 

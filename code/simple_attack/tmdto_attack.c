@@ -9,12 +9,11 @@
 	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
 */
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
-#include <math.h>		/* for power function */
-#include "hitag2.c"		/* for hitag2 stream cipher operations */
+#include <math.h>			/* for power function */
+#include "hitag2.c"			/* for hitag2 stream cipher operations */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
 
@@ -111,7 +110,9 @@ int main()
 	/* initialze the tradeoff parameters */
 	initialize();
 
-	time(&time1);
+	/* allocate memory for keystream */
+	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
+
 	printf("\nCurrent Time: %s", ctime(&time1));
 	fflush(stdout);
 
@@ -134,11 +135,9 @@ int main()
     		}
 	}
 
-	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
-
 	time(&time2);
 	sec_diff = difftime(time2,time1);
-	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
+	printf("\nTIME for preparing hashtable: %d ", sec_diff);
 	fflush(stdout);
 
 	/* Prepare a long keystream */
@@ -213,7 +212,7 @@ int main()
 					}
 					else
 					{
-						// Find the Initial State.
+						/* Find the Initial State */
 						found_initial_state = temp_state;
 						for(j = 0; j < i; j++)
 							hitag2_prev_state(&found_initial_state);
@@ -221,7 +220,7 @@ int main()
 						printf("\nFound Initial State: %llx", found_initial_state);
 						fflush(stdout);
 
-						// Find the Key
+						/* Find the Key */
 						found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
 						printf("\nFound Key: %llx", found_key);
 						printf("\nFound Key: %llx", rev64(found_key));
@@ -339,7 +338,7 @@ void prepare_keystream(u64 * c_keystream)
 	u64 state = 0;
 	u64 i = 0;
 
-	// Initial State which needs to be determined..
+	/* Randomly select a key, a IV and a Serial ID; to determine the initial state */
 	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
 
 	for(;i < D/64 + 1; i++)
@@ -349,7 +348,6 @@ void prepare_keystream(u64 * c_keystream)
 	}
 	printf("\nKeystream made available ...");
 	fflush(stdout);
-
 }
 
 u64 get_random(u32 bits)
@@ -367,15 +365,13 @@ u64 get_random(u32 bits)
 	return random_number;
 }
 
-
 void mapping_function(u64 * state, u32 i)
 {
 	u64 prefix = 0;
 
-	// do the function f(state) - gives prefix of that state
+	/* do the function f(state) - gives prefix of that state */
 	prefix = hitag2_prefix(state, prefix_bits);
 
-	// do the permutation function (prefix to state)
-
+	/* do the permutation function (prefix to state) */
 	*state = prefix;
 }
