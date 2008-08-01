@@ -13,7 +13,7 @@
 
 #define u8				unsigned char
 #define u32				unsigned long
-#define u64				unsigned __int64
+#define u64				unsigned long long
 
 int main()
 {

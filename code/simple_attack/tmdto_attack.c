@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
-#include <math.h>			/* for power function */
-#include "hitag2.c"			/* for hitag2 stream cipher operations */
+#include <math.h>		/* for power function */
+#include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
 
