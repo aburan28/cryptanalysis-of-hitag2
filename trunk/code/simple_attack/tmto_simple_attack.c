@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
-#include "hitag2.c"		/* for hitag2 stream cipher operations */
+#include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
 
@@ -26,15 +26,17 @@ void initialize_matrix();
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 
+u32 N = 48;				/* number of bits in internal state */
 u32 M;					/* memory for precomputation phase */
 u32 T;					/* time for attack phase */
 u32 P;					/* time for precomputation phase */
 u32 D;					/* length of data available (bits)*/
 
+u32 prefix_bits = 48;			/* number of prefix bits */
 u32 random_memory;			/* '1' if the memory setup is random, else '0' */
 
 u8 transition_matrix[48][48];		/* state transition matrix A */
-u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
+u8 transition_matrix_2n[48][48];		/* matrix for computing state directly after 2^n transitions */
 
 /*****************************************************************************/
 struct key
@@ -68,12 +70,12 @@ DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
 void initialize()
 {
-	M = pow(2,25);
-	T = pow(2,23);
+	M = pow(2,22);
+	T = pow(2,26);
 	D = T;
 	P = M;
 
-	random_memory = 1;
+	random_memory = 0;
 }
 
 u64 get_random(u32 bits)
@@ -82,11 +84,13 @@ u64 get_random(u32 bits)
 	u64 random_number = 0;
 	u64 random_bit = 0;
 
-	for(i = 0; i < bits; i++)
+	for(i = 0; i < bits - 16; i++)
 	{
 		random_bit = rand() % 65535;
 		random_number = (random_number << 1) ^ random_bit;
 	}
+
+	//printf("\nRandom number: %llx", random_number);
 
 	return random_number;
 }
@@ -111,7 +115,7 @@ int main()
 
 	initialize();
 
-	c_keystream = (u64 *)malloc(sizeof(u64) * (T/64 + 1));
+	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
 
 	if(random_memory == 0)
 	{
@@ -195,6 +199,7 @@ int main()
 			printf("\nMatch Found! Current State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
 			printf("\nPercentage of the worst case time: %f ", (i*100.00)/T);
+			printf("I: %d\n", i);
 			fflush(stdout);
 
 			// Find the Initial State.
@@ -211,7 +216,7 @@ int main()
 			fflush(stdout);
 
 			matched = 1;
-			break;
+			//break;
 		}
 	}
 
@@ -262,8 +267,8 @@ struct hashtable * hash_table_setup()
 			// Save the starting state
 			pre_state = state;
 
-			//call hitag function - get 48 bits prefix (in u64 format)
-			prefix = hitag2_prefix(&state, 48);
+			//call hitag function - get prefix bits (in u64 format)
+			prefix = hitag2_prefix(&state, prefix_bits);
 
 			//save prefix and state in the hash table
 			k = (struct key *)malloc(sizeof(struct key));
@@ -294,9 +299,11 @@ struct hashtable * hash_table_setup()
 	{
 		for(i = 0; i < P; i++)
 		{
-			state = get_random(48);
-			//call hitag function - get 48 bits prefix (in u64 format)
-			prefix = hitag2_prefix(&state, 48);
+			state = get_random(N);
+			pre_state = state;
+			
+			//call hitag function - get prefix bits (in u64 format)
+			prefix = hitag2_prefix(&state, prefix_bits);
 
 			//save prefix and state in the hash table
 			k = (struct key *)malloc(sizeof(struct key));
@@ -326,12 +333,13 @@ struct hashtable * hash_table_setup()
 
 void prepare_keystream(u64 * c_keystream)
 {
-	u64 i = 0;
+	u32 i = 0;
 	u64 state = 0;
 
 	// Initial State which needs to be determined..
-	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
-
+	state = hitag2_init(rev64(0x524B494D4E4FULL), rev32(0x69574349), rev32(0x72456E65));
+	printf("\nInitial State: %llx", state);
+	
 	for(;i < D/64 + 1; i++)
 	{
 		*c_keystream = (u64) hitag2_prefix(&state, 64);
@@ -346,9 +354,9 @@ void initialize_matrix()
 	u64 i = 0;
 	u64 j = 0;
 
-	for(i = 0; i < 48; i++)
+	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			transition_matrix[i][j] = 0;
 		}
@@ -378,9 +386,9 @@ void initialize_matrix()
 	transition_matrix[0][47 - 46] = 1;
 	transition_matrix[0][47 - 47] = 1;
 
-	for(i = 0; i < 48; i++)
+	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			transition_matrix_2n[i][j] = transition_matrix[i][j];
 		}
@@ -388,9 +396,9 @@ void initialize_matrix()
 
 	printf("\n");
 	fflush(stdout);
-	for(i = 0; i < 48; i++)
+	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			printf("%1x", transition_matrix[i][j]);
 			fflush(stdout);
@@ -404,9 +412,9 @@ void initialize_matrix()
 	square_matrix_2n();
 
 	//print the squared matrix
-	for(i = 0; i < 48; i++)
+	for(i = 0; i < N; i++)
 	{
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			//printf("%1x", transition_matrix_2n[i][j]);
 		}
@@ -422,6 +430,7 @@ void square_matrix_2n()
 	u64 j = 0;
 	u64 k = 0;
 	u64 count = 0;
+	u32 time_order = 0;
 
 	u8 c_temp = 0;
 	u64 l_temp = 0;
@@ -429,16 +438,17 @@ void square_matrix_2n()
 	u64 one = 1;
 	u64 zero = 0;
 
-	u64 matrix_1[48];
-	u64 matrix_2[48];
+	u64 matrix_1[N];
+	u64 matrix_2[N];
 
+	time_order = (u32) log2(T);
 	// For time_index number of times, square the matrix transition_matrix_2n
-	for(i = 0; i < T; i++)
+	for(i = 0; i < time_order; i++)
 	{
 		//convert the matrix into array of u64
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
-			for(k = 0; k < 48; k++)
+			for(k = 0; k < N; k++)
 			{
 				if(transition_matrix_2n[j][k] == 1)
 				{
@@ -456,15 +466,15 @@ void square_matrix_2n()
 		}
 
 		//print the u64 array conversion of transition_matrix_2n
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			//printf("%llx ", matrix_1[j]);
 		}
 
 		//transpose of the matrix transition_matrix_2n
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
-			for(k = 0; k < 48; k++)
+			for(k = 0; k < N; k++)
 			{
 				if(j > k)
 				{
@@ -476,9 +486,9 @@ void square_matrix_2n()
 		}
 
 		//print the transpose matrix
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
-			for(k = 0; k < 48; k++)
+			for(k = 0; k < N; k++)
 			{
 				//printf("%1x", transition_matrix_2n[j][k]);
 			}
@@ -487,9 +497,9 @@ void square_matrix_2n()
 		//printf("\n");
 
 		//convert the transposed matrix into u64 array
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
-			for(k = 0; k < 48; k++)
+			for(k = 0; k < N; k++)
 			{
 				if(transition_matrix_2n[j][k] == 1)
 				{
@@ -508,15 +518,15 @@ void square_matrix_2n()
 		}
 
 		//print the u64 array conversion of transpose of transition_matrix_2n
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			//printf("%llx %llx\n", matrix_1[j], matrix_2[j]);
 		}
 
 		//perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the matrix
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
-			for(k = 0; k < 48; k++)
+			for(k = 0; k < N; k++)
 			{
 				// AND of the two rows
 				l_temp = matrix_1[j] & matrix_2[k];
@@ -524,7 +534,7 @@ void square_matrix_2n()
 
 				l_xor = zero;
 
-				for(count = 0; count < 48; count++)
+				for(count = 0; count < N; count++)
 				{
 					l_xor = l_xor ^ (l_temp >> (count));
 				}
@@ -549,14 +559,14 @@ void compute_new_state(u64 * state_ptr)
 	u64 one = 1;
 	u64 zero = 0;
 
-	u64 matrix_2[48];
+	u64 matrix_2[N];
 	u64 state = *state_ptr;
 	u64 new_state = 0;
 
 	//convert the transition_matrix_2n matrix into u64 array
-	for(j = 0; j < 48; j++)
+	for(j = 0; j < N; j++)
 	{
-		for(k = 0; k < 48; k++)
+		for(k = 0; k < N; k++)
 		{
 			if(transition_matrix_2n[j][k] == 1)
 			{
@@ -575,21 +585,21 @@ void compute_new_state(u64 * state_ptr)
 	}
 
 	//print transition_matrix_2n
-	for(j = 0; j < 48; j++)
+	for(j = 0; j < N; j++)
 	{
 		//printf("%12llx \n", matrix_2[j]);
 	}
 
 	//printf("State: %12llx \n", state);
 
-	for(k = 0; k < 48; k++)
+	for(k = 0; k < N; k++)
 	{
 		// AND of the two rows
 		l_temp = matrix_2[k] & state;
 
 		l_xor = zero;
 
-		for(j = 0; j < 48; j++)
+		for(j = 0; j < N; j++)
 		{
 			l_xor = l_xor ^ (l_temp >> (j));
 		}

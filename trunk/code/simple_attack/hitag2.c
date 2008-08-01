@@ -16,22 +16,11 @@
 // The inverse of the first 4 bytes is sent to the tag to authenticate.
 // The rest is encrypted by XORing it with the subsequent keystream.
 
-
-#define u8				unsigned char
-#define u32				unsigned int
-#define u64				unsigned long long
-#define rev8(x)			((((x)>>7)&1)+((((x)>>6)&1)<<1)+((((x)>>5)&1)<<2)+((((x)>>4)&1)<<3)+((((x)>>3)&1)<<4)+((((x)>>2)&1)<<5)+((((x)>>1)&1)<<6)+(((x)&1)<<7))
-#define rev16(x)		(rev8 (x)+(rev8 (x>> 8)<< 8))
-#define rev32(x)		(rev16(x)+(rev16(x>>16)<<16))
-#define rev64(x)		(rev32(x)+(rev32(x>>32)<<32))
-#define bit(x,n)		(((x)>>(n))&1)
-#define bit32(x,n)		((((x)[(n)>>5])>>((n)))&1)
-#define inv32(x,i,n)	((x)[(i)>>5]^=((u32)(n))<<((i)&31))
-#define rotl64(x, n)	((((u64)(x))<<((n)&63))+(((u64)(x))>>((0-(n))&63)))
+#include<stdio.h>
+#include "hitag2.h"
 
 /* Single bit Hitag2 functions */
 
-#define i4(x,a,b,c,d)	((u32)((((x)>>(a))&1)+(((x)>>(b))&1)*2+(((x)>>(c))&1)*4+(((x)>>(d))&1)*8))
 
 static const u32 ht2_f4a = 0x2C79;		// 0010 1100 0111 1001
 static const u32 ht2_f4b = 0x6671;		// 0110 0110 0111 0001
@@ -50,9 +39,9 @@ static u64 f20(const u64 x)
 	return (ht2_f5c >> i5) & 1;
 }
 
-static u64 hitag2_init(const u64 key, const u32 serial, const u32 IV)
+u64 hitag2_init(const u64 key, const u32 serial, const u32 IV)
 {
-	u32 i;
+	u32 i = 0;
 	u64 x = ((key & 0xFFFF) << 32) + serial;
 
 	for (i = 0; i < 32; i++)
@@ -63,12 +52,12 @@ static u64 hitag2_init(const u64 key, const u32 serial, const u32 IV)
 	return x;
 }
 
-static u64 hitag2_find_key(u64 initial_state, const u32 serial, const u32 IV)
+u64 hitag2_find_key(u64 initial_state, const u32 serial, const u32 IV)
 {
 	u64 last_bit = 0;
 	u64 key = 0;
 	u64 state = 0;
-	u32 i = 31;
+	s32 i = 31;
 
 	state = initial_state;
 
@@ -79,9 +68,9 @@ static u64 hitag2_find_key(u64 initial_state, const u32 serial, const u32 IV)
 		key = key + (((last_bit ^ f20(state) ^ (IV >> i)) & 1) << (i + 16));
 		state = (state << 1) + (u64) ((serial >> i) & 1);
 	}
-
-	key = (key ^ ((state >> 32) & 0xFFFF));
-
+	
+	key = key ^ ((state >> 32) & 0xFFFF);
+	
 	return key;
 }
 
@@ -111,6 +100,7 @@ void hitag2_next_state(u64 *state)
 	*state = x;
 }
 
+
 static u64 hitag2_round(u64 *state)
 {
 	u64 x = *state;
@@ -134,7 +124,7 @@ static u64 hitag2_byte(u64 * x)
 	return c;
 }
 
-static u64 hitag2_prefix(u64 * x, u32 bits)
+u64 hitag2_prefix(u64 * x, u32 bits)
 {
 	u64 i;
 	u64 prefix = 0;

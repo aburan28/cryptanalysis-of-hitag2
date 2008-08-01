@@ -14,7 +14,7 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
-#include "hitag2.c"		/* for hitag2 stream cipher operations */
+#include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
 
@@ -73,7 +73,6 @@ int main()
 	time_t time1, time2;
 	u32 sec_diff = 0;
 	u64 * c_tags;
-	u64 keystream = 0;
 	u64 prefix = 0;
 	u32 i = 0;
 	u32 j = 0;
@@ -158,7 +157,7 @@ int main()
 			//printf("%llx ", prefix);
 			// Find the Key for the Internal State
 			found_key = hitag2_find_key(found_current_state, 0x69574349, iv);
-			printf("Found Key: %llx\n", found_key);			
+			printf(" Found Key: %llx\n", found_key);			
 			matched = 1;
 		}
 
@@ -199,7 +198,7 @@ struct hashtable * hash_table_setup()
 	if (NULL == h) exit(-1); /* exit on error*/
 	
 	// Initialize the state, to some random value.
-	state = 0x69574AD004ACULL;
+	state = 0x695ABCD471FCULL;
 
 	/* It is important how we setup the hash table for this attack 
 	 * One way could be to store states which are at a fixed distance from each other 
@@ -282,18 +281,10 @@ void prepare_tags(u64 * c_tags)
 	for(;i < time_complexity; i++)
 	{
 		
-		// Reseed 
-/*		if(i % 2048 == 0)
-		{
-			time(&seconds);
-	
-			srand(seconds*(i%2048));
-		}	
-*/	
 		iv = get_random(32);
 		//printf("\n%llx ", iv);	
 		
-		state = hitag2_init(0x524B494D4E4FULL, 0x69574349, iv);
+		state = hitag2_init(0x524BF8ED4E4FULL, 0x69574349, iv);
 
 		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
 		//printf("\nNew Tag: %llx ", *c_tags);

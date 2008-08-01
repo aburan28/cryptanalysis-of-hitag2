@@ -1,13 +1,16 @@
 #all: tmto_simple_attack tmto_adv_attack tmdto_attack
 
-tmdto_attack: hashtable.o tmdto_attack.o
-	gcc -g -Wall -O -lm -o tmdto_attack hashtable.o tmdto_attack.o
+tmdto_attack: hashtable.o hitag2.o tmdto_attack.o 
+	gcc -g -Wall -O -lm -o tmdto_attack hashtable.o tmdto_attack.o hitag2.o 
 
-tmto_adv_attack: hashtable.o tmto_adv_attack.o 
-	gcc -g -Wall -O -lm -o tmto_adv_attack hashtable.o tmto_adv_attack.o
+tmto_adv_attack: hashtable.o hitag2.o tmto_adv_attack.o  
+	gcc -g -Wall -O -lm -o tmto_adv_attack hashtable.o tmto_adv_attack.o hitag2.o 
 
-tmto_simple_attack: hashtable.o tmto_simple_attack.o 
-	gcc -g -Wall -O -lm -o tmto_simple_attack hashtable.o tmto_simple_attack.o
+tmto_simple_attack: hashtable.o hitag2.o tmto_simple_attack.o  
+	gcc -g -Wall -O -lm -o tmto_simple_attack hashtable.o hitag2.o tmto_simple_attack.o 
+
+hitag2.o: hitag2.c
+	gcc -g -Wall -O -c hitag2.c -o hitag2.o
 
 tmdto_attack.o:	tmdto_attack.c
 	gcc -g -Wall -O -c tmdto_attack.c -o tmdto_attack.o
