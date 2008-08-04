@@ -76,7 +76,7 @@ On the other hand, the requirement on how large the period should be depends on 
 \end{enumerate}
 
 \subsection{Linear feedback shift registers} 
-
+\label{sec:lfsr}
 The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences do exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. It is important to note that LFSR provides only the \emph{update function} of the PRSG. The \emph{output function} of the PRSG needs to be implemented on top of the LFSR.
 % reason why LFSR are widely used, and why are we more interested in them %
 % more info on other generators %
@@ -128,82 +128,85 @@ We now discuss the properties which the polynomial representation should satisfy
 \section{The HiTag2 stream cipher}
 \label{sec:hitag2}
 
-\subsection{Background of HiTag2}
-% background of hitag2, how it was secret and later released %
+\subsection{Background}
+
+HiTag2 is a stream cipher originally designed by Philips Semiconductors (now NXP Semiconductors) and used for mutual authentication between a car remote control and controller in the car. Such systems (called remote keyless entry or RKE system) have been widely implemented in modern electronic cars, and facilitates unlocking of car doors upon just a button press from within a certain maximum distance from the car. The HiTag2 stream cipher provides two-way authentication, authenticating each of the two entities to each other one by one. But, this is just one use of the cipher, and other applications could use the cipher for authentication as well as encryption. It is important to understand here that if a stream cipher is used for authentication, the keystream bits are sent directly, since the challenge/response nonces are sent in plain previously. Hence, \emph{xor} of the nonce and keystream would hide nothing. While when encryption is desired, the message bits are \emph{xor}'d with the keystream bits before sending over the public channel. 
+
+HiTag2 was kept secret by Philips until it was reverse-engineered using the cipher's software implementation. The microcode (or assembly code) of HiTag2 was decompiled from the implementation available in the car remote controls and the RKE receivers. The C code for the cipher is availabe on the website \cite{hitag2-code}. A full system level specification of the RKE system by Philips (titled Active Tag and IC) implementing the HiTag2 cipher is available \cite{active-tag-datasheet}. HiTag2 now is the intellectual property of NXP, but the specification document holds the name of Philips since NXP did not come into existence at that time in 2005. Also, since the cryptography (HiTag2) on the RKE system was kept secret at that time, HiTag2 modes are just mentioned without any further information on the functional working of the cipher.
+
+The design of HiTag2 is very similar to a recently reverse-engineered \cite{NohlESP-2008-usenix} stream cipher called Crypto-1, which is used in Mifare Classic smartcards by NXP. The Mifare family comprises of contactless smart cards and card readers, with a variety of different features including memory availability on the cards to store data and read/write permissions on the cards. As a result of these features, Mifare system is widely used in applications requiring more than just authentication. Some such applications are ticketing system for public transportation (OV-Chipkaart in Netherlands, Oyster cards in UK etc.) and access control in buildings. Crypto-1 cipher used in Mifare Classic cards and readers was proprietary until recently when Nohl et. al. \cite{NohlESP-2008-usenix} reverse-engineered the algorithm from its silicon implementation.
+
+In addition, the same Mifare Classic cards and readers are shown to be easily clonable \cite{dekoninggans2008pam} by researchers at Radboud University. They have analyzed the communication protocol between Mifare Classic cards and readers, and have been been able to show that the there are several weaknesses in the Crypto-1 cipher. They have been able to recover the necessary keystream by analyzing the protocol messages. The details of this protocol analysis complements the work by Nohl et. al., and using both the ideas, mounting brute-force attacks on the cipher have been made possible. 
+
+Apart from reverse-engineering from software or hardware implementations, a black-box reverse-engineering has also been applied to break secret algorithms. The DST RFID tag (using the DST stream cipher) was broken in 2005 using black-box reverse-engineering \cite{bono2005sac}, i.e. by selecting certain input formats and using both the input and output combinations to deduce the structure and working of the cipher. The most common application of Texas Instrument's DST tag is in vehical immobilizer systems and electronic payment systems \cite{dst-rfid-analysis}. 
+
+Next, we describe the working of the HiTag2 cipher, and after that we carry out a brief security analysis of the cipher.
 
 \subsection{Cipher Description}
-The components of the HiTag2 stream cipher are outlined below. 
+The various components of the HiTag2 stream cipher are outlined below. 
 \begin{itemize}
-\item 48 bit Key
-\item 32 bit Serial ID
-\item 32 bit Initialization Vector (IV)
-\item 48 bit internal state with linear update function (basically, a Linear Feedback Shift Register or LFSR)
+\item 48 bit key
+\item 32 bit serial ID
+\item 32 bit initialization vector (IV)
+\item 48 bit internal state with linear update function (basically, an LFSR)
 \item Non-linear output function based on multiplexor, with fixed data bits and address bits depending on the current internal state
 \end{itemize}
 
-The entire setup of the keystream generator is done in two phases. The first phase is the initialization of the LFSR, while the second is the setup of the LFSR. Once the LFSR is set, the keystream is ready to be generated from the internal state.\\ Important note: unless mentioned otherwise, all the bit numbers mentioned in the following description are based on index values starting from 0, and not 1.\\
+The entire setup of the keystream generator is done in two phases. The first phase is the initialization of the LFSR, which sets the internal state to a non-zero value using the key and the serial ID. The second phase is the setup of the LFSR during which the LFSR is clocked (resulting in the shifting of bits) and the key and IV bits are used in the process. Once the LFSR is set, the keystream is ready to be generated from the internal state right away. We describe these phases in detail here.\\ 
 
-\textit{\textbf{LFSR Initialization.}} The initialization step of the LFSR is straightforward. Instead of initializing the LFSR with zeros, the bits are initialized with the Serial ID and initial part of the secret key. The 32 bits of the Serial ID (from lsb to msb) are stored in the first 32 bits of the LFSR. Then, the first 16 bits of the secret key are stored in the remaining 16 bits of the LFSR. With this the initialization of the LFSR is complete, as also shown in figure \ref{fig:hitag2-1}.\\
+\textit{\textbf{1. LFSR Initialization.}} The initialization step of the LFSR is straightforward. Instead of initializing the LFSR with zeros, the bits are initialized with the serial ID and initial part of the key. The 32 bits of the serial ID (from \emph{lsb} to \emph{msb}) are stored in the first 32 bits of the LFSR (bits from index 0 through index 31). Then, the first 16 bits of the key (again, from \emph{lsb} to \emph{msb}) are stored in the remaining 16 bits of the LFSR (bits from index 32 through index 47). With this the initialization of the LFSR is complete. This is also shown in figure \ref{fig:hitag2-1}.\\
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 	\centering
 		\includegraphics[width=5in]{./figures/hitag2-1.PNG}
 	\caption{LFSR Initialization}	
 	\label{fig:hitag2-1}
 \end{figure}
 
-\textit{\textbf{LFSR Setup.}} During the setup of the LFSR, the remaining bits of the secret key and the IV bits are used. The bits in the LFSR are shifted to the left in every clock cycle, and a new value is stored in the rightmost bit. In every clock cycle, an xor of three bits (one bit from the remaining part of the key (from bit 16 to 47), one bit from the IV (from bit 0 to 31) and the output bit from the non-linear output function) is written at the rightmost bit of the LFSR. After 32 clock cycles, the internal state is prepared for keystream generation. This is shown in figure \ref{fig:hitag2-2}.
+\textit{\textbf{2. LFSR Setup.}} During the setup of the LFSR, the 32 bits of IV are used with the remaining 32 bits of the key. The bits in the LFSR are shifted to the right in every clock cycle, and a new value is stored in the leftmost bit (refer section \ref{sec:lfsr}). In every clock cycle, an xor of three bits: one bit from the remaining part of the key (bits from index 16 through 47), one bit from the IV (from \emph{lsb} to \emph{msb}) and the output bit from the non-linear output function, is stored at the leftmost bit of the LFSR. After 32 clock cycles, the internal state is now prepared for keystream generation. This is shown in figure \ref{fig:hitag2-2}.\\
 
-\begin{figure}[h!]
+\begin{figure}[ht!]
 	\centering
 		\includegraphics[width=5in]{./figures/hitag2-2.PNG}
 	\caption{LFSR Setup Phase}	
 	\label{fig:hitag2-2}
 \end{figure}
 
-The output function is basically a multiplexor with fixed data bits. Three multiplexor functions are used in the output function, and these are called $f_a^4$, $f_b^4$ and $f_c^5$. The different instances of these functions used are described below.
+\textit{\textbf{Output function.}} The output function consists of two levels of sequentially arranged multiplexors. The multiplexors have pre-decided data bits, where as the address bits are chosen either from the LFSR or from other multiplexors. In the first level, 20 bits from the LFSR are used as address bits to five four-bit multiplexors, giving a total of five bits of output (one from each multiplexor). These five bits are then used as address bits to the single five-bit multiplexor at the second level. The output bit of this multiplexor gives the stream cipher's keystream bit. In all, six instances of multiplexors cover the two levels of the output function.
 
-\paragraph{Function $f_a^4$}
-\begin{itemize}
-\item Data Bits: 0x2C79
-\item Address Bits: LFSR bits (1, 2, 4, 5)
-\end{itemize}
+Three different multiplexor functions are used to realize these six instances, and these are called $f_a^4$, $f_b^4$ and $f_c^5$. While $f_a^4$ and $f_b^4$ take in four bits for addressing the output, $f_c^5$ takes in five bits. The multiplexors $f_a^4$ and $f_b^4$ are used in the first level, where as $f_c^5$ is used in the second level. The six different instances of these functions used are described in the table \ref{tab:muxs}. In the table, the input bits for the first level of multiplexors are indicated by indices of LFSR bits.
 
-\paragraph{Function $f_b^4$}
-\begin{itemize}
-\item Data Bits: 0x6671
-\item Address Bits: LFSR bits (7, 11, 13, 14)
-\end{itemize}
+\begin{table}[ht!]
+\begin{center}
+\small{
+\begin{tabular}{|p{2.2cm}|l|p{2cm}|p{2.8cm}|p{1.5cm}|}
+\hline
+\textbf{Multiplexor instance}	& \textbf{Function}		& \textbf{Data bits}	& \textbf{Address bits (input)}		& \textbf{Output bit}\\ \hline
+\multicolumn{5}{|c|}{Level 1 Multiplexors}\\ \hline
+MUX 1 			&	$f_a^4$			& 0x2C79			& 1, 2, 4, 5							& $o_1$\\
+MUX 2 			&	$f_b^4$			& 0x6671			& 7, 11, 13, 14						& $o_2$\\
+MUX 3 			&	$f_b^4$			& 0x6671			& 16, 20, 22, 25					& $o_3$\\
+MUX 4 			&	$f_b^4$			& 0x6671			& 27, 28, 30, 32					& $o_4$\\
+MUX 5 			&	$f_a^4$			& 0x2C79			& 33, 42, 43, 45					& $o_5$\\ \hline
+\multicolumn{5}{|c|}{Level 2 Multiplexor}\\ \hline
+MUX 6 			&	$f_c^5$			& 0x7907287B	& $o_1$, $o_2$, $o_3$, $o_4$, $o_5$		& $k_i$\\ \hline
+\end{tabular}}
+\end{center}
+\caption{Multiplexors making the output function}
+\label{tab:muxs}
+\end{table}
 
-\paragraph{Function $f_b^4$}
-\begin{itemize}
-\item Data Bits: 0x6671
-\item Address Bits: LFSR bits (16, 20, 22, 25)
-\end{itemize}
+Hence, as mentioned previously, the output bit from the function $f_c^5$ is \emph{xor}'ed with the key and IV bits for 32 clock cycles and written to the rightmost bit of the LFSR.
 
-\paragraph{Function $f_b^4$}
-\begin{itemize}
-\item Data Bits: 0x6671
-\item Address Bits: LFSR bits (27, 28, 30, 32)
-\end{itemize}
+The source code for the initialization and setup of the LFSR is shown below in the listing. Here, the function \emph{f20()} stands for the output function, which we have just described.\\
 
-\paragraph{Function $f_a^4$}
-\begin{itemize}
-\item Data Bits: 0x2C79
-\item Address Bits: LFSR bits (33, 42, 43, 45)
-\end{itemize}
+\lstinputlisting[frame=trBL, caption={HiTag2 initialization code snippet}]{./code-snippets/hitag2_init.c}
 
-\paragraph{Function $f_c^5$}
-\begin{itemize}
-\item Data Bits: 0x7907287B
-\item Address Bits: Output bits from 5 multiplexor functions $f_a^4$, $f_b^4$, $f_b^4$, $f_b^4$, $f_a^4$ described above. 
-\end{itemize}
+\textit{\textbf{3. Keystream Generation.}} The output from the function $f_c^5$ constitutes the keystream. In addition, the LFSR state is changed in every clock cycle through the update function. The internal state is updated linearly, in the following fashion: an xor of the taps of the LFSR (which are bits 0, 2, 3, 6, 7, 8, 16, 22, 23, 26, 30, 41, 42, 43, 46 and 47) is written to the leftmost bit of the LFSR. Once the internal state is changed, the output bit gets recomputed, generating the next bit of the keystream. This is shown in figure \ref{fig:hitag2-3}. Following is the code snippet for the function implementing one round of the HiTag2 (\emph{hitag2\_round}), by first updating the state and then calling the output function (\emph{f20}).\\
 
-Hence, in the setup phase, this output bit from the function $f_c^5$ is xor'ed with the key and IV bits for 32 cycles and written to the rightmost bit of the LFSR, as mentioned previously. \\
+\lstinputlisting[frame=trBL, caption={HiTag2 keystream generation code snippet}]{./code-snippets/hitag2_round.c}
 
-\textit{\textbf{Keystream Generation.}} The output from the function $f_c^5$ constitutes the keystream. During the keystream generation, the internal state is updated linearly, in the following fashion: an xor of the taps of the LFSR (which are bits 0, 2, 3, 6, 7, 8, 16, 22, 23, 26, 30, 41, 42, 43, 46 and 47) is written to the rightmost bit of the LFSR in every clock cycle. This is shown in figure \ref{fig:hitag2-3}.
-
-\begin{figure}[h!]
+\begin{figure}[ht!]
 	\centering
 		\includegraphics[width=5in]{./figures/hitag2-3.PNG}
 	\caption{Keystream Generation}	
