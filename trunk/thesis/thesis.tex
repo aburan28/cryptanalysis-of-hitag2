@@ -9,6 +9,7 @@
 \usepackage{graphicx}
 \usepackage{placeins}
 \usepackage{url}
+\usepackage{color}
 
 \hypersetup{
 %    bookmarks=true,         % show bookmarks bar?
@@ -26,9 +27,9 @@
 
 \lstset{ 
 language=C,                			% choose the language of the code
-basicstyle=\small,       				% the size of the fonts that are used for the code
+basicstyle=\footnotesize,       % the size of the fonts that are used for the code
 showstringspaces=false,         % underline spaces within strings
-numbers=left,                   % where to put the line-numbers
+numbers=none,                   % where to put the line-numbers
 numberstyle=\footnotesize,      % the size of the fonts that are used for the line-numbers
 stepnumber=1,                   % the step between two . If it's 1 each line will be numbered
 numbersep=5pt,                  % how far the line-numbers are from the code
@@ -37,6 +38,15 @@ showspaces=false,               % show spaces within strings adding particular u
 showtabs=false,                 % show tabs within strings adding particular underscores
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
+%% Define a new 'leo' style for the package that will use a smaller font.
+\makeatletter
+\def
+\url@leostyle{%
+  \@ifundefined{selectfont}{\def\UrlFont{\sf}}{\def\UrlFont{\small\ttfamily}}}
+
+\makeatother
+%% Now actually use the newly defined style.
+\urlstyle{leostyle}
 
 \begin{document}
 
