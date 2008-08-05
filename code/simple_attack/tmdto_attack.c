@@ -36,6 +36,11 @@ u32 T;				/* time for attack phase */
 
 u32 prefix_bits;		/* number of bits considered from the prefix */
 
+FILE *fp = NULL;
+u32 file_m = 0;
+u32 file_r = 0;
+u32 file_t = 0;
+
 /*****************************************************************************/
 struct key
 {
@@ -70,8 +75,8 @@ DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 void initialize()
 {
 	/* independent parameters */
-	m = pow(2,20);
-	t = pow(2,14);
+	m = pow(2,18);
+	t = pow(2,15);
 	D = pow(2,14);
 	N = 48;
 	prefix_bits = 48;
@@ -81,6 +86,13 @@ void initialize()
 	M = (m*t)/D;
 	T = t*t;
 	P = (m*t*t)/D;
+	
+	fp = fopen("tmdto_table.txt", "r");
+	if(fp == NULL)
+	{
+		printf("\nError: Could not open file for reading ...");
+		exit(1);
+	}
 }
 
 int main()
@@ -101,6 +113,9 @@ int main()
 	u64 found_initial_state = 0;
 	u64 found_start_state = 0;
 	u64 found_key = 0;
+	u32 table_number = 0;
+	
+	
 
 	struct value *found = NULL;
 	struct key * k = NULL;
@@ -109,16 +124,22 @@ int main()
 
 	/* initialze the tradeoff parameters */
 	initialize();
+	
+	/* verify the file is compatible with this attack parameters */
+	fscanf(fp, "%d %d %d\n", &file_m, &file_r, &file_t);
+	if((file_m != m)||(file_r != r)||(file_t != t))
+	{
+		printf("\nError: Incompatible parameters from hashtable file ...\n");
+		exit(1);
+	}
 
 	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
 
 	printf("\nCurrent Time: %s", ctime(&time1));
-	fflush(stdout);
-
-	/**** Prepare the hashtables ****/
+	
+	/* Prepare the hashtables */
 	printf("\n\nPreparing Hashtable ...");
-	fflush(stdout);
 	time(&time1);
 
 	/* generate 'r' hashtables to store endpoints of each table */
@@ -129,38 +150,33 @@ int main()
 		/* Check the size of the hashtable matches the memory_complexity */
 		if (m != hashtable_count(hashtable_array[current_r]))
 		{
-			printf("\nError: Size of Hashtable not correct ...");
-			fflush(stdout);
-        		return 1;
+			printf("\nError: Size of Hashtable not correct ...\n");
+        		exit(1);
     		}
 	}
 
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing hashtable: %d ", sec_diff);
-	fflush(stdout);
 
 	/* Prepare a long keystream */
 	printf("\n\nPreparing Keystream ...");
-	fflush(stdout);
+
 	time(&time1);
 	prepare_keystream(c_keystream);
 	keystream = *c_keystream;
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
-	fflush(stdout);
 
 	/* Starting Attack */
 	printf("\n\nAttacking ...");
-	fflush(stdout);
 	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
 	if (NULL == k)
 	{
-		printf("\nError: Ran out of memory allocating a key ...");
-		fflush(stdout);
-       	return 1;
+		printf("\nError: Ran out of memory allocating a key ...\n");
+       		return 1;
    	}
 
 	/* Start searching prefixes in the hashtable */
@@ -175,20 +191,22 @@ int main()
 		/* run through all the 'r' tables */
 		for(current_r = 0; current_r < r; current_r++)
 		{
-			//printf("\nTable %d being checked ...", current_r);
+			table_number = current_r + 1;
+			
 			h = hashtable_array[current_r];
 
 			/* perform the permutation function on the prefix first (in this case, no permutation) */
-			current_state = prefix;
+			current_state = prefix ^ ((u64) table_number);
 
 			for(current_t = 0; current_t < t; current_t++)
 			{
 				k->key = current_state;
+				
 				/* Call the hashtable method with key */
 				found = search_some(h,k);
 
 				/* compute the next state in the chain */
-				mapping_function(&current_state, current_r);
+				mapping_function(&current_state, table_number);
 
 				if(found != NULL)
 				{
@@ -197,7 +215,7 @@ int main()
 
 					for(j = 0; j < t - (current_t + 1); j++)
 					{
-						mapping_function(&temp_state, current_r);
+						mapping_function(&temp_state, table_number);
 					}
 
 					/* find prefix of the current state */
@@ -229,7 +247,6 @@ int main()
 						matched = 1;
 						break;
 					}
-
 				}
 			}
 		}
@@ -266,72 +283,45 @@ struct hashtable * single_hash_table_setup(u32 table_number)
 	u64 start_state = 0;
 	u64 end_state = 0;
 
-	u64 i = 0;
-	u64 j = 0;
-
-	printf("\nCreating the Hashtable ...");
-	fflush(stdout);
+	u64 current_m = 0;
 
 	// initialize the hash table
 	h = create_hashtable(m, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 
-
-	/* It is important how we setup the hash table for this attack
-	 * One way could be to store states which are at a fixed distance from each other
-	 * Other way could be to store a consecutive set of states along with their tags */
-
-	for(i = 0; i < m; i++)
+	for(current_m = 0; current_m < m; current_m++)
 	{
-		// Initialize the state, to some random value.
-		start_state = get_random(N);
+		/* retrieve the start_state and end_state from file */
+		fscanf(fp, "%llu %llu\n", &start_state, &end_state);
 
-		// Save the starting state
-		end_state = start_state;
-
-		for(j = 0; j < t; j++)
-		{
-			mapping_function(&end_state, table_number);
-		}
-
-		//save prefix and state in the hash table
+		/* save start_state and end_state in the hash table */
 		k = (struct key *)malloc(sizeof(struct key));
 		if (NULL == k)
 		{
-			printf("\nError: Could not allocate memory for Prefix ...");
-			fflush(stdout);
+			printf("\nError: Could not allocate memory for end_state ...");
 			exit(1);
 		}
 
 		k->key = end_state;
+		
 		v = (struct value *)malloc(sizeof(struct value));
+		if (NULL == v)
+		{
+			printf("\nError: Could not allocate memory for start_state ...");
+			exit(1);
+		}
+
 		v->value = start_state;
+		
 		if (!insert_some(h,k,v))
 		{
-			printf("\nError: Could not allocate memory for State ...");
-			fflush(stdout);
-			exit(-1); /*oom*/
+			printf("\nError: Could not insert element in hash table ...");
+			exit(1);
 		}
 	}
 
-	printf("\nCreation of Hashtable %d complete ...", table_number);
-	fflush(stdout);
-
 	return h;
 }
-
-/*
-u64 get_random()
-{
-	u64 random_number = 0;
-
-	random_number = rand() % 4294967295;
-	if(random_number == 0)
-		random_number = get_random();
-
-	return random_number;
-}
-*/
 
 void prepare_keystream(u64 * c_keystream)
 {
@@ -373,5 +363,5 @@ void mapping_function(u64 * state, u32 i)
 	prefix = hitag2_prefix(state, prefix_bits);
 
 	/* do the permutation function (prefix to state) */
-	*state = prefix;
+	*state = prefix ^ ((u64) i);
 }

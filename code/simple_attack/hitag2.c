@@ -25,22 +25,9 @@ static const u32 ht2_f4a = 0x2C79;		/* 0010 1100 0111 1001 */
 static const u32 ht2_f4b = 0x6671;		/* 0110 0110 0111 0001 */
 static const u32 ht2_f5c = 0x7907287B;		/* 0111 1001 0000 0111 0010 1000 0111 1011 */
 
-u64 hitag2_init(const u64 key, const u32 serial, const u32 IV)
-{
-	u32 i = 0;
-	u64 x = ((key & 0xFFFF) << 32) + serial;
-
-	for (i = 0; i < 32; i++)
-	{
-		x >>= 1;
-		x += (u64) (hitag2_output (x) ^ (((IV >> i) ^ (key >> (i+16))) & 1)) << 47;
-	}
-	return x;
-}
-
 static u64 hitag2_output(const u64 x)
 {
-	u64	i5;
+	u64 i5;
 
 	i5 = ((ht2_f4a >> i4 (x, 1, 2, 4, 5)) & 1)* 1
 	   + ((ht2_f4b >> i4 (x, 7,11,13,14)) & 1)* 2
@@ -49,6 +36,19 @@ static u64 hitag2_output(const u64 x)
 	   + ((ht2_f4a >> i4 (x,33,42,43,45)) & 1)*16;
 
 	return (ht2_f5c >> i5) & 1;
+}
+
+u64 hitag2_init(const u64 key, const u32 serial, const u32 IV)
+{
+	u32 i = 0;
+	u64 x = ((key & 0xFFFF) << 32) + serial;
+
+	for (i = 0; i < 32; i++)
+	{
+		x >>= 1;
+		x += (u64) (hitag2_output(x) ^ (((IV >> i) ^ (key >> (i+16))) & 1)) << 47;
+	}
+	return x;
 }
 
 static u64 hitag2_round(u64 *state)

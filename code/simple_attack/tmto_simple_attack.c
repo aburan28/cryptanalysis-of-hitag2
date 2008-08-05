@@ -23,7 +23,9 @@ void prepare_keystream(u64 *);
 struct hashtable * hash_table_setup(void);
 
 void initialize_matrix();
+
 void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
+
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 
 u32 N = 48;				/* number of bits in internal state */
@@ -32,8 +34,8 @@ u32 T;					/* time for attack phase */
 u32 P;					/* time for precomputation phase */
 u32 D;					/* length of data available (bits)*/
 
-u32 prefix_bits = 56;			/* number of prefix bits */
-u32 random_memory;			/* '1' if the memory setup is random, else '0' */
+u32 prefix_bits;			/* number of prefix bits */
+u32 memory_setup;			/* '1' if the memory setup is random, else '0' */
 
 u8 transition_matrix[48][48];		/* state transition matrix A */
 u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
@@ -63,20 +65,21 @@ equalkeys(void *k1, void *k2)
     return (0 == memcmp(k1,k2,sizeof(struct key)));
 }
 
-
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
+/*
 void initialize()
 {
 	M = pow(2,24);
-	T = pow(2,26);
+	T = pow(2,27);
 	D = T;
 	P = M;
 
-	random_memory = 1;
+	memory_setup = 1;
 }
+*/
 
 u64 get_random(u32 bits)
 {
@@ -95,7 +98,7 @@ u64 get_random(u32 bits)
 	return random_number;
 }
 
-int main()
+int tmto_keystream_attack(u32 param_M, u32 param_T, u32 param_prefix_bits, u32 param_random_memory)
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -113,11 +116,20 @@ int main()
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
 
-	initialize();
+	/* initialize important variables */
+	M = param_M;
+	T = param_T;
+	D = T;
+	P = M;
 
+	memory_setup = param_memory_setup;
+	prefix_bits = param_prefix_bits;
+	
+	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
 
-	if(random_memory == 0)
+	/* if non-random memory is to be setup - initialize the matrices */
+	if(memory_setup == 0)
 	{
 		/* Initializing the matrices */
 		printf("\n\nInitializing matrices ...");
@@ -132,7 +144,7 @@ int main()
 		fflush(stdout);
 	}
 
-	/* Prepare the hashtable */
+	/* prepare the hashtable */
 	printf("\n\nPreparing Hashtable ...");
 	fflush(stdout);
 	time(&time1);
@@ -259,7 +271,7 @@ struct hashtable * hash_table_setup()
 	// Initialize the state, to some random value.
 	state = 0x69574AD004ACULL;
 
-	if(random_memory == 0)
+	if(memory_setup == 0)
 	{
 
 		for(i = 0; i < P; i++)
@@ -289,7 +301,7 @@ struct hashtable * hash_table_setup()
 				exit(-1); /*oom*/
 			}
 
-			//State transition function
+			/* State transition function */
 			state = pre_state;
 
 			compute_new_state(&state);
@@ -319,7 +331,7 @@ struct hashtable * hash_table_setup()
 			v->value = pre_state;
 			if (!insert_some(h,k,v))
 			{
-				printf("\nError: Could not allocate memory for State");
+				printf("\nError: Could not insert values into hashtable ...");
 				fflush(stdout);
 				exit(-1); /*oom*/
 			}
