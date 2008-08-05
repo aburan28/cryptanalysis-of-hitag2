@@ -13,9 +13,10 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
-#include "hitag2.h"		/* for common definitions */
-#include "hashtable.h"		/* for hashtable */
 #include <time.h>
+
+#include "hashtable.h"		/* for hashtable */
+#include "common.h"		/* for common definitions */
 
 void prepare_keystream(u64 *);
 void mapping_function(u64 *, u32);
