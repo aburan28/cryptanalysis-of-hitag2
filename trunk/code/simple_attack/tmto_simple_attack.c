@@ -32,11 +32,11 @@ u32 T;					/* time for attack phase */
 u32 P;					/* time for precomputation phase */
 u32 D;					/* length of data available (bits)*/
 
-u32 prefix_bits = 48;			/* number of prefix bits */
+u32 prefix_bits = 56;			/* number of prefix bits */
 u32 random_memory;			/* '1' if the memory setup is random, else '0' */
 
 u8 transition_matrix[48][48];		/* state transition matrix A */
-u8 transition_matrix_2n[48][48];		/* matrix for computing state directly after 2^n transitions */
+u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
 
 /*****************************************************************************/
 struct key
@@ -70,12 +70,12 @@ DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
 void initialize()
 {
-	M = pow(2,22);
+	M = pow(2,24);
 	T = pow(2,26);
 	D = T;
 	P = M;
 
-	random_memory = 0;
+	random_memory = 1;
 }
 
 u64 get_random(u32 bits)
@@ -87,7 +87,7 @@ u64 get_random(u32 bits)
 	for(i = 0; i < bits - 16; i++)
 	{
 		random_bit = rand() % 65535;
-		random_number = (random_number << 1) ^ random_bit;
+		random_number = (random_number << 1) ^ random_bit ^ (random_bit >> 1);
 	}
 
 	//printf("\nRandom number: %llx", random_number);
@@ -178,7 +178,7 @@ int main()
 	/* Start searching prefixes in the hashtable */
 	for(i = 0, j = 0; i < T; i++)
 	{
-		prefix = keystream >> 16;
+		prefix = keystream >> (64 - prefix_bits);
 
 		//printf("\nCurrent Prefix: %llX", prefix);
 
@@ -337,7 +337,7 @@ void prepare_keystream(u64 * c_keystream)
 	u64 state = 0;
 
 	// Initial State which needs to be determined..
-	state = hitag2_init(rev64(0x524B494D4E4FULL), rev32(0x69574349), rev32(0x72456E65));
+	state = hitag2_init(rev64(0x524A59FC37EFULL), rev32(0x69574349), rev32(0x72456E65));
 	printf("\nInitial State: %llx", state);
 	
 	for(;i < D/64 + 1; i++)
