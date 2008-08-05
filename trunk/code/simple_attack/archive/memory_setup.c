@@ -11,10 +11,6 @@
 #include <stdio.h>
 #include "../hitag2.c"
 
-#define u8				unsigned char
-#define u32				unsigned long
-#define u64				unsigned long long
-
 int main()
 {
 	memory_setup();
@@ -33,12 +29,16 @@ int memory_setup()
 	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
 	printf("Current State: %llu\n", state);
 
+	//fp = fopen("memory.txt","r");
+
+	if(fp == NULL) printf("\nFP is null..");
+	
 	fp = fopen("memory.txt","w");
 
 	for(i = 0; i < iterations; i++)
 	{
 		//call hitag function - get 48 bits prefix (in u64 format)
-		prefix = hitag2_prefix(&state);
+		prefix = hitag2_prefix(&state, 48);
 
 		//save prefix and state in the file
 		printf("%llu ", prefix);
