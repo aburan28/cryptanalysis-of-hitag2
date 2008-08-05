@@ -10,10 +10,10 @@ static u64 hitag2_round(u64 *state)
 	<< 47);
 
    *state = x;
-   return f20(x);
+   return hitag2_output(x);
 }
 
-static u64 f20(const u64 x)
+static u64 hitag2_output(const u64 x)
 {
    u64	i5;
 
