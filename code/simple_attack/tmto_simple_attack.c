@@ -14,9 +14,10 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
-#include "hitag2.h"		/* for common definitions */
-#include "hashtable.h"		/* for hashtable */
 #include <time.h>
+
+#include "hashtable.h"		/* for hashtable */
+#include "common.h"		/* for common definitions */
 
 void prepare_keystream(u64 *);
 
@@ -98,7 +99,7 @@ u64 get_random(u32 bits)
 	return random_number;
 }
 
-int tmto_keystream_attack(u32 param_M, u32 param_T, u32 param_prefix_bits, u32 param_random_memory)
+int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 _memory_setup)
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -117,13 +118,13 @@ int tmto_keystream_attack(u32 param_M, u32 param_T, u32 param_prefix_bits, u32 p
 	struct hashtable *h = NULL;
 
 	/* initialize important variables */
-	M = param_M;
-	T = param_T;
-	D = T;
-	P = M;
+	M = _M;
+	T = _T;
+	D = _D;
+	P = _P;
 
-	memory_setup = param_memory_setup;
-	prefix_bits = param_prefix_bits;
+	memory_setup = _memory_setup;
+	prefix_bits = _prefix_bits;
 	
 	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));

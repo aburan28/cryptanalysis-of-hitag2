@@ -9,7 +9,7 @@ tmto_adv_attack: hashtable.o hitag2.o tmto_adv_attack.o
 tmto_simple_attack: hashtable.o hitag2.o tmto_simple_attack.o  
 	gcc -g -Wall -O -lm -o tmto_simple_attack hashtable.o hitag2.o tmto_simple_attack.o 
 
-hitag2.o: hitag2.c
+hitag2.o: hitag2.c common.h
 	gcc -g -Wall -O -c hitag2.c -o hitag2.o
 
 tmdto_attack.o:	tmdto_attack.c

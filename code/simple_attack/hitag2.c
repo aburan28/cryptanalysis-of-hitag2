@@ -17,7 +17,7 @@
 // The rest is encrypted by XORing it with the subsequent keystream.
 
 #include<stdio.h>
-#include "hitag2.h"
+#include "common.h"
 
 /* Single bit Hitag2 functions */
 
