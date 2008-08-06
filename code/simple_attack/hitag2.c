@@ -18,12 +18,7 @@
 
 #include<stdio.h>
 #include "common.h"
-
-/* Single bit Hitag2 functions */
-
-static const u32 ht2_f4a = 0x2C79;		/* 0010 1100 0111 1001 */
-static const u32 ht2_f4b = 0x6671;		/* 0110 0110 0111 0001 */
-static const u32 ht2_f5c = 0x7907287B;		/* 0111 1001 0000 0111 0010 1000 0111 1011 */
+#include "hitag2.h"
 
 static u64 hitag2_output(const u64 x)
 {

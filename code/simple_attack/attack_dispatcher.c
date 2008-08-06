@@ -4,23 +4,12 @@
 #include <time.h>
 
 #include "common.h"		/* for common definitions */
-
-u32 attack_type = 0;
-u32 M = 0;
-u32 T = 0;
-u32 D = 0;
-u32 P = 0;
-u32 m = 0;
-u32 t = 0;
-u32 r = 0;
-
-u32 prefix_bits = 0;
-u32 memory_setup = 0;
+#include "attack_dispatcher.h"	
+#include "attack_helper.h"
 
 int main(int argc, char *argv[])
 {
 	attack_type = atoi(argv[1]);
-	printf("herherihewoiudf");
 	
 	if(attack_type == TMTO_KEYSTREAM_ATTACK)
 	{
@@ -29,7 +18,7 @@ int main(int argc, char *argv[])
 		P = M;
 		D = T;
 		prefix_bits = 48;
-		memory_setup = NON_RANDOM_MEMORY;
+		memory_setup = RANDOM_MEMORY;
 		tmto_keystream_attack(M, T, P, D, prefix_bits, memory_setup);
 	}
 	
@@ -49,5 +38,4 @@ int main(int argc, char *argv[])
 		prefix_bits = 48;
 		tmdto_hellman_attack(M, T, P, D, m, t, r, prefix_bits);
 	}
-
 }

@@ -17,6 +17,8 @@
 
 #include "hashtable.h"		/* for hashtable */
 #include "common.h"		/* for common definitions */
+#include "hitag2.h"		/* for hitag2 function prototypes */
+#include "attack_helper.h"	/* for helper function prototypes */
 
 FILE *fp = NULL;
 u32 file_m = 0;
@@ -88,6 +90,7 @@ int tmdto_hellman_attack(u32 _M,
 	r = _r;
 
 	prefix_bits = _prefix_bits;
+	N = 48;
 	
 	/* open the file pointer */
 	fp = fopen("tmdto_table.txt", "r");
@@ -295,30 +298,3 @@ static struct hashtable * single_hash_table_setup(u32 table_number)
 	return h;
 }
 
-void prepare_keystream(u64 * c_keystream)
-{
-	u64 state = 0;
-	u64 i = 0;
-
-	/* Randomly select a key, a IV and a Serial ID; to determine the initial state */
-	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
-
-	for(;i < D/64 + 1; i++)
-	{
-		*c_keystream = (u64) hitag2_prefix(&state, 64);
-		c_keystream++;
-	}
-	printf("\nKeystream made available ...");
-	fflush(stdout);
-}
-
-void mapping_function(u64 * state, u32 i)
-{
-	u64 prefix = 0;
-
-	/* do the function f(state) - gives prefix of that state */
-	prefix = hitag2_prefix(state, prefix_bits);
-
-	/* do the permutation function (prefix to state) */
-	*state = prefix ^ ((u64) i);
-}
