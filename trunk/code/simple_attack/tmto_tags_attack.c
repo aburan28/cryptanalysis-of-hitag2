@@ -18,6 +18,8 @@
 
 #include "hashtable.h"		/* for hashtable */
 #include "common.h"		/* for common definitions */
+#include "hitag2.h"		/* for hitag2 function prototypes */
+#include "attack_helper.h"	/* for helper function prototypes */
 
 static struct hashtable * hash_table_setup();
 
@@ -64,6 +66,7 @@ int tmto_tags_attack()
 
 	prefix_bits = 32;
 	
+	N = 48;
 	time(&time1);
 	printf("\nCurrent Time: %s", ctime(&time1));
 	
@@ -230,33 +233,3 @@ u64 get_random()
 */
 
 
-void prepare_tags(u64 * c_tags)
-{
-	u64 state = 0;
-	u64 i = 0;
-	u64 iv = 0;
-
-	time_t seconds;
-	
-	time(&seconds);
-	
-	srand(seconds);
-	
-	for(;i < time_complexity; i++)
-	{
-		
-		iv = get_random(32);
-		//printf("\n%llx ", iv);	
-		
-		state = hitag2_init(0x524BF8ED4E4FULL, 0x69574349, iv);
-
-		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
-		//printf("\nNew Tag: %llx ", *c_tags);
-		c_tags++;
-		*c_tags = (u64) iv; 
-		//printf(" New IV: %llx", *c_tags);
-		c_tags++;
-	}
-	
-	printf("\nTags made available ...");
-}
