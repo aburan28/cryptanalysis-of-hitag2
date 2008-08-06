@@ -12,45 +12,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
 #include <time.h>
 
 #include "hashtable.h"		/* for hashtable */
 #include "common.h"		/* for common definitions */
 
-void prepare_keystream(u64 *);
+static struct hashtable * hash_table_setup();
 
-struct hashtable * hash_table_setup(void);
-
-void initialize_matrix();
-
-void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)^2) .. n times .. )^2 */
-
-void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
-
-u32 N = 48;				/* number of bits in internal state */
-u32 M;					/* memory for precomputation phase */
-u32 T;					/* time for attack phase */
-u32 P;					/* time for precomputation phase */
-u32 D;					/* length of data available (bits)*/
-
-u32 prefix_bits;			/* number of prefix bits */
-u32 memory_setup;			/* '1' if the memory setup is random, else '0' */
-
-u8 transition_matrix[48][48];		/* state transition matrix A */
-u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
-
-/*****************************************************************************/
-struct key
+static int
+equalkeys(void *k1, void *k2)
 {
-    u64 key;
-};
-
-struct value
-{
-    u64 value;
-};
+    return (0 == memcmp(k1,k2,sizeof(struct key)));
+}
 
 static unsigned int
 hashfromkey(void *ky)
@@ -60,41 +34,20 @@ hashfromkey(void *ky)
 	return (k->key % M);
 }
 
-static int
-equalkeys(void *k1, void *k2)
-{
-    return (0 == memcmp(k1,k2,sizeof(struct key)));
-}
-
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
-DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
-
-/*
-void initialize()
-{
-	M = pow(2,24);
-	T = pow(2,27);
-	D = T;
-	P = M;
-
-	memory_setup = 1;
-}
-*/
 
 u64 get_random(u32 bits)
 {
 	u32 i = 0;
 	u64 random_number = 0;
-	u64 random_bit = 0;
+	u64 rand_out = 0;
 
 	for(i = 0; i < bits - 16; i++)
 	{
-		random_bit = rand() % 65535;
-		random_number = (random_number << 1) ^ random_bit ^ (random_bit >> 1);
+		rand_out = rand() % 65535;
+		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
 	}
-
-	//printf("\nRandom number: %llx", random_number);
 
 	return random_number;
 }
@@ -117,7 +70,7 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
 
-	/* initialize important variables */
+	/* initialize tradeoff variables */
 	M = _M;
 	T = _T;
 	D = _D;
@@ -253,7 +206,7 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
  * Hash Table functions
 ****************************************************************************************************/
 
-struct hashtable * hash_table_setup()
+static struct hashtable * hash_table_setup()
 {
 	struct key *k;
 	struct value *v;
@@ -342,24 +295,6 @@ struct hashtable * hash_table_setup()
 	printf("\nPreparation of Hashtable complete ...");
 	fflush(stdout);
 	return h;
-}
-
-void prepare_keystream(u64 * c_keystream)
-{
-	u32 i = 0;
-	u64 state = 0;
-
-	// Initial State which needs to be determined..
-	state = hitag2_init(rev64(0x524A59FC37EFULL), rev32(0x69574349), rev32(0x72456E65));
-	printf("\nInitial State: %llx", state);
-	
-	for(;i < D/64 + 1; i++)
-	{
-		*c_keystream = (u64) hitag2_prefix(&state, 64);
-		c_keystream++;
-	}
-	printf("\nKeystream made available ...");
-	fflush(stdout);
 }
 
 void initialize_matrix()
