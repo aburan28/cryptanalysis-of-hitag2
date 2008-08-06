@@ -1,5 +1,3 @@
-#all: tmto_simple_attack tmto_adv_attack tmdto_attack
-
 attack_dispatcher: hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o attack_dispatcher.o attack_helper.o
 	gcc -g -Wall -O -lm -o attack_dispatcher hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o attack_dispatcher.o attack_helper.o
 
