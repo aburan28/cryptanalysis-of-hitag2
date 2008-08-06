@@ -18,40 +18,18 @@
 #include "hashtable.h"		/* for hashtable */
 #include "common.h"		/* for common definitions */
 
-void prepare_keystream(u64 *);
-void mapping_function(u64 *, u32);
-u64 get_random(u32);
-struct hashtable * single_hash_table_setup(u32);
-
-/* following parameters need to be set independently */
-u32 N;				/* state size */
-u32 m;				/* number of the rows in each table */
-u32 t;				/* length of each row in a table*/
-u32 D;				/* length of data available */
-
-/* following parameters are calculated based on the above parameters */
-u32 r;				/* number of tables */
-u32 M;				/* memory for precomputation phase */
-u32 P;				/* time for precomputation phase */
-u32 T;				/* time for attack phase */
-
-u32 prefix_bits;		/* number of bits considered from the prefix */
-
 FILE *fp = NULL;
 u32 file_m = 0;
 u32 file_r = 0;
 u32 file_t = 0;
 
-/*****************************************************************************/
-struct key
-{
-    u64 key;
-};
+static struct hashtable * single_hash_table_setup(u32);
 
-struct value
+static int
+equalkeys(void *k1, void *k2)
 {
-    u64 value;
-};
+    return (0 == memcmp(k1,k2,sizeof(struct key)));
+}
 
 
 static unsigned int
@@ -62,41 +40,17 @@ hashfromkey(void *ky)
 	return (k->key % m);
 }
 
-static int
-equalkeys(void *k1, void *k2)
-{
-    return (0 == memcmp(k1,k2,sizeof(struct key)));
-}
-
-
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
-DEFINE_HASHTABLE_REMOVE(remove_some, struct key, struct value);
 
-void initialize()
-{
-	/* independent parameters */
-	m = pow(2,18);
-	t = pow(2,15);
-	D = pow(2,14);
-	N = 48;
-	prefix_bits = 48;
-
-	/* dependent parameters */
-	r = t/D;
-	M = (m*t)/D;
-	T = t*t;
-	P = (m*t*t)/D;
-	
-	fp = fopen("tmdto_table.txt", "r");
-	if(fp == NULL)
-	{
-		printf("\nError: Could not open file for reading ...");
-		exit(1);
-	}
-}
-
-int main()
+int tmdto_hellman_attack(u32 _M, 
+			 u32 _T, 
+			 u32 _P, 
+			 u32 _D, 
+			 u32 _m, 
+			 u32 _t, 
+			 u32 _r, 
+			 u32 _prefix_bits)
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -123,9 +77,26 @@ int main()
 	struct hashtable *h = NULL;
 	struct hashtable * hashtable_array[r];
 
-	/* initialze the tradeoff parameters */
-	initialize();
+	/* initialize tradeoff variables */
+	M = _M;
+	T = _T;
+	D = _D;
+	P = _P;
+
+	m = _m;
+	t = _t;
+	r = _r;
+
+	prefix_bits = _prefix_bits;
 	
+	/* open the file pointer */
+	fp = fopen("tmdto_table.txt", "r");
+	if(fp == NULL)
+	{
+		printf("\nError: Could not open file for reading ...");
+		exit(1);
+	}
+
 	/* verify the file is compatible with this attack parameters */
 	fscanf(fp, "%d %d %d\n", &file_m, &file_r, &file_t);
 	if((file_m != m)||(file_r != r)||(file_t != t))
@@ -275,7 +246,7 @@ int main()
 /****************************************************************************************************
  * Hash Table setup function
 ****************************************************************************************************/
-struct hashtable * single_hash_table_setup(u32 table_number)
+static struct hashtable * single_hash_table_setup(u32 table_number)
 {
 	struct key *k;
 	struct value *v;
@@ -339,21 +310,6 @@ void prepare_keystream(u64 * c_keystream)
 	}
 	printf("\nKeystream made available ...");
 	fflush(stdout);
-}
-
-u64 get_random(u32 bits)
-{
-	u32 i = 0;
-	u64 random_number = 0;
-	u64 random_bit = 0;
-
-	for(i = 0; i < bits; i++)
-	{
-		random_bit = rand() % 65535;
-		random_number = (random_number << 1) ^ random_bit;
-	}
-
-	return random_number;
 }
 
 void mapping_function(u64 * state, u32 i)
