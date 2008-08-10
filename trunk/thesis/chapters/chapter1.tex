@@ -14,9 +14,9 @@ In the late 19th century, Kerckhoff published a very important principle which h
 
 % symmetric and asymmetric key cryptosystems
 
-Two kinds of cryptosystems exist, depending on the manner in which keys are used: symmetric-key and asymmetric-key. In symmetric-key cryptography, a single key is shared between two communicating parties, such that if one party encrypts a message using the shared key, the other party is able to decrypt the ciphertext using the same key. In such systems, the secrecy of the shared key becomes extremely important. Also, if the number of parties grows, the number of keys required in the system becomes large, since each communicating pair would hold a different key. Also, sharing keys between parties requires secure protocols. 
+Two kinds of cryptosystems exist, depending on the manner in which keys are used: symmetric-key and asymmetric-key. In symmetric-key cryptography, a single key is shared between two communicating parties, such that if one party encrypts a message using the shared key, the other party is able to decrypt the ciphertext using the same key. In such systems, the secrecy of the shared key becomes extremely important. Also, if the number of parties grows, the number of keys required in the system becomes large, since each communicating pair would hold a different key. In addition, sharing keys between parties requires secure protocols. 
 
-Symmetric-key cryptography was the only known kind of encryption before 1976, when Diffie and Hellman introduced the concept of asymmetric-key cryptography \cite{diffie1976ndc} for the first time. In asymmetric-key cryptography, the encryption and corresponding decryption are performed with different keys. Every party holds two keys: one public and one private. If \emph{Alice} wants to send a message to \emph{Bob}, she will encrypt the message with the public key of \emph{Bob}. At the other end, \emph{Bob} decrypts this ciphertext using his private key. The public-private key pair are related, but it is unfeasible to determine \emph{Bob}'s private key from his public key. In such a system, every party would hold two keys, and thus the total number of keys is reduced considerably when compared to symmetric-key systems. Also, there is no overhead in sharing the keys, as the public keys are distributed through public channels.
+Symmetric-key cryptography was the only known kind of encryption before 1976, when Diffie and Hellman introduced the concept of asymmetric-key cryptography \cite{diffie1976ndc} for the first time. In asymmetric-key cryptography, the encryption and corresponding decryption are performed with different keys. Every party holds two keys: one public and one private. If \emph{Alice} wants to send a message to \emph{Bob}, she will encrypt the message with the public key of \emph{Bob}. At the other end, \emph{Bob} would decrypt this ciphertext using his private key. The public-private key pair are related, but it is unfeasible to determine \emph{Bob}'s private key from his public key. Since every party holds two keys, the total number of keys is reduced considerably when compared to symmetric-key cryptosystems. Also, there is no overhead in sharing the keys, as the public keys are distributed through public channels.
 
 % explain block cipher
 Symmetric-key algorithms are further classified into two different types, based on the manner in which plaintext is used by the encryption algorithm: block ciphers and stream ciphers. Block ciphers divide the plaintext into blocks of data, and each such block is then encrypted separately. The sizes of the input and output blocks are same, irrespective of the size of the key. Successive output blocks are then connected to each other in some way, depending on the mode of operation of the block cipher. \emph{DES} has been one of the most widely used block ciphers with block size of 64 bits and key size of 56 bits. \emph{DES} has been recently replaced by \emph{AES} as the standard, through a public competition which called for new block cipher designs to replace \emph{DES}.
@@ -158,8 +158,10 @@ $p(x)$ =  1 + $x^{11}$ + $x^{13}$ + $x^{14}$ + $x^{16}$
 The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{new}$ bit, since $s_{new}$ can be interpreted to be existing at the \textbf{0}'th position of the shift register. $s_{new}$ becomes $s_1$ in the next clock cycle, but in the current clock cycle, $s_{new}$ is $s_0$ (which exists just theoretically). It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
 
 \begin{center}
-$p'(x)$ = $x^{17}$ + $x^{6}$ + $x^{4}$ + $x^{3}$ + $x$,\\
+$p'(x)$ = $x^{17}$ + $x^{6}$ + $x^{4}$ + $x^{3}$ + $x$\\
+
 $p'(x)$ = $x$*($x^{16}$ + $x^{5}$ + $x^{3}$ + $x^{2}$ + 1)\\
+
 $p'(x)$ = $x^{16}$ + $x^{5}$ + $x^{3}$ + $x^{2}$ + 1
 \end{center}
 
@@ -269,4 +271,5 @@ The source code for the initialization and setup of the LFSR is shown below in t
 \end{figure}
 
 \subsection{Brief security analysis}
+\label{sec:hitag2-security-analysis}
 % a basic cryptanalysis of the cipher - maximal period? linearity? %
