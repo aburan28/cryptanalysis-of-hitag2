@@ -40,6 +40,8 @@ void square_matrix_2n();		/* squares the state transition matrix n times (((A^2)
 void compute_new_state(u64 *);		/* computes the new state from the new transition matrix by A.State */
 void mapping_function(u64 *, u32);
 u64 get_random(u32);
+u64 get_random_32();
 
 int tmto_keystream_attack(u32, u32, u32, u32, u32, u32);
+int tmto_tags_attack(u32, u32, u32, u32, u32);
 int tmdto_hellman_attack(u32, u32, u32, u32, u32, u32, u32, u32);
