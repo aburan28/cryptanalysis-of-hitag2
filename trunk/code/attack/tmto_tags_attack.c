@@ -23,12 +23,6 @@
 
 static struct hashtable * hash_table_setup();
 
-u32 memory_index = 23;
-u32 time_index = 26;
-
-u64 memory_complexity;
-u64 time_complexity;
-
 static int
 equalkeys(void *k1, void *k2)
 {
@@ -40,13 +34,13 @@ hashfromkey(void *ky)
 {
 	struct key *k = (struct key *)ky;
 
-	return (k->key % memory_complexity);
+	return (k->key % M);
 }
 
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 	
-int tmto_tags_attack()
+int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -63,17 +57,21 @@ int tmto_tags_attack()
 	struct value *found;
 	struct key * k;
 	struct hashtable *h;
-
-	prefix_bits = 32;
 	
 	N = 48;
+
+	/* initialize tradeoff variables */
+	M = _M;
+	T = _T;
+	D = _D;
+	P = _P;
+	
+	prefix_bits = _prefix_bits;
+	
 	time(&time1);
 	printf("\nCurrent Time: %s", ctime(&time1));
 	
-	memory_complexity = pow(2,memory_index);
-	time_complexity = pow(2,time_index);
-	
-	c_tags = (u64 *)malloc(sizeof(u64) * time_complexity * 2);
+	c_tags = (u64 *)malloc(sizeof(u64) * T * 2);
 	
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
@@ -91,8 +89,8 @@ int tmto_tags_attack()
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
 		
-	/* Check the size of the hashtable matches the memory_complexity */
-	if (memory_complexity != hashtable_count(h)) 
+	/* Check the size of the hashtable matches M */
+	if (M != hashtable_count(h)) 
 	{
 		printf("\nError: Size of Hashtable not correct ...");
         	return 1;
@@ -117,7 +115,7 @@ int tmto_tags_attack()
     	}
 	
 	/* Start searching prefixes in the hashtable */
-	for(i = 0, j = 0; i < time_complexity; i++)
+	for(i = 0, j = 0; i < T; i++)
 	{
 		prefix = *c_tags;
 		iv = *(c_tags + 1);
@@ -175,7 +173,7 @@ static struct hashtable * hash_table_setup()
 	
 	printf("\nCreating the Hashtable ...");
 	// initialize the hash table
-	h = create_hashtable(memory_complexity, hashfromkey, equalkeys);
+	h = create_hashtable(M, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 	
 	// Initialize the state, to some random value.
@@ -185,7 +183,7 @@ static struct hashtable * hash_table_setup()
 	 * One way could be to store states which are at a fixed distance from each other 
 	 * Other way could be to store a consecutive set of states along with their tags */
 	 
-	for(i = 0; i < memory_complexity; i++)
+	for(i = 0; i < P; i++)
 	{
 		// Save the starting state
 		pre_state = state;
@@ -218,18 +216,5 @@ static struct hashtable * hash_table_setup()
 	printf("\nCreation of Hashtable complete ...");
 	return h;
 }
-
-/*
-u64 get_random()
-{
-	u64 random_number = 0;
-
-	random_number = rand() % 4294967295;
-	if(random_number == 0)
-		random_number = get_random();
-	
-	return random_number; 
-}
-*/
 
 

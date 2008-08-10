@@ -111,6 +111,7 @@ int tmdto_hellman_attack(u32 _M,
 	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
 
+	time(&time1);
 	printf("\nCurrent Time: %s", ctime(&time1));
 	
 	/* Prepare the hashtables */

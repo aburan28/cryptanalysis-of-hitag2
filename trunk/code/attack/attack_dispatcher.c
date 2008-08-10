@@ -19,7 +19,19 @@ int main(int argc, char *argv[])
 		D = T;
 		prefix_bits = 48;
 		memory_setup = RANDOM_MEMORY;
+		
 		tmto_keystream_attack(M, T, P, D, prefix_bits, memory_setup);
+	}
+
+	else if(attack_type == TMTO_TAGS_ATTACK)
+	{
+		M = pow(2,20);
+		T = pow(2,26);
+		P = M;
+		D = T;
+		prefix_bits = 32;
+		
+		tmto_tags_attack(M, T, P, D, prefix_bits);
 	}
 	
 	else if(attack_type == TMDTO_HELLMAN_ATTACK)
@@ -36,6 +48,7 @@ int main(int argc, char *argv[])
 		P = (m*t*t)/D;
 
 		prefix_bits = 48;
+		
 		tmdto_hellman_attack(M, T, P, D, m, t, r, prefix_bits);
 	}
 }

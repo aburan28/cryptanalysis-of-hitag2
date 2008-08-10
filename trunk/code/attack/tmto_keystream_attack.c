@@ -72,20 +72,21 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
 	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
 
+	time(&time1);
+	printf("\nCurrent Time: %s", ctime(&time1));
+
 	/* if non-random memory is to be setup - initialize the matrices */
 	if(memory_setup == NON_RANDOM_MEMORY)
 	{
 		/* Initializing the matrices */
 		printf("\n\nInitializing matrices ...");
-		fflush(stdout);
+
 		time(&time1);
 		initialize_matrix();
 		time(&time2);
-		printf("\nCurrent Time: %s", ctime(&time1));
-		fflush(stdout);
+
 		sec_diff = difftime(time2,time1);
 		printf("\nTIME for initializing matrix: %d ", sec_diff);
-		fflush(stdout);
 	}
 
 	/* prepare the hashtable */
