@@ -51,4 +51,22 @@ int main(int argc, char *argv[])
 		
 		tmdto_hellman_attack(M, T, P, D, m, t, r, prefix_bits);
 	}
+	
+	else if(attack_type == TMDTO_RAINBOW_ATTACK)
+	{
+		/* independent parameters */
+		m = pow(2,18);
+		t = pow(2,15);
+		D = pow(2,14);
+
+		/* dependent parameters */
+		M = (m*t)/D;
+		T = t;
+		P = (m*t*t)/D;
+
+		prefix_bits = 48;
+		
+		tmdto_rainbow_attack(M, T, P, D, m, t, prefix_bits);
+	}
+
 }

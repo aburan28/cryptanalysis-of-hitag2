@@ -59,7 +59,7 @@ void prepare_keystream(u64 * c_keystream)
 	u64 i = 0;
 
 	/* Randomly select a key, a IV and a Serial ID; to determine the initial state */
-	state = hitag2_init (rev64 (0x524B494D4E4FULL), rev32 (0x69574349), rev32 (0x72456E65));
+	state = hitag2_init (rev64 (0x524B494D4AC6ULL), rev32 (0x69574349), rev32 (0x72456E65));
 
 	for(;i < D/64 + 1; i++)
 	{
