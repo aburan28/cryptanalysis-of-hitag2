@@ -27,6 +27,11 @@ u32 memory_setup;			/* '1' if the memory setup is random, else '0' */
 u8 transition_matrix[48][48];		/* state transition matrix A */
 u8 transition_matrix_2n[48][48];	/* matrix for computing state directly after 2^n transitions */
 
+FILE *fp;
+u32 file_m;
+u32 file_r;
+u32 file_t;
+u32 file_M;
 
 /* function prototypes here */
 
@@ -45,3 +50,4 @@ u64 get_random_32();
 int tmto_keystream_attack(u32, u32, u32, u32, u32, u32);
 int tmto_tags_attack(u32, u32, u32, u32, u32);
 int tmdto_hellman_attack(u32, u32, u32, u32, u32, u32, u32, u32);
+int tmdto_rainbow_attack(u32, u32, u32, u32, u32, u32, u32);

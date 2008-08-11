@@ -20,7 +20,8 @@
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
 
-static struct hashtable * single_hash_table_setup(u32);
+
+static struct hashtable * hash_table_setup();
 
 static int
 equalkeys(void *k1, void *k2)
@@ -37,16 +38,16 @@ hashfromkey(void *ky)
 	return (k->key % m);
 }
 
+/* static alias functions */
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 
-int tmdto_hellman_attack(u32 _M, 
+int tmdto_rainbow_attack(u32 _M, 
 			 u32 _T, 
 			 u32 _P, 
 			 u32 _D, 
 			 u32 _m, 
 			 u32 _t, 
-			 u32 _r, 
 			 u32 _prefix_bits)
 {
 	time_t time1, time2;
@@ -56,7 +57,6 @@ int tmdto_hellman_attack(u32 _M,
 	u64 prefix = 0;
 	u32 i = 0;
 	u32 j = 0;
-	u32 current_r = 0;
 	u32 current_t = 0;
 	u32 matched = 0;
 	u64 current_state = 0;
@@ -66,13 +66,12 @@ int tmdto_hellman_attack(u32 _M,
 	u64 found_start_state = 0;
 	u64 matched_state = 0;
 	u64 found_key = 0;
-	u32 table_number = 0;
+	u32 function_number = 0;
 	u32 false_alarms_count = 0;
 	
 	struct value *found = NULL;
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
-	struct hashtable * hashtable_array[r];
 
 	/* initialize tradeoff variables */
 	M = _M;
@@ -82,13 +81,12 @@ int tmdto_hellman_attack(u32 _M,
 
 	m = _m;
 	t = _t;
-	r = _r;
 
 	prefix_bits = _prefix_bits;
 	N = 48;
 	
 	/* open the file pointer */
-	fp = fopen("tmdto_table.txt", "r");
+	fp = fopen("tmdto_rainbow_table.txt", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -96,8 +94,8 @@ int tmdto_hellman_attack(u32 _M,
 	}
 
 	/* verify the file is compatible with this attack parameters */
-	fscanf(fp, "%d %d %d\n", &file_m, &file_r, &file_t);
-	if((file_m != m)||(file_r != r)||(file_t != t))
+	fscanf(fp, "%d %d\n", &file_m,&file_t);
+	if((file_M != M)||(file_t != t))
 	{
 		printf("\nError: Incompatible parameters from hashtable file ...\n");
 		exit(1);
@@ -112,36 +110,37 @@ int tmdto_hellman_attack(u32 _M,
 	/* Prepare the hashtables */
 	printf("\n\nPreparing Hashtable ...");
 	time(&time1);
+	
+	h = (struct hashtable *) hash_table_setup();
 
-	/* generate 'r' hashtables to store endpoints of each table */
-	for(current_r = 0; current_r < r; current_r++)
+	/* Check the size of the hashtable matches the memory_complexity */
+	if (M != hashtable_count(h))
 	{
-		hashtable_array[current_r] = (struct hashtable *) single_hash_table_setup(current_r + 1);
-
-		/* Check the size of the hashtable matches the memory_complexity */
-		if (m != hashtable_count(hashtable_array[current_r]))
-		{
-			printf("\nError: Size of Hashtable not correct ...\n");
-        		exit(1);
-    		}
+		printf("\nError: Size of Hashtable not correct ...\n");
+       		exit(1);
 	}
 
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing hashtable: %d ", sec_diff);
 
-	/* Prepare a long keystream */
+	/*---------- Prepare a long keystream --------------*/
+	
 	printf("\n\nPreparing Keystream ...");
 
 	time(&time1);
+	
 	prepare_keystream(c_keystream);
 	keystream = *c_keystream;
+	
 	time(&time2);
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
 
-	/* Starting Attack */
+	/*------------------ Starting Attack ---------------*/
+	
 	printf("\n\nAttacking ...");
+	
 	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
 	if (NULL == k)
@@ -159,72 +158,66 @@ int tmdto_hellman_attack(u32 _M,
 		if((i % 64) == 0) c_keystream++;
 		keystream = (keystream << 1) ^ ((* c_keystream >> (63 - (i % 64))) & 1);
 
-		/* run through all the 'r' tables */
-		for(current_r = 0; current_r < r; current_r++)
+		for(current_t = 0; current_t < t; current_t++)
 		{
-			table_number = current_r + 1;
+			function_number = current_t + 1;
 			
-			h = hashtable_array[current_r];
-
 			/* perform the permutation function on the prefix first (in this case, no permutation) */
-			current_state = prefix ^ ((u64) table_number);
+			current_state = prefix ^ ((u64) function_number);
 
-			for(current_t = 0; current_t < t; current_t++)
+			for(j = 0; j < (t - (current_t + 1)); j++)
 			{
-				k->key = current_state;
-				
-				/* Call the hashtable method with key */
-				found = search_some(h,k);
-				
-				/* compute the next state in the chain */
-				mapping_function(&current_state, table_number);
+				mapping_function(&current_state, (function_number + j + 1));
+			}
 
-				if(found != NULL)
+
+			k->key = current_state;
+				
+			/* Call the hashtable method with key */
+			found = search_some(h,k);
+				
+			if(found != NULL)
+			{
+				found_start_state = found->value;
+				temp_state = found_start_state;
+
+				for(j = 0; j < current_t; j++)
 				{
-					found_start_state = found->value;
-					temp_state = found_start_state;
-
-					for(j = 0; j < t - (current_t + 1); j++)
-					{
-						mapping_function(&temp_state, table_number);
-					}
-
-					/* find prefix of the current state */
-					temp_prefix = hitag2_prefix(&temp_state, prefix_bits);
-	
-					/* false alarm has occured */
-					if(temp_prefix != prefix)
-					{
-						//printf("\nFalse Alarm generated ...");
-						false_alarms_count++;
-						continue;
-					}
-					else
-					{
-						/* Find the Matched State */
-						for(j = 0; j < 48; j++) hitag2_prev_state(&temp_state);
-						matched_state = temp_state;
-						
-						found_initial_state = matched_state;
-						
-						/* Find the Initial State */
-						for(j = 0; j < i; j++)
-							hitag2_prev_state(&found_initial_state);
-
-						printf("\nFound Initial State: %llx", found_initial_state);
-		
-						/* Find the Key */
-						found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
-						printf("\nFound Key: %llx", rev64(found_key));
-
-						matched = 1;
-						break;
-					}
+					mapping_function(&temp_state, (current_t + 1));
 				}
 
+				/* find prefix of the current state */
+				temp_prefix = hitag2_prefix(&temp_state, prefix_bits);
+
+				/* false alarm has occured */
+				if(temp_prefix != prefix)
+				{
+					//printf("\nFalse Alarm generated ...");
+					false_alarms_count++;
+					continue;
+				}
+				else
+				{
+					/* Find the Matched State */
+					for(j = 0; j < 48; j++) hitag2_prev_state(&temp_state);
+					matched_state = temp_state;
+
+					found_initial_state = matched_state;
+
+					/* Find the Initial State */
+					for(j = 0; j < i; j++)
+						hitag2_prev_state(&found_initial_state);
+
+					printf("\nFound Initial State: %llx", found_initial_state);
+
+					/* Find the Key */
+					found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
+					printf("\nFound Key: %llx", rev64(found_key));
+
+					matched = 1;
+					break;
+				}
 			}
-			
-			if(matched == 1) break;
 		}
 		
 		if(matched == 1) break;
@@ -239,10 +232,7 @@ int tmdto_hellman_attack(u32 _M,
 
 	printf("\nCOUNT of false alarms: %d", false_alarms_count);
 
-	for(i = 0; i < r; i++)
-	{
-		hashtable_destroy(hashtable_array[i], 1);
-	}
+	hashtable_destroy(h, 1);
 	free(k);
 	free(found);
 
@@ -252,7 +242,7 @@ int tmdto_hellman_attack(u32 _M,
 /****************************************************************************************************
  * Hash Table setup function
 ****************************************************************************************************/
-static struct hashtable * single_hash_table_setup(u32 table_number)
+static struct hashtable * hash_table_setup()
 {
 	struct key *k;
 	struct value *v;
@@ -267,7 +257,7 @@ static struct hashtable * single_hash_table_setup(u32 table_number)
 	h = create_hashtable(m, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 
-	for(current_m = 0; current_m < m; current_m++)
+	for(current_m = 0; current_m < M; current_m++)
 	{
 		/* retrieve the start_state and end_state from file */
 		fscanf(fp, "%llu %llu\n", &start_state, &end_state);

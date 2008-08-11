@@ -1,11 +1,14 @@
-attack_dispatcher: hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o attack_dispatcher.o attack_helper.o
-	gcc -g -Wall -O -lm -o attack_dispatcher hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o attack_dispatcher.o attack_helper.o
+attack_dispatcher: hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o 
+	gcc -g -Wall -O -lm -o attack_dispatcher hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o
 
 attack_dispatcher.o: attack_dispatcher.c common.h attack_dispatcher.h
 	gcc -g -Wall -O -c attack_dispatcher.c -o attack_dispatcher.o
 
 attack_helper.o: attack_helper.c common.h hitag2.h attack_helper.h
 	gcc -g -Wall -O -c attack_helper.c -o attack_helper.o
+
+tmdto_rainbow_attack.o:	tmdto_rainbow_attack.c common.h hitag2.h attack_helper.h
+	gcc -g -Wall -O -c tmdto_rainbow_attack.c -o tmdto_rainbow_attack.o
 
 tmdto_hellman_attack.o:	tmdto_hellman_attack.c common.h hitag2.h attack_helper.h
 	gcc -g -Wall -O -c tmdto_hellman_attack.c -o tmdto_hellman_attack.o
