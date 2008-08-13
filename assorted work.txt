@@ -1,0 +1,86 @@
+
+Check LFSR in hitag2 for primitive polynomial
+Note important, the primitive polynomial only ascertains maximal length of the LFSR states, and not of the output of the cipher. 
+Hence keystream period is not confirmed through this. 
+
+Why do we have the rev() function in hitag2.c?
+
+-----------
+In thesis, explain the different phases of the attack - like find current state, then find initial state, then find key!
+
+Add code snippets in the thesis, for finding initial state, finding key etc (various hitag2 functions).
+
+-----------
+
+add the observation on random numbers. test code and period of rand() function. 
+also refer to slides by erik chapter 5 - mentioned that the period of the rand() function is 2^15. affirm this.
+
+-----------
+What about different arrangements in the hash table - which provide best time key search? 
+One way is improved BG attack - otehr is completely random setup of hash table. 
+Any other setting that would help us?
+Analysis -> random/non-random - prefix_bits - T and M parameters
+random hash table - try finding keys if prefix bit is 56? whats the probability then? 
+non-random -> does not find key if prefix bits are 56
+-----------
+
+mention somewhere that you have used solaris machines for most of the implementation and time figures. 
+not much tested on windows.
+
+-----------
+
+comparison of hellman tradeoff with and without data - MT2 = N2 and MT2D2 = N2...
+
+------------
+
+future work section:
+
+1. the attacks assume a lot. in practice it cannot be guaranteed if the attack would work or not. 
+just see the assumption on the amount of keystream. it depends on the actual protocol ! (read karsten's mail).
+
+
+
+
+
+
+Transaction #: 4331155357839543743
+Subscription ID #: 1247750340
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Open standards:
+
+	Mifare DESfire
+	HiTag2+
+
+Closed standards: (then reverse engineered)
+
+	HiTag2 (considered similar to Mifare classic - so quite prone to attacks)
+	Mifare classic (which is broken by groups in virginia and Radboud University's)
+
+
+
+
+
+
+
+
+
+
+
+
+
+Questions:
+- Why would the attacker want to find the secret key by running the PRSG backwards? What can be done by running it forward?
