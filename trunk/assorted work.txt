@@ -40,20 +40,11 @@ just see the assumption on the amount of keystream. it depends on the actual pro
 
 
 
+-------------
 
+argue that the matrix stopping rule is not completely correct! 
 
-
-Transaction #: 4331155357839543743
-Subscription ID #: 1247750340
-
-
-
-
-
-
-
-
-
+-------------
 
 
 
