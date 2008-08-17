@@ -4,7 +4,7 @@
 	Key	= 4F 4E 4D 49 4B 52
 	Serial	= 49 43 57 69
 
-	Available Keystream: 32 bit tags
+	Available Keystream: 
 
 	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
 */
@@ -35,7 +35,7 @@ hashfromkey(void *ky)
 {
 	struct key *k = (struct key *)ky;
 
-	return (k->key % m);
+	return (k->key % M);
 }
 
 /* static alias functions */
@@ -86,7 +86,7 @@ int tmdto_rainbow_attack(u32 _M,
 	N = 48;
 	
 	/* open the file pointer */
-	fp = fopen("tmdto_rainbow_table.txt", "r");
+	fp = fopen("rainbow_table.txt", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -94,7 +94,7 @@ int tmdto_rainbow_attack(u32 _M,
 	}
 
 	/* verify the file is compatible with this attack parameters */
-	fscanf(fp, "%d %d\n", &file_m,&file_t);
+	fscanf(fp, "%d %d\n", &file_M, &file_t);
 	if((file_M != M)||(file_t != t))
 	{
 		printf("\nError: Incompatible parameters from hashtable file ...\n");
@@ -157,7 +157,7 @@ int tmdto_rainbow_attack(u32 _M,
 		/* Shift the keystream by 1 bit for computing the next prefix */
 		if((i % 64) == 0) c_keystream++;
 		keystream = (keystream << 1) ^ ((* c_keystream >> (63 - (i % 64))) & 1);
-
+		
 		for(current_t = 0; current_t < t; current_t++)
 		{
 			function_number = current_t + 1;
@@ -215,12 +215,12 @@ int tmdto_rainbow_attack(u32 _M,
 					printf("\nFound Key: %llx", rev64(found_key));
 
 					matched = 1;
-					break;
+					//break;
 				}
 			}
 		}
 		
-		if(matched == 1) break;
+		//if(matched == 1) break;
 	}
 
 	if(matched == 0)
@@ -254,7 +254,7 @@ static struct hashtable * hash_table_setup()
 	u64 current_m = 0;
 
 	// initialize the hash table
-	h = create_hashtable(m, hashfromkey, equalkeys);
+	h = create_hashtable(M, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 
 	for(current_m = 0; current_m < M; current_m++)

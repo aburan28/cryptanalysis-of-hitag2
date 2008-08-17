@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
+#include "common.h"
 #include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
@@ -16,13 +17,12 @@ u64 get_random(u32 bits)
 
 	for(i = 0; i < bits - 16; i++)
 	{
-		rand_out = rand() % 65535;
-		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+		rand_out = rand();
+		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
 	}
 
 	return random_number;
 }
-
 
 void mapping_function(u64 * state, u32 i)
 {
@@ -51,7 +51,7 @@ int main()
 	time_t time1, time2;
 	u32 sec_diff = 0;
 			
-	M = pow(2, 18);
+	M = pow(2, 24);
 	t = pow(2, 8);
 		
 	fp = fopen("rainbow_table.txt", "w");
