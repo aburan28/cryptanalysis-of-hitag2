@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
+#include "common.h"
 #include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
 #include <time.h>
@@ -56,7 +57,7 @@ int main()
 	t = pow(2, 15);
 	r = pow(2, 1);
 		
-	fp = fopen("tmdto_table.txt", "w");
+	fp = fopen("hellman_table.txt", "w");
 	
 	fprintf(fp, "%d %d %d\n", m, r, t);
 

@@ -15,12 +15,27 @@ u64 get_random(u32 bits)
 
 	for(i = 0; i < bits - 16; i++)
 	{
-		rand_out = rand() % 65535;
-		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+		rand_out = rand();
+		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
 	}
 
 	return random_number;
 }
+
+// u64 get_random(u32 bits)
+// {
+// 	u32 i = 0;
+// 	u64 random_number = 0;
+// 	u64 rand_out = 0;
+// 
+// 	for(i = 0; i < bits - 16; i++)
+// 	{
+// 		rand_out = rand() % 65535;
+// 		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+// 	}
+// 
+// 	return random_number;
+// }
 
 void prepare_tags(u64 * c_tags)
 {
@@ -59,7 +74,7 @@ void prepare_keystream(u64 * c_keystream)
 	u64 i = 0;
 
 	/* Randomly select a key, a IV and a Serial ID; to determine the initial state */
-	state = hitag2_init (rev64 (0x524B494D4AC6ULL), rev32 (0x69574349), rev32 (0x72456E65));
+	state = hitag2_init (rev64 (0x52B49EA34972ULL), rev32 (0x69574349), rev32 (0x72456E65));
 
 	for(;i < D/64 + 1; i++)
 	{
