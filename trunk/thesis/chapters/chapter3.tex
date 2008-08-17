@@ -25,15 +25,15 @@ Consider the following general scenario for a TMTO attack on block ciphers. The 
 
 \noindent \textit{\textbf{Precomputation phase.}} An $n$ bit value is randomly selected using a uniform distribution (and denoted by $SP$ for a starting point). Using $SP$ as a key (denoted by $K_0$), encryption of $P$ is performed. The ciphertext obtained from this encryption is then used as the key (denoted by $K_1$) for the subsequent round of encryption of $P$. This procedure is iterated over a total of $t$ encryptions, yielding the key $K_t$ at the end. The key $K_t$ is called an end point, and is represented by $EP$. Moreover, the sequence of encryptions starting from $SP$ to $EP$ is called a \emph{chain} and is illustrated in the figure \ref{fig:block-cipher-single-chain}. Equations for the $t$ encryptions are also shown below. 
 
-\begin{center}
-$K_0$ = $SP$\\
-1. $K_1$ = $E_{K_0}(P)$\\
-2. $K_2$ = $E_{K_1}(P)$\\
-\vdots
-$(t-1)$. $K_{t-1}$ = $E_{K_{t-2}}(P)$\\
-$(t)$. $K_{t}$ = $E_{K_{t-1}}(P)$\\
-$EP$ = $K_{t}$\\
-\end{center}
+\begin{align*}
+& & K_0 &= SP & & & &\\
+1&. & K_1 &= E_{K_0}(P) & & & &\\
+2&. & K_2 &= E_{K_1}(P) & & & &\\
+& & &\vdots & & & &\\
+(t-1)&. &K_{t-1} &= E_{K_{t-2}}(P) & & & &\\
+(t)&. &K_{t} &= E_{K_{t-1}}(P) & & & &\\
+& & EP &= K_{t} & & & &\\
+\end{align*}
 
 \begin{figure}[ht!]
 	\centering
@@ -72,13 +72,13 @@ If $C$ does not match any of the $EP_j$, the next possibility is that $C$ lies i
 
 If $C$ exists in the chains, then the time taken to find $K$ is actually the same as the length of each chain. Assuming $C$ exists in the $r$'th column (such that  $2 \leq r \leq t$, then $X$ is computed by performing $(t-r)$ encryptions in the following way.
 
-\begin{center}
-$K_r$ = $C$\\
-1. $K_{r+1}$ = $E_{K_r}(P)$\\
-2. $K_{r+2}$ = $E_{K_{r+1}}(P)$\\
-\vdots
-$(t-r)$. $K_{r + (t-r)}$ = $E_{K_{r + (t-r-1)}}(P)$\\
-$X$ = $K_{r + (t - r)}$\\
+\begin{align*}
+& & K_r &= C & & & &\\
+1&. &K_{r+1} &= E_{K_r}(P)  & & & &\\
+2&. &K_{r+2} &= E_{K_{r+1}}(P) & & & &\\
+& & &\vdots & & & &\\
+(t-r) &. &K_{r + (t-r)} &= E_{K_{r + (t-r-1)}}(P) & & & &\\
+& & X &= K_{r + (t - r)} & & & &\\
 \end{center}
 
 If $X$ matches an $EP_j$, then $(r-1)$ encryptions are performed to retrieve the key $K_{r-1}$. In all, the number of encryptions performed is $(t-1)$. The attack time is of the order of $t$, thus our attack parameter $T$ = $t$. \\
@@ -164,17 +164,24 @@ We describe in detail the precomputation and attack phase for the TMTO attack us
 
 \noindent \textit{\textbf{Precomputation phase.}} First, $r$ different random reduction functions are chosen, say \mbox{$R_1$, $R_2$, \ldots ,$R_r$}. Using each of these functions, $r$ tables are created in the same way as described for the ideal case. Each of the $r$ tables consist of $m$ chains with $t$ computations by using the mapping function $F$. Also, for each table, a different hashtable is created such that the starting and end points of the chains from a particular table are stored in the corresponding hashtable. 
 
+\begin{figure}[ht!]
+	\centering
+		\includegraphics[width=3in]{./figures/hellman-tables.PNG}
+	\caption{Hellman tables structure}	
+	\label{fig:hellman-tables}
+\end{figure}
+
 The equations for creating the keys in the chain $i$ of table $j$ are shown below. The mapping function is denoted by $F_j$ and the reduction function by $R_j$.
 
-\begin{center}
-$K_{i,0}$ = $SP_i$\\
-1. $K_{i,1}$ = $R_j(E_{K_{i,0}}(P))$\\
-2. $K_{i,2}$ = $R_j(E_{K_{i,1}}(P))$\\
-\vdots
-$(t-1)$. $K_{i,t-1}$ = $R_j(E_{K_{i,t-2}}(P))$\\
-$(t)$. $K_{i,t}$ = $R_(E_{K_{i,t-1}}(P))$\\
-$EP_i$ = $K_{i,t}$\\
-\end{center}
+\begin{align*}
+& & K_{i,0} & = SP_i & & & &\\
+1&. &K_{i,1} & = R_j(E_{K_{i,0}}(P)) & & & &\\
+2&. &K_{i,2} & = R_j(E_{K_{i,1}}(P)) & & & &\\
+& & &\vdots & & & &\\
+(t-1)&. &K_{i,t-1} & = R_j(E_{K_{i,t-2}}(P)) & & & &\\
+(t)&. &K_{i,t} & = R_j(E_{K_{i,t-1}}(P)) & & & &\\
+& & EP_i & = K_{i,t} & & & &\\
+\end{align*}
 
 The time for precomputation is proportional to the number of computations that are done in all the tables, which is $mtr$. Hence, $P$ = $mtr$. Also, corresponding to each table, $m$ entries would exist in the hashtable. Hence, total number of entries in the hashtables is $mr$, resulting in required precomputation memory of an order $M$ = $mr$.\\
 
@@ -202,22 +209,65 @@ $mt^2 = 2^k$\\
 
 Further, it is required that all the possible keys are covered in the Hellman tables. Since the number of keys computed during the precomputation is $mtr$, we require
 
-\begin{center}
-$mtr = 2^k$\\
-\end{center}
+\begin{align*}
+mtr = 2^k
+\end{align*}
 
 From the last two equations, we have $r$ = $t$. Hence, the number of tables is equal to the length of each chain. Eliminating $m$ and $t$ from the relations for $M$ and $T$, we get the following tradeoff equation
 
-\begin{center}
-$M^{2}T = 2^k$\\
-\end{center}
+\begin{align*}
+M^{2}T = 2^k
+\end{align*}
 
 
 \section{Hellman tables for stream ciphers}
 
+Hellman tables for block ciphers have been used for mounting TMTO attacks on stream ciphers by Biryukov and Shamir in \cite{biryukov2000ctm}. Stream ciphers have a different working principle than block ciphers, and thus certain modifications in the original Hellman tables are proposed in order to apply them on stream ciphers. 
+
+The Hellman tables for block ciphers are prepared using the plaintext $P$, which is assumed to be known to (or chosen by) the attacker before the precomputation phase of the attack. Using the available ciphertext $C$, the attacker can find the secret key $K$ if and only if $P$ is the plaintext corresponding to $C$ under the key $K$. Hence in a way, the prepared tables are \emph{static} and cannot be re-used if a different plaintext and ciphertext pair for the same key are known. The tables can only be re-used if the same plaintext $P$ is later encrypted using a different key, say, during a different run of the protocol using the block cipher.
+
+In addition, one of the important goals while constructing the tables for block ciphers is to cover all the possible keys. This is so because, if the required key exists in the table, it would surely be found during the attack phase. But if it does not exist, it can never be found. 
+
+Tables for stream ciphers differ from those for block ciphers on some of these grounds. Tables prepared for stream ciphers (as we have already seen in section \ref{sec:bg-attack}) are not bound to a particular plaintext. They are general tables, and can be re-used any number of times for different keystreams. Once a match is found, the LFSR is reversed to obtain the initial state. From here, different keystreams are treated differently, owing to the different initialization parameters of key, IV and serial ID.
+
+Also, stream ciphers traverse through a number of internal states while generating the output keystream. If the attacker is able to find any of these internal states, the initial state is recovered and so is the key. The attacker has knowledge of \emph{data}, which comprises of subsequences of the keystream or the prefix of each of the internal state that occurs while generating the keystream. Using this data, several match attempts can be made to the precomputed tables, thus increasing the probability of finding the key. This flexibility is not available to the attacker for breaking a block cipher, since the only data known there is $C$. 
+
+Attacks taking into consideration the availability of data, in addition to time and memory, are called time-memory-data tradeoff attacks (or TMDTO attacks). The BG attack (and its variants) introduced in section \ref{} As we can see, TMDTO attacks are particularly suited to stream ciphers as lot's of data is available in the form of the output keystream. Whereas in the case of block ciphers, in such attacks we always have $D$ = $1$. 
+
+Next, we describe the precomputation and attack phase for a TMDTO attack on stream ciphers.\\
+
+\noindent \textit{\textbf{Precomputation phase.}} While attacking stream ciphers, the unknown part is always the current internal state and the known part is the prefix of the state. Before we discuss how the tables are organized, it is important to consider the number of states that are required to be covered by the tables, to have a high probability of a match. We have two set of states here: one, the states covered in the tables; and two, the states traversed while generating the keystream (the order of which is $D$). According to the variant of the birthday paradox, in order to have a high probablity of a common state existing between these two sets, the product of the sizes of these sets must be greater than or equal to the size of the state space. 
+
+Since $P$ (the order of time for precomputation phase) also represents the number of states covered in the tables, we can say that $P$.$D$ $\geq$ $N$. If we ignore the greater than sign, we get the lower bound on $P$ and $D$, and we have $P$ = $N/D$. As compared to the tables for block ciphers, $P$ is reduced by a factor of $D$ for stream ciphers. This is clearly understood, since while attacking block ciphers, only the ciphertext $C$ is known. 
+
+According to \cite{biryukov2000ctm}, reduction in the number of precomputed states can be achieved by either reducing the number of states in each table, or by reducing the number of tables itself. This can be seen from the relation, $P$ = $mt$.$t$/$D$, i.e. either $mt$ be made $mt$/$D$ (thus reducing number of states in each table) or $t$ be made $t$/$D$ (thus reducing the number of tables). The former option is not a good idea, as the authors argue, since the tables would now not accomodate the maximum number of states allowed before a state repeats. Hence, the latter option is chosen, and the number of tables is reduced instead. Ofcourse, this binds the values of $t$ and $D$ together such that $t \geq D$, since there should atleast be one table. 
+
+Thus, for the precomputation phase, we have $t$/$D$ tables, each of $m$ chains with $t$ states each. The chains start with a random state $S_{j,0}$ (also denoted by $SP_j$) representing the $j$'th chain. The prefix for the starting state is then computed, and a reduction function applied on the prefix to give the next state $S_{j,1}$. We denote the prefix function by $Prefix$ and the reduction function by $R$. Then, we have the following relation,
+
+\begin{align*}
+S_{j,1} = F_i(S_{j,0}) = R_i(Prefix(S_{j,0}))
+\end{align*}  
+
+State $S_{j,1}$ is then used to compute $S_{j,2}$ and the process is repeated for $t$ such computations at the end of which the end state $S_{j,t}$ or $EP_j$ is known. $m$ such chains are created to represent one table, and the same repeated with different reduction functions for other tables. 
+
+The precomputation time $P$ is as discussed before, i.e. $P$ = $mt^2/D$. Since the number of tables has reduced, the order of memory required to store the starting and end points also reduces. We have, $M$ = $mt/D$.\\
+
+\noindent \textit{\textbf{Attack phase.}} The attack phase for stream ciphers is much similar to that for block ciphers explained in the previous section. Every subsequence of the keystream (state prefixes) is searched in all the tables. The possibility of the current state being present in all the columns of a table is checked one by one, and this repeated for each of the $t/D$ tables. In the worst case, the attack would require $t$ computations per table, for each of the $D$ prefixes, which amounts to $t^2/D$ computations for each prefix. Hence the worst case attack time is of the order of $t^2$ and thus we have $T$ = $t^2$.\\
+
+\noindent \textit{\textbf{Tradeoff equation.}} The tradeoff equation can be easily derived by eliminating the parameters $m$ and $t$ from the following three important equations,
+
+\begin{align*}
+M &= mt/D\\
+T &= t^2\\
+mt^2 &= N\\
+\end{align*}
+
+The tradeoff equation comes out to be,
+\begin{align}
+\label{eq:tmdto-hellman-stream} MT^2D^2 = N^2
+\end{align}
 
 \section{Results from implementation}
-
 
 
 %hellman tables for TMTO attacks on block ciphers
