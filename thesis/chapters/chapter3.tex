@@ -20,7 +20,7 @@ A block cipher is an encryption algorithm, which takes in a plaintext block of $
 	\label{fig:block-cipher}
 \end{figure}
 
-\subsection{The ideal case TMTO attack}
+\subsection{The ideal TMTO attack}
 Consider the following general scenario for a TMTO attack on block ciphers. The attacker has knowledge of a particular plaintext block $P$ and the corresponding ciphertext block $C$. The goal is to find $K$, using which the attacker can decipher ciphertext corresponding to unknown plaintext. In addition, for simplicity, we assume the size of $K$ to be equal to the block size of $n$ bits. Then following we have the precomputation and attack phases for the attack in an ideal case.\\
 
 \noindent \textit{\textbf{Precomputation phase.}} An $n$ bit value is randomly selected using a uniform distribution (and denoted by $SP$ for a starting point). Using $SP$ as a key (denoted by $K_0$), encryption of $P$ is performed. The ciphertext obtained from this encryption is then used as the key (denoted by $K_1$) for the subsequent round of encryption of $P$. This procedure is iterated over a total of $t$ encryptions, yielding the key $K_t$ at the end. The key $K_t$ is called an end point, and is represented by $EP$. Moreover, the sequence of encryptions starting from $SP$ to $EP$ is called a \emph{chain} and is illustrated in the figure \ref{fig:block-cipher-single-chain}. Equations for the $t$ encryptions are also shown below. 
@@ -79,7 +79,7 @@ If $C$ exists in the chains, then the time taken to find $K$ is actually the sam
 & & &\vdots & & & &\\
 (t-r) &. &K_{r + (t-r)} &= E_{K_{r + (t-r-1)}}(P) & & & &\\
 & & X &= K_{r + (t - r)} & & & &\\
-\end{center}
+\end{align*}
 
 If $X$ matches an $EP_j$, then $(r-1)$ encryptions are performed to retrieve the key $K_{r-1}$. In all, the number of encryptions performed is $(t-1)$. The attack time is of the order of $t$, thus our attack parameter $T$ = $t$. \\
 
@@ -96,7 +96,7 @@ During precomputation phase, the encryption function is replaced with the new fu
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=3in]{./figures/mapping-function.PNG}
-	\caption{Mapping function}	
+	\caption{Mapping function for block ciphers}	
 	\label{fig:mapping-function}
 \end{figure}
 
@@ -238,6 +238,19 @@ Next, we describe the precomputation and attack phase for a TMDTO attack on stre
 
 \noindent \textit{\textbf{Precomputation phase.}} While attacking stream ciphers, the unknown part is always the current internal state and the known part is the prefix of the state. Before we discuss how the tables are organized, it is important to consider the number of states that are required to be covered by the tables, to have a high probability of a match. We have two set of states here: one, the states covered in the tables; and two, the states traversed while generating the keystream (the order of which is $D$). According to the variant of the birthday paradox, in order to have a high probablity of a common state existing between these two sets, the product of the sizes of these sets must be greater than or equal to the size of the state space. 
 
+\begin{figure}[ht!]
+	\centering
+		\includegraphics[width=3in]{./figures/mapping-function-stream.PNG}
+	\caption{Mapping function for stream ciphers}	
+	\label{fig:mapping-function-stream}
+\end{figure}
+
+The function can also be represented in notation as follows, where $R$ stands for the reduction function.
+
+\begin{center}
+$S_{i+1}$ = $F(S_i)$ = $R(Prefix(S_i))$\\
+\end{center}
+
 Since $P$ (the order of time for precomputation phase) also represents the number of states covered in the tables, we can say that $P$.$D$ $\geq$ $N$. If we ignore the greater than sign, we get the lower bound on $P$ and $D$, and we have $P$ = $N/D$. As compared to the tables for block ciphers, $P$ is reduced by a factor of $D$ for stream ciphers. This is clearly understood, since while attacking block ciphers, only the ciphertext $C$ is known. 
 
 According to \cite{biryukov2000ctm}, reduction in the number of precomputed states can be achieved by either reducing the number of states in each table, or by reducing the number of tables itself. This can be seen from the relation, $P$ = $mt$.$t$/$D$, i.e. either $mt$ be made $mt$/$D$ (thus reducing number of states in each table) or $t$ be made $t$/$D$ (thus reducing the number of tables). The former option is not a good idea, as the authors argue, since the tables would now not accomodate the maximum number of states allowed before a state repeats. Hence, the latter option is chosen, and the number of tables is reduced instead. Ofcourse, this binds the values of $t$ and $D$ together such that $t \geq D$, since there should atleast be one table. 
@@ -264,7 +277,7 @@ mt^2 &= N\\
 
 The tradeoff equation comes out to be,
 \begin{align}
-\label{eq:tmdto-hellman-stream} MT^2D^2 = N^2
+\label{eq:tmdto-hellman-stream} TM^2D^2 = N^2
 \end{align}
 
 \section{Results from implementation}
