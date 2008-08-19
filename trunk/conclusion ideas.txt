@@ -17,3 +17,7 @@ because - time is the same as data available.
 
 in hellman, rainbow tables, time is dependent on other parameters also. in simple words, for every prefix, certain computations need to be performed. t2.
 
+
+2. P and D are the most important parameters - as P.D >= N.
+
+But in tradeoff equations, we are more interested in finding a relation between T, M and D. In BG attacks, M = P and T = D, so they are simple to understand. 
