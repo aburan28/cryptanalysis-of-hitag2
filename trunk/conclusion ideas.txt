@@ -1,0 +1,19 @@
+Assumptions:
+- The time shown in seconds may not be precise, since attacks were run on a ahared machine at different times. Hence, depending on the load on the machines, there might be some inconsistencies. 
+
+
+
+
+
+
+
+
+
+
+
+
+1. in first two attacks, we have data - but in the tradeoff equation we dont see it
+because - time is the same as data available. 
+
+in hellman, rainbow tables, time is dependent on other parameters also. in simple words, for every prefix, certain computations need to be performed. t2.
+
