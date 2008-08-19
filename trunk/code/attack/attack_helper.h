@@ -33,6 +33,11 @@ u32 file_r;
 u32 file_t;
 u32 file_M;
 
+//static const u64 secret_key = 0x52B49EA34972ULL;
+static const u64 secret_key = 0x49D2AC801F94ULL;
+static const u32 serial_id = 0x69574349; 
+static const u32 init_vector = 0x72456E65;
+
 /* function prototypes here */
 
 void prepare_keystream(u64 *);

@@ -1,13 +1,6 @@
 /*
  *	This program is used to execute a Babbage-Golic time-memory
  *	tradeoff attack on the HiTag2 stream cipher
- *
- *	HiTag2 parameters:
- *	Key	= 4F 4E 4D 49 4B 52
- *	Serial	= 49 43 57 69
- *	Random	= 65 6E 45 72
- *
- *	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
  */
 
 #include <stdio.h>
@@ -79,56 +72,51 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
 	if(memory_setup == NON_RANDOM_MEMORY)
 	{
 		/* Initializing the matrices */
-		printf("\n\nInitializing matrices ...");
+		printf("\n\nInitializing state transition matrix ...");
 
 		time(&time1);
 		initialize_matrix();
 		time(&time2);
 
 		sec_diff = difftime(time2,time1);
-		printf("\nTIME for initializing matrix: %d ", sec_diff);
+		printf("\nTIME for initializing state transition matrix: %d ", sec_diff);
 	}
 
 	/* prepare the hashtable */
 	printf("\n\nPreparing Hashtable ...");
-	fflush(stdout);
+
 	time(&time1);
 	h = hash_table_setup();
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
-	fflush(stdout);
 
 	/* Check the size of the hashtable matches the M */
 	if (M != hashtable_count(h))
 	{
 		printf("\nError: Size of Hashtable not correct ...");
-		fflush(stdout);
 		return 1;
 	}
 
 	/* Prepare a long keystream */
 	printf("\n\nPreparing Keystream ...");
-	fflush(stdout);
+
 	time(&time1);
 	prepare_keystream(c_keystream);
-
 	keystream = *c_keystream;
-
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
-	fflush(stdout);
 
 	/* Starting Attack */
 	printf("\n\nAttacking ...");
-	fflush(stdout);
 	time(&time1);
 	k = (struct key *)malloc(sizeof(struct key));
 	if (NULL == k)
 	{
 		printf("\nError: Ran out of memory allocating a key ...");
-		fflush(stdout);
         	return 1;
     	}
 
@@ -153,38 +141,31 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
 			found_current_state = found->value;
 			found_initial_state = found_current_state;
 
-			printf("\nMatch Found! Current State: %llx  ", found_current_state);
+			printf("\n\nMatch Found! \nCurrent State: %llx  ", found_current_state);
 			printf("Prefix: %llx\n", prefix);
 			printf("\nPercentage of the worst case time: %f ", (i*100.00)/T);
 			printf("I: %d\n", i);
-			fflush(stdout);
 
 			// Find the Initial State.
 			for(j = 0; j < i; j++)
 				hitag2_prev_state(&found_initial_state);
 
 			printf("\nFound Initial State: %llx", found_initial_state);
-			fflush(stdout);
 
 			// Find the Key
-			found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
+			found_key = hitag2_find_key(found_initial_state, serial_id, init_vector);
 			printf("\nFound Key: %llx", found_key);
-			printf("\nFound Key: %llx", rev64(found_key));
-			fflush(stdout);
 
 			matched = 1;
-			//break;
 		}
 	}
 
-	if(matched == 0)
-		printf("\n\nNo Internal State found ...\n");
-		fflush(stdout);
+	if(matched == 0) printf("\n\nNo Internal State found ...\n");
 
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for attack: %d", sec_diff);
-	fflush(stdout);
 
 	hashtable_destroy(h, 1);
 	free(k);
@@ -268,7 +249,6 @@ static struct hashtable * hash_table_setup()
 			if (NULL == k)
 			{
 				printf("\nError: Could not allocate memory for Prefix");
-				fflush(stdout);
 				exit(1);
 			}
 
@@ -278,7 +258,6 @@ static struct hashtable * hash_table_setup()
 			if (!insert_some(h,k,v))
 			{
 				printf("\nError: Could not insert values into hashtable ...");
-				fflush(stdout);
 				exit(-1); /*oom*/
 			}
 		}
@@ -291,6 +270,5 @@ static struct hashtable * hash_table_setup()
 	}
 
 	printf("\nPreparation of Hashtable complete ...");
-	fflush(stdout);
 	return h;
 }

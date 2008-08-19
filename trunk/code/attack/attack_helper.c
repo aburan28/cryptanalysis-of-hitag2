@@ -7,21 +7,6 @@
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
 
-u64 get_random(u32 bits)
-{
-	u32 i = 0;
-	u64 random_number = 0;
-	u64 rand_out = 0;
-
-	for(i = 0; i < bits - 16; i++)
-	{
-		rand_out = rand();
-		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
-	}
-
-	return random_number;
-}
-
 // u64 get_random(u32 bits)
 // {
 // 	u32 i = 0;
@@ -30,12 +15,27 @@ u64 get_random(u32 bits)
 // 
 // 	for(i = 0; i < bits - 16; i++)
 // 	{
-// 		rand_out = rand() % 65535;
-// 		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+// 		rand_out = rand();
+// 		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
 // 	}
 // 
 // 	return random_number;
 // }
+
+u64 get_random(u32 bits)
+{
+	u32 i = 0;
+	u64 random_number = 0;
+	u64 rand_out = 0;
+
+	for(i = 0; i < bits - 16; i++)
+	{
+		rand_out = rand() % 65535;
+		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+	}
+
+	return random_number;
+}
 
 void prepare_tags(u64 * c_tags)
 {
@@ -55,7 +55,7 @@ void prepare_tags(u64 * c_tags)
 		iv = get_random(32);
 		//printf("\n%llx ", iv);	
 		
-		state = hitag2_init(0x524BF8ED4E4FULL, 0x69574349, iv);
+		state = hitag2_init(secret_key, serial_id, iv);
 
 		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
 		//printf("\nNew Tag: %llx ", *c_tags);
@@ -74,7 +74,7 @@ void prepare_keystream(u64 * c_keystream)
 	u64 i = 0;
 
 	/* Randomly select a key, a IV and a Serial ID; to determine the initial state */
-	state = hitag2_init (rev64 (0x52B49EA34972ULL), rev32 (0x69574349), rev32 (0x72456E65));
+	state = hitag2_init (secret_key, serial_id, init_vector);
 
 	for(;i < D/64 + 1; i++)
 	{
@@ -100,7 +100,6 @@ void initialize_matrix()
 	u64 i = 0;
 	u64 j = 0;
 
-	printf("\nInside Initialization matrix %d", N);
 	for(i = 0; i < N; i++)
 	{
 		for(j = 0; j < N; j++)
@@ -141,33 +140,7 @@ void initialize_matrix()
 		}
 	}
 
-	printf("\n");
-	fflush(stdout);
-	for(i = 0; i < N; i++)
-	{
-		for(j = 0; j < N; j++)
-		{
-			printf("%1x", transition_matrix[i][j]);
-			fflush(stdout);
-		}
-		printf("\n");
-		fflush(stdout);
-	}
-	printf("\n");
-	fflush(stdout);
-
 	square_matrix_2n();
-
-	//print the squared matrix
-	for(i = 0; i < N; i++)
-	{
-		for(j = 0; j < N; j++)
-		{
-			//printf("%1x", transition_matrix_2n[i][j]);
-		}
-		//printf("\n");
-	}
-	//printf("\n");
 }
 
 /***********************************************************************************************************/
@@ -177,7 +150,7 @@ void square_matrix_2n()
 	u64 j = 0;
 	u64 k = 0;
 	u64 count = 0;
-	u32 time_order = 0;
+	u32 square_order = 0;
 
 	u8 c_temp = 0;
 	u64 l_temp = 0;
@@ -188,9 +161,10 @@ void square_matrix_2n()
 	u64 matrix_1[N];
 	u64 matrix_2[N];
 
-	time_order = (u32) log2(T);
+	square_order = (u32) (N - log2(M));
+
 	// For time_index number of times, square the matrix transition_matrix_2n
-	for(i = 0; i < time_order; i++)
+	for(i = 0; i < square_order; i++)
 	{
 		//convert the matrix into array of u64
 		for(j = 0; j < N; j++)
@@ -212,12 +186,6 @@ void square_matrix_2n()
 			l_temp = 0;
 		}
 
-		//print the u64 array conversion of transition_matrix_2n
-		for(j = 0; j < N; j++)
-		{
-			//printf("%llx ", matrix_1[j]);
-		}
-
 		//transpose of the matrix transition_matrix_2n
 		for(j = 0; j < N; j++)
 		{
@@ -231,17 +199,6 @@ void square_matrix_2n()
 				}
 			}
 		}
-
-		//print the transpose matrix
-		for(j = 0; j < N; j++)
-		{
-			for(k = 0; k < N; k++)
-			{
-				//printf("%1x", transition_matrix_2n[j][k]);
-			}
-			//printf("\n");
-		}
-		//printf("\n");
 
 		//convert the transposed matrix into u64 array
 		for(j = 0; j < N; j++)
@@ -262,12 +219,6 @@ void square_matrix_2n()
 
 			matrix_2[j] = l_temp;
 			l_temp = 0;
-		}
-
-		//print the u64 array conversion of transpose of transition_matrix_2n
-		for(j = 0; j < N; j++)
-		{
-			//printf("%llx %llx\n", matrix_1[j], matrix_2[j]);
 		}
 
 		//perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the matrix
@@ -292,7 +243,6 @@ void square_matrix_2n()
 
 		l_temp = 0;
 		l_xor = 0;
-
 	}
 }
 
@@ -331,14 +281,6 @@ void compute_new_state(u64 * state_ptr)
 		l_temp = 0;
 	}
 
-	//print transition_matrix_2n
-	for(j = 0; j < N; j++)
-	{
-		//printf("%12llx \n", matrix_2[j]);
-	}
-
-	//printf("State: %12llx \n", state);
-
 	for(k = 0; k < N; k++)
 	{
 		// AND of the two rows
@@ -351,7 +293,6 @@ void compute_new_state(u64 * state_ptr)
 			l_xor = l_xor ^ (l_temp >> (j));
 		}
 
-		//printf("%x ",(l_xor & one));
 		new_state = new_state + ((l_xor & one) << (47 - k));
 	}
 

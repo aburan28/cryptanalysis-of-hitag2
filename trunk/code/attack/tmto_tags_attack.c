@@ -58,8 +58,6 @@ int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 	struct key * k;
 	struct hashtable *h;
 	
-	N = 48;
-
 	/* initialize tradeoff variables */
 	M = _M;
 	T = _T;
@@ -68,6 +66,8 @@ int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 	
 	prefix_bits = _prefix_bits;
 	
+	N = 48;
+	
 	time(&time1);
 	printf("\nCurrent Time: %s", ctime(&time1));
 	
@@ -75,18 +75,22 @@ int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 	
 	/* Initializing the matrices */
 	printf("\n\nInitializing matrices ...");
+	
 	time(&time1);
 	initialize_matrix();
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for initializing matrix: %d ", sec_diff);
 	
 	/* Prepare the hashtable */
 	printf("\n\nPreparing Hashtable ...");
+	
 	time(&time1);
 	h = hash_table_setup();
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for preparing Hashtable: %d ", sec_diff);
 		
 	/* Check the size of the hashtable matches M */
@@ -135,7 +139,7 @@ int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 			printf("\nA Tag Found! State: %llx for Tag: %llx", found_current_state, prefix);
 			//printf("%llx ", prefix);
 			// Find the Key for the Internal State
-			found_key = hitag2_find_key(found_current_state, 0x69574349, iv);
+			found_key = hitag2_find_key(found_current_state, serial_id, iv);
 			printf(" Found Key: %llx\n", found_key);			
 			matched = 1;
 		}

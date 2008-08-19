@@ -1,7 +1,7 @@
 /* declarations for various attack parameters */
 
 u32 attack_type = 0;
-u32 N = 0;
+
 u32 M = 0;
 u32 T = 0;
 u32 D = 0;
