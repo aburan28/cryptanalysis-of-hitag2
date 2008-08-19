@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
 	
 	if(attack_type == TMTO_KEYSTREAM_ATTACK)
 	{
-		M = pow(2,22);
-		T = pow(2,26);
+		M = pow(2,21);
+		T = pow(2,28);
 		P = M;
 		D = T;
-		prefix_bits = 48;
+		prefix_bits = 56;
 		memory_setup = RANDOM_MEMORY;
 		
 		tmto_keystream_attack(M, T, P, D, prefix_bits, memory_setup);
