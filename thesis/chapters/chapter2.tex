@@ -32,12 +32,13 @@ Here, $>>$ denotes the right shift operation and \& denotes bitwise binary \emph
 
 One middle way between both these approaches would be to store the \textit{sum} for all possible 8 bit numbers, rather than doing it for all 32 bit numbers. Then the memory required would be of the order of $2^{8}$. Then, we break the 32 bit integer into four bytes, and add the stored \textit{sum} for each of the four bytes, by looking up in the table. If $y_1$, $y_2$, $y_3$ and $y_4$ are the four bytes, such that
 
-\begin{flushleft}
+
+\begin{center}
 $y_4$ = ($x$ $\&$ $0$xFF)\\
 $y_3$ = ($(x >> 8)$ $\&$ $0$xFF)\\ 
 $y_2$ = ($(x >> 16)$ $\&$ $0$xFF)\\ 
 $y_1$ = ($(x >> 24)$ $\&$ $0$xFF)\\
-\end{flushleft}
+\end{center}
 
 and if p is the array which stores the \textit{sum} for all possible bytes, then the desired \textit{sum} for $x$ can simply be calculated by
 
@@ -124,6 +125,8 @@ Several proposals have been suggested to avoid the problem of collision. The mos
 
 The implementation of the hash table is done by Christopher Clark and has been taken from the web source \cite{hash-table-impl}, with due acknowledgement. 
 
+% Also, $M$ is used in defining the hash function for the hashtable. A very simple hash function is used, which uses maps the key to the space $M$ by taking the modulo $M$ of the key.
+
 
 \section{BG attack}
 \label{sec:bg-attack}
@@ -152,15 +155,15 @@ During the attack phase, the attacker is assumed to know some part of the initia
 \textit{\textbf{Parameters in the attack.}} Before we proceed to an analysis of the above attack, we introduce the notation of important parameters used to describe the BG attack. These parameters would help us in understanding where an ideal line be drawn between memory and time consumption during the precomputation and attack phases, so that the attack is feasible say for example on a personal computer. These parameters are introduced below. 
 
 \begin{enumerate}
-\item \emph{M}, represents the order of memory size required for precomputation.
-\item \emph{P}, represents the order of time required for precomputation.
-\item \emph{T}, represents the order of time required for the attack phase.
-\item \emph{D}, represents the order of the amount of data (in bits) available during the attack phase (length of the keystream).
+\item \emph{M} represents the order of memory size required for precomputation.
+\item \emph{P} represents the order of time required for precomputation.
+\item \emph{T} represents the order of time required for the attack phase.
+\item \emph{D} represents the order of data available during the attack phase (applies only to stream ciphers).
 \end{enumerate}
 
 \textit{\textbf{Tradeoff equation.}} Let us assume that we select $n_1$ states during the precomputation phase and during the attack phase the PRSG traverses through $n_2$ states before the first match is observed. $M$ is equal to $n_1$, since the size of the hashtable would depend on the number of states stored in it. Similarly, the time to prepare the hashtable is proportional to $n_1$, hence the order of this time, or $P$, is $n_1$. As a result, $M$ = $P$ = $n_1$.
 
-Similarly, $T$ is the same as $n_2$. Also, for sufficient number of subsequences to be available, the keystream should have a length of at least $(n_2 + n - 1)$ bits. Hence, $D$ = $(n_2 + n - 1)$. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
+The time taken for the attack or $T$ is the same as $n_2$. The amount of data available or the number of subsequences of length $n$ derived using the available keystream, must be the same as $T$. Hence, $D$ = $n_2$. The keystream should have a length of at least $(D + n - 1)$ bits in order to provide the required amount of data. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
 
 This is a clear setting for applying the birthday paradox. In a set of $2^n$ states, $n_1$ are selected in precomputation and $n_2$ are selected during the attack. According to the variant of the birthday paradox, explained in section \ref{sec:bday-paradox}, we then have the following condition:
 
@@ -252,25 +255,26 @@ From \cite{erik-discussions}, there is an efficient solution for computing the s
 
 As can be seen, computing each state would take $\log_2{d}$ multiplications, and thus the entire precomputation phase would take $d \times \log_2{d}$ matrix multiplications. This is much effecient than the previous complexity of $2^n$. The above equation shall then be used in the precomputation phase of this attack to compute the (prefix, state) pairs.
 
-\subsection{Implementation details}
+% It is important to note here that the number of times squaring operation is performed depends only on $M$. 
+
+\subsection{Attack algorithm and results}
 % implementation results %
 % TMD calculations, specially data requirement for the attack %
 
-Both the versions of the BG attack differ only in the way the precomputation phase proceeds. In the implementation, we have identified these different ways by using a variable named \emph{memory\_setup} which either has the value RANDOM\_MEMORY or NON\_RANDOM\_MEMORY. Depending on this parameter, the appropriate functions are called.\\
-
-\textit{\textbf{Using random function.}}
-In order to randomly select states for precomputation, we need a random function. The $rand()$ function provided by C library is not a cryptographically strong function. Initially, the rand() function was used. Based on its short period, the desired number of different states could not be generated. 
-
-\textit{\textbf{Computing state transition function.}}
-
-
-\textit{\textbf{Preparing keystream.}}
-
-
-\textit{\textbf{Setup hashtable.}}
+Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. In this section, we discuss certain specific implementation requirements for both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
+\begin{enumerate}
+\item If the precomputation phase is non-random, the state transition matrix is computed, otherwise it is not. To compute the state transition matrix, the update matrix is first initialized with the tap bits of the HiTag2 LFSR and then squared recursively, as discussed in the previous section.
+\item The keystream for the attack is made available. A secret key of size $48$ bits is chosen and used in initializing the HiTag2 LFSR alongwith the serial ID and an initialization vector. Starting from this initial state the LFSR is run and keystream of desired length produced and stored in memory.
+The length of the keystream is defined by the parameter $D$ for the attack.
+\item A hashtable of size $M$ is created. If the precomputation phase is non-random, the state transition matrix is used in computing subsequent states which are stored in the hashtable. Else, states are randomly chosen and stored. $P$ defines the number of times a new state is computed (which is different from number of times a new state is stored in hashtable). As we can see, in this case every time a new state is computed, it is stored in the hashtable, hence $P$ and $M$ are the same. We shall see in later attacks that $P$ and $M$ can be different also. 
+\item Lastly, the attack is started. Overlapping subsequences of the available keystream are selected and matched with the prefixes in the hashtable. The worst case duration of the attack is the number of subsequences that are available, which is $D$. As also, in this case we have $T$ = $D$. In some later attacks we shall see that this does not hold. 
+\end{enumerate}
 
 
-\textit{\textbf{Running attack.}}
+\noindent \textit{\textbf{Random function.}}
+A random function is required in order to randomly select states in the random precomputation phase. The $rand()$ function provided by C library is not a cryptographically strong function. 
+
+
 
 
 
