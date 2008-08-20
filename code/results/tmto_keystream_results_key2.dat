@@ -1,10 +1,10 @@
 
 
 -----------------------------------------
-Time of attack: Wed Aug 20 03:09:26 2008
+Time of attack: Wed Aug 20 03:26:30 2008
 -----------------------------------------
 
-**** Secret key used: 0xd4e973ada2f2 ****
+**** Secret key used: 0xd4e98d3da2f2 ****
 
 
 Attack type: TMTO KEYSTREAM ATTACK
@@ -17,7 +17,36 @@ memory_setup = RANDOM_MEMORY
 
 Preparing Hashtable ...
 Preparation of Hashtable complete ...
-TIME for preparing Hashtable: 30 
+TIME for preparing Hashtable: 29 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 6 
+
+Attacking ...
+
+No Internal State found ...
+
+TIME for attack: 70
+
+-----------------------------------------
+Time of attack: Wed Aug 20 03:38:39 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 23
+T = 2 power 26
+P = 2 power 23
+D = 2 power 26
+prefix_bits = 48
+memory_setup = RANDOM_MEMORY
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 58 
 
 Preparing Keystream ...
 Keystream made available ...
@@ -26,18 +55,346 @@ TIME for preparing keystream: 5
 Attacking ...
 
 Match Found! 
-Current State: 3f6f65c06070  Prefix: 45e80b8428eb
+Current State: 3355cdf36689  Prefix: 732abf1854e5
 
-Percentage of the worst case time: 37.075935 I: 24881239
+Percentage of the worst case time: 28.568554 I: 19172032
 
-Found Initial State: 621c9e17a2f2
-Found Key: d4e973ada2f2
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
 
 Match Found! 
-Current State: 36aa6a3237f7  Prefix: 4a2ae4f87f56
+Current State: 3ef3320a9067  Prefix: 33a9a547f3dc
 
-Percentage of the worst case time: 67.736408 I: 45457134
+Percentage of the worst case time: 51.079379 I: 34278791
 
-Found Initial State: 621c9e17a2f2
-Found Key: d4e973ada2f2
-TIME for attack: 82
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME for attack: 72
+
+-----------------------------------------
+Time of attack: Wed Aug 20 03:47:18 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 27
+P = 2 power 22
+D = 2 power 27
+prefix_bits = 48
+memory_setup = RANDOM_MEMORY
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 30 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 10 
+
+Attacking ...
+
+Match Found! 
+Current State: 4d01ba9154b  Prefix: b2d1e93449d
+
+Percentage of the worst case time: 62.520605 I: 83913735
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 166ed32f43c8  Prefix: 825783f735a0
+
+Percentage of the worst case time: 63.722134 I: 85526401
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 1c9af442859b  Prefix: 39eff575e2f2
+
+Percentage of the worst case time: 67.108031 I: 90070875
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 16712ea912f2  Prefix: 18f44ee291dc
+
+Percentage of the worst case time: 73.398369 I: 98513623
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 10fc245ab8fe  Prefix: 30627b39dbd9
+
+Percentage of the worst case time: 95.166407 I: 127730189
+
+Found Initial State: 6f7ebb9d851f
+Found Key: 4dc3e4c3851f
+TIME for attack: 152
+
+-----------------------------------------
+Time of attack: Wed Aug 20 03:56:14 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 27
+P = 2 power 22
+D = 2 power 27
+prefix_bits = 56
+memory_setup = RANDOM_MEMORY
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 32 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 10 
+
+Attacking ...
+
+Match Found! 
+Current State: 4d01ba9154b  Prefix: b2d1e93449dd6
+
+Percentage of the worst case time: 62.520605 I: 83913735
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 166ed32f43c8  Prefix: 825783f735a061
+
+Percentage of the worst case time: 63.722134 I: 85526401
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 1c9af442859b  Prefix: 39eff575e2f283
+
+Percentage of the worst case time: 67.108031 I: 90070875
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 16712ea912f2  Prefix: 18f44ee291dc8e
+
+Percentage of the worst case time: 73.398369 I: 98513623
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME for attack: 148
+
+-----------------------------------------
+Time of attack: Wed Aug 20 14:04:13 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 25
+P = 2 power 22
+D = 2 power 25
+prefix_bits = 48
+memory_setup = NON_RANDOM_MEMORY
+
+Initializing state transition matrix ...
+TIME for initializing state transition matrix: 0 
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 178 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 3 
+
+Attacking ...
+
+Match Found! 
+Current State: fb79888408cd  Prefix: 34dbc655f9ec
+
+Percentage of the worst case time: 35.397097 I: 11877295
+
+Found Initial State: b3aad634fca0
+Found Key: f39d2f92fca0
+
+Match Found! 
+Current State: 9f47ba196714  Prefix: cc88fe2839c9
+
+Percentage of the worst case time: 92.197010 I: 30936183
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME for attack: 29
+
+-----------------------------------------
+Time of attack: Wed Aug 20 14:13:34 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 26
+P = 2 power 22
+D = 2 power 26
+prefix_bits = 48
+memory_setup = NON_RANDOM_MEMORY
+
+Initializing state transition matrix ...
+TIME for initializing state transition matrix: 0 
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 178 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 6 
+
+Attacking ...
+
+Match Found! 
+Current State: fb79888408cd  Prefix: 34dbc655f9ec
+
+Percentage of the worst case time: 17.698549 I: 11877295
+
+Found Initial State: b3aad634fca0
+Found Key: f39d2f92fca0
+
+Match Found! 
+Current State: 9f47ba196714  Prefix: cc88fe2839c9
+
+Percentage of the worst case time: 46.098505 I: 30936183
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+
+Match Found! 
+Current State: 51b9bcd83bdc  Prefix: ec34798cc7c6
+
+Percentage of the worst case time: 56.004348 I: 37583882
+
+Found Initial State: f0ba8d76dec8
+Found Key: 49c1f6e6dec8
+TIME for attack: 57
+
+-----------------------------------------
+Time of attack: Wed Aug 20 14:22:18 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 25
+P = 2 power 22
+D = 2 power 25
+prefix_bits = 56
+memory_setup = NON_RANDOM_MEMORY
+
+Initializing state transition matrix ...
+TIME for initializing state transition matrix: 0 
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 181 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 3 
+
+Attacking ...
+
+Match Found! 
+Current State: 9f47ba196714  Prefix: cc88fe2839c968
+
+Percentage of the worst case time: 92.197010 I: 30936183
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME for attack: 28
+
+-----------------------------------------
+Time of attack: Wed Aug 20 14:39:50 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 26
+P = 2 power 22
+D = 2 power 26
+prefix_bits = 56
+memory_setup = NON_RANDOM_MEMORY
+
+Initializing state transition matrix ...
+TIME for initializing state transition matrix: 0 
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 181 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 6 
+
+Attacking ...
+
+Match Found! 
+Current State: 9f47ba196714  Prefix: cc88fe2839c968
+
+Percentage of the worst case time: 46.098505 I: 30936183
+
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME for attack: 55
+
+-----------------------------------------
+Time of attack: Wed Aug 20 14:47:06 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 21
+T = 2 power 26
+P = 2 power 21
+D = 2 power 26
+prefix_bits = 48
+memory_setup = NON_RANDOM_MEMORY
+
+Initializing state transition matrix ...
+TIME for initializing state transition matrix: 0 
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 88 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 6 
+
+Attacking ...
+
+No Internal State found ...
+
+TIME for attack: 53
