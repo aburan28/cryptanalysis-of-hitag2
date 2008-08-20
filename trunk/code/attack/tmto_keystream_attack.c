@@ -13,6 +13,8 @@
 #include "common.h"		/* for common declarations */
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
+#include "attack_dispatcher.h"
+
 
 static struct hashtable * hash_table_setup();
 
@@ -33,7 +35,7 @@ hashfromkey(void *ky)
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 
-int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 _memory_setup)
+int tmto_keystream_attack()
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -51,22 +53,8 @@ int tmto_keystream_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits, u32 
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
 
-	/* initialize tradeoff variables */
-	M = _M;
-	T = _T;
-	D = _D;
-	P = _P;
-
-	memory_setup = _memory_setup;
-	prefix_bits = _prefix_bits;
-	
-	N = 48;
-	
 	/* allocate memory for keystream */
 	c_keystream = (u64 *)malloc(sizeof(u64) * (D/64 + 1));
-
-	time(&time1);
-	printf("\nCurrent Time: %s", ctime(&time1));
 
 	/* if non-random memory is to be setup - initialize the matrices */
 	if(memory_setup == NON_RANDOM_MEMORY)

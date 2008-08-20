@@ -6,21 +6,7 @@
 #include "common.h"		/* for common definitions */
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
-
-// u64 get_random(u32 bits)
-// {
-// 	u32 i = 0;
-// 	u64 random_number = 0;
-// 	u64 rand_out = 0;
-// 
-// 	for(i = 0; i < bits - 16; i++)
-// 	{
-// 		rand_out = rand();
-// 		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
-// 	}
-// 
-// 	return random_number;
-// }
+#include "attack_dispatcher.h"
 
 u64 get_random(u32 bits)
 {
@@ -30,8 +16,8 @@ u64 get_random(u32 bits)
 
 	for(i = 0; i < bits - 16; i++)
 	{
-		rand_out = rand() % 65535;
-		random_number = (random_number << 1) ^ rand_out ^ (rand_out >> 1);
+		rand_out = rand();
+		random_number = (random_number << 1) ^ rand_out;
 	}
 
 	return random_number;

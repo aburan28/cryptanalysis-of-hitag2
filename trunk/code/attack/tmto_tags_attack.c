@@ -20,6 +20,8 @@
 #include "common.h"		/* for common definitions */
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
+#include "attack_dispatcher.h"
+
 
 static struct hashtable * hash_table_setup();
 
@@ -40,7 +42,7 @@ hashfromkey(void *ky)
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 	
-int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
+int tmto_tags_attack()
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -57,19 +59,6 @@ int tmto_tags_attack(u32 _M, u32 _T, u32 _P, u32 _D, u32 _prefix_bits)
 	struct value *found;
 	struct key * k;
 	struct hashtable *h;
-	
-	/* initialize tradeoff variables */
-	M = _M;
-	T = _T;
-	D = _D;
-	P = _P;
-	
-	prefix_bits = _prefix_bits;
-	
-	N = 48;
-	
-	time(&time1);
-	printf("\nCurrent Time: %s", ctime(&time1));
 	
 	c_tags = (u64 *)malloc(sizeof(u64) * T * 2);
 	
