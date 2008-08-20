@@ -14,30 +14,25 @@ int main(int argc, char *argv[])
 	attack_type = atoi(argv[1]);
 
 	time(&time1);
+
+	N = 48;
+	secret_key = KEY3;
+	serial_id = SERIAL_ID; 
+	init_vector = INITIALIZATION_VECTOR;
 	
 	printf("\n\n-----------------------------------------");
 	printf("\nTime of attack: %s", ctime(&time1));
 	printf("-----------------------------------------");
-	
-	//secret_key = 0x52B49EA34972ULL;
-	//secret_key = 0x49D2AC801F94ULL;
-	secret_key = 0xD4E973ADA2F2ULL;
-
-	serial_id = 0x69574349; 
-	init_vector = 0x72456E65;
-	
-	N = 48;
-	
 	printf("\n\n**** Secret key used: 0x%llx ****\n", secret_key);
 
 	if(attack_type == TMTO_KEYSTREAM_ATTACK)
 	{
-		M = pow(2,22);
-		T = pow(2,26);
+		M = pow(2,21);
+		T = pow(2,28);
 		P = M;
 		D = T;
-		prefix_bits = 48;
-		memory_setup = RANDOM_MEMORY;
+		prefix_bits = 56;
+		memory_setup = NON_RANDOM_MEMORY;
 
 		/* print the attack parameters */
 		printf("\n\nAttack type: TMTO KEYSTREAM ATTACK");

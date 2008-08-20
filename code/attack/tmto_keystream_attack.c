@@ -172,52 +172,52 @@ static struct hashtable * hash_table_setup()
 	struct value *v;
 	struct hashtable *h;
 
+	const u64 starting_state = 0x69574AD004ACULL;
 	u64 state = 0;
 	u64 pre_state = 0;
 
 	u64 i = 0;
 	u64 prefix = 0;
 
-	// initialize the hash table
+	/* create the hashtable */
 	h = create_hashtable(M, hashfromkey, equalkeys);
 	if (NULL == h) exit(-1); /* exit on error*/
 
-	// Initialize the state, to some random value.
-	state = 0x69574AD004ACULL;
+	/* initialize the state to constant starting state */
+	state = starting_state;
 
 	if(memory_setup == NON_RANDOM_MEMORY)
 	{
 
 		for(i = 0; i < P; i++)
 		{
-			// Save the starting state
+			/* save the starting state */
 			pre_state = state;
 
-			//call hitag function - get prefix bits (in u64 format)
+			/* call hitag2 prefix function */
 			prefix = hitag2_prefix(&state, prefix_bits);
 
-			//save prefix and state in the hash table
 			k = (struct key *)malloc(sizeof(struct key));
 			if (NULL == k)
 			{
-				printf("\nError: Could not allocate memory for Prefix");
-				fflush(stdout);
+				printf("\nError: Could not allocate memory for prefix ...");
 				exit(1);
 			}
 
 			k->key = prefix;
 			v = (struct value *)malloc(sizeof(struct value));
 			v->value = pre_state;
+			
+			/* insert (prefix,state) pair in the hash table */
 			if (!insert_some(h,k,v))
 			{
-				printf("\nError: Could not allocate memory for State");
-				fflush(stdout);
+				printf("\nError: Could not allocate memory for state ...");
 				exit(-1); /*oom*/
 			}
 
-			/* State transition function */
 			state = pre_state;
 
+			/* state jump function */
 			compute_new_state(&state);
 		}
 	}
@@ -226,26 +226,28 @@ static struct hashtable * hash_table_setup()
 	{
 		for(i = 0; i < P; i++)
 		{
+			/* get a random state */
 			state = get_random(N);
 			pre_state = state;
 			
-			//call hitag function - get prefix bits (in u64 format)
+			/* call hitag2 prefix function */
 			prefix = hitag2_prefix(&state, prefix_bits);
 
-			//save prefix and state in the hash table
 			k = (struct key *)malloc(sizeof(struct key));
 			if (NULL == k)
 			{
-				printf("\nError: Could not allocate memory for Prefix");
+				printf("\nError: Could not allocate memory for prefix ...");
 				exit(1);
 			}
 
 			k->key = prefix;
 			v = (struct value *)malloc(sizeof(struct value));
 			v->value = pre_state;
+			
+			/* insert (prefix,state) pair in the hash table */
 			if (!insert_some(h,k,v))
 			{
-				printf("\nError: Could not insert values into hashtable ...");
+				printf("\nError: Could not allocate memory for state ...");
 				exit(-1); /*oom*/
 			}
 		}
