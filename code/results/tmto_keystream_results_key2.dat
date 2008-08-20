@@ -1,0 +1,43 @@
+
+
+-----------------------------------------
+Time of attack: Wed Aug 20 03:09:26 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e973ada2f2 ****
+
+
+Attack type: TMTO KEYSTREAM ATTACK
+M = 2 power 22
+T = 2 power 26
+P = 2 power 22
+D = 2 power 26
+prefix_bits = 48
+memory_setup = RANDOM_MEMORY
+
+Preparing Hashtable ...
+Preparation of Hashtable complete ...
+TIME for preparing Hashtable: 30 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 5 
+
+Attacking ...
+
+Match Found! 
+Current State: 3f6f65c06070  Prefix: 45e80b8428eb
+
+Percentage of the worst case time: 37.075935 I: 24881239
+
+Found Initial State: 621c9e17a2f2
+Found Key: d4e973ada2f2
+
+Match Found! 
+Current State: 36aa6a3237f7  Prefix: 4a2ae4f87f56
+
+Percentage of the worst case time: 67.736408 I: 45457134
+
+Found Initial State: 621c9e17a2f2
+Found Key: d4e973ada2f2
+TIME for attack: 82

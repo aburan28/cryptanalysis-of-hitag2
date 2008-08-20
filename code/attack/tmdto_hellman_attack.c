@@ -19,6 +19,8 @@
 #include "common.h"		/* for common definitions */
 #include "hitag2.h"		/* for hitag2 function prototypes */
 #include "attack_helper.h"	/* for helper function prototypes */
+#include "attack_dispatcher.h"
+
 
 static struct hashtable * single_hash_table_setup(u32);
 

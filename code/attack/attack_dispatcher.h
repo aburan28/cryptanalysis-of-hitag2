@@ -1,14 +1,19 @@
 /* declarations for various attack parameters */
 
-u32 attack_type = 0;
+u32 attack_type;
 
-u32 M = 0;
-u32 T = 0;
-u32 D = 0;
-u32 P = 0;
-u32 m = 0;
-u32 t = 0;
-u32 r = 0;
+u32 N;
+u32 M;
+u32 T;
+u32 D;
+u32 P;
+u32 m;
+u32 t;
+u32 r;
 
-u32 prefix_bits = 0;
-u32 memory_setup = 0;
+u32 prefix_bits;
+u32 memory_setup;
+
+u64 secret_key; 
+u32 serial_id;
+u32 init_vector;
