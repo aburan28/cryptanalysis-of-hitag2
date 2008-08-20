@@ -128,11 +128,11 @@ The implementation of the hash table is done by Christopher Clark and has been t
 % Also, $M$ is used in defining the hash function for the hashtable. A very simple hash function is used, which uses maps the key to the space $M$ by taking the modulo $M$ of the key.
 
 
-\section{BG attack}
+\section{Babbage-Golic attack}
 \label{sec:bg-attack}
 Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack which was conceptualized on the block cipher DES, was published by Hellman in 1980 \cite{hellman1980ctm}. In contrast, the first and the simplest TMTO attack on stream ciphers was published by Babbage \cite{babbage} and Golic \cite{golic}, independent of each other in 1995 and 1997 respectively. We would call this attack on stream ciphers as the BG attack. We explain the original BG attack and a variant of it in the sections \ref{sec:bg-r} and \ref{sec:bg-nr}.
 
-\subsection{BG attack with random precomputation}
+\subsection{Attack with random precomputation}
 \label{sec:bg-r}
 
 As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a short secret key, to which the bits of the plaintext are \emph{xor}'ed giving the ciphertext bits. In this way, a stream cipher is produced. A simple model of the PRSG taken from \cite{babbage} is shown in figure \ref{fig:psrg-model}. The initial state of the PRSG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function while the downward arrow represents the output function. We assume that the PRSG incorporates an LFSR having the maximal period of $2^{n} - 1$.
@@ -174,7 +174,7 @@ This is a clear setting for applying the birthday paradox. In a set of $2^n$ sta
 
 This is the condition that we required for a successful attack. Though this is probabilistic, we know that if the parameters of $M$ and $T$ are wisely chosen, the probability of a match becomes very high.
 
-\subsection{BG attack with non-random precomputation}
+\subsection{Attack with non-random precomputation}
 \label{sec:bg-nr}
 
 The precomputation in BG attack is done by randomly generating states of $n$ bits, and then computing their prefix. The other way of performing the precomputation is by selecting states through a deterministic algorithm. Consider that the internal state in a stream cipher runs through all $2^n - 1$ possible states, represented by a huge cycle of states as shown in figure \ref{}. If we select states at a fixed distance $d$ from each other during precomputation, we can be sure that there would be a match if the attack phase has a time order of $d$ \cite{erik-discussions}. This is the main idea behind non-random precomputation and is explained in detail in the further paragraphs. The HiTag2 cipher is well suited for this attack, since it's internal state runs through the longest possible cycle of size $2^n - 1$. The attack phase for this attack remains the same as in case of randomly selected precomputation states.\\
@@ -257,9 +257,7 @@ As can be seen, computing each state would take $\log_2{d}$ multiplications, and
 
 % It is important to note here that the number of times squaring operation is performed depends only on $M$. 
 
-\subsection{Attack algorithm and results}
-% implementation results %
-% TMD calculations, specially data requirement for the attack %
+\subsection{Implementation and results}
 
 Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. In this section, we discuss certain specific implementation requirements for both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
 \begin{enumerate}
@@ -270,16 +268,59 @@ The length of the keystream is defined by the parameter $D$ for the attack.
 \item Lastly, the attack is started. Overlapping subsequences of the available keystream are selected and matched with the prefixes in the hashtable. The worst case duration of the attack is the number of subsequences that are available, which is $D$. As also, in this case we have $T$ = $D$. In some later attacks we shall see that this does not hold. 
 \end{enumerate}
 
+% a note about the reversing of keys. little bit of implementation details. (or to mention this in the hitag2 section?)
 
-\noindent \textit{\textbf{Random function.}}
-A random function is required in order to randomly select states in the random precomputation phase. The $rand()$ function provided by C library is not a cryptographically strong function. 
-
-
-
+% a note on random function chosen? %
+A random function is required in order to select states for the hashtable in a random precomputation phase. The $rand()$ function provided by C library is not a cryptographically strong function. The 
 
 
 
-\section{TMTO attack with limited keystream}
+Three different keys are randomly chosen, and the attack run for each of them. The values of $M$ and $T$ are varied. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for all the keys. 
+
+\begin{table}[ht!]
+\begin{center}
+%\begin{tabular}{|p{4cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
+\begin{tabular}{|c||@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|}
+\hline
+\multicolumn{13}{|c|}{\textbf{Key 0x52b49ea34972}} \\ \hline
+Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
+Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
+
+M																&	11 &	11 &	11 &	11 &	11 &	11 &	$2^{21}$ & $2^{21}$ &	$2^{21}$ & $2^{21}$ & $2^{21}$ &	$2^{21}$ \\ \hline
+T	  														&	11 &	11 &	11 &	11 &	11 &	11 &	$2^{26}$ & $2^{27}$ &	$2^{28}$ & $2^{26}$ & $2^{27}$ &	$2^{28}$ \\ \hline
+Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	75 & 74 &	74 &	77 &	76 &	78 \\ \hline
+Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	5 & 11 &	21 &	5 &	11 &	21 \\ \hline
+Time for attack									&	11 &	11 &	11 &	11 &	11 &	11 &	69 & 140 &	278 &	79 &	142 &	288 \\ \hline
+Number of times key is found		&	11 &	11 &	11 &	11 &	11 &	11 &	1 & 1 &	2 &	1 &	1 &	2 \\ \hline
+False Alarms										&	11 &	11 &	11 &	11 &	11 &	11 &	0 & 1 &	1 &	0 &	0 &	0 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Results of TMTO keystream attack for key 0x52b49ea34972}
+\label{tab:keystream-attack-results}
+\end{table}
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|p{3cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{13}{|c|}{\textbf{Key 0x49D2AC801F94}} \\ \hline
+Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
+Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
+
+M		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+T	  &	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for attack								&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Number of times key is found	&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+False Alarms									&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Results of TMTO keystream attack for key 0x49D2AC801F94}
+\label{tab:keystream-attack-results}
+\end{table}
+
+\section{Babbage-Golic attack with limited keystream}
 
 In the previous attack, there is an assumption on the length of keystream available to the attacker. The minimum number of operations required to be performed during the attack phase (or $T$) in order to find a match determines the required length of keystream. Considering the use of HiTag2 in car keys, it is certain that long keystream would not be available. Rather several short length keystream (for each transaction between the car and car key) would be available over some span of time. As explained in section \ref{sec:hitag2}, 32 bits of data is exchanged between the car and the car key in the beginning of every run of the protocol. The complete protocol is not known to us, but it is just known that these 32 bits are sent across from the car controller to the key \cite{email-ruptor}. Along with the 32 bits, an IV is also sent. The car key then initializes the HiTag2 cipher using the shared secret key, the IV and its serial ID, and matches the computed output of the cipher to the received 32 bits. These 32 bits of data, known as the \emph{authenticator tag}, perform the function of authenticating the car to the car key. After authentication is successful, subsequent messages if any, are encrypted using the subsequent keystream.
 
@@ -320,3 +361,28 @@ This is the probability of the correct key being found when we have one tag. Hen
 \end{center}
 
 In practice, the product of $M$ and $T$ must be larger than $2^n$, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is quite possible that the attack is successful for higher values of the two parameters.
+
+
+\subsection{Implementation and results}
+
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|p{3cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
+\hline
+\multicolumn{13}{|c|}{\textbf{Key 0x49D2AC801F94}} \\ \hline
+Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
+Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
+
+M		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+T	  &	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Time for attack								&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+Number of times key is found	&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+False Alarms									&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+\end{tabular}
+\end{center}
+\caption{Results of TMTO keystream attack for key 0x49D2AC801F94}
+\label{tab:keystream-attack-results}
+\end{table}
