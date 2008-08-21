@@ -157,13 +157,11 @@ $p(x)$ =  1 + $x^{11}$ + $x^{13}$ + $x^{14}$ + $x^{16}$
 
 The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{new}$ bit, since $s_{new}$ can be interpreted to be existing at the \textbf{0}'th position of the shift register. $s_{new}$ becomes $s_1$ in the next clock cycle, but in the current clock cycle, $s_{new}$ is $s_0$ (which exists just theoretically). It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
 
-\begin{center}
-$p'(x)$ = $x^{17}$ + $x^{6}$ + $x^{4}$ + $x^{3}$ + $x$\\
-
-$p'(x)$ = $x$*($x^{16}$ + $x^{5}$ + $x^{3}$ + $x^{2}$ + 1)\\
-
-$p'(x)$ = $x^{16}$ + $x^{5}$ + $x^{3}$ + $x^{2}$ + 1
-\end{center}
+\begin{align*}
+p'(x) &= x^{17} + x^{6} + x^{4} + x^{3} + x\\
+p'(x) &= x*(x^{16} + x^{5} + x^{3} + x^{2} + 1)\\
+p'(x) &= x^{16} + x^{5} + x^{3} + x^{2} + 1
+\end{align*}
 
 \begin{figure}[ht!]
 	\centering
@@ -213,6 +211,8 @@ The entire setup of the keystream generator is done in two phases. The first pha
 
 \textit{\textbf{1. LFSR Initialization.}} The initialization step of the LFSR is straightforward. Instead of initializing the LFSR with zeros, the bits are initialized with the serial ID and initial part of the key. The 32 bits of the serial ID (from \emph{lsb} to \emph{msb}) are stored in the first 32 bits of the LFSR (bits from index 0 through index 31). Then, the first 16 bits of the key (again, from \emph{lsb} to \emph{msb}) are stored in the remaining 16 bits of the LFSR (bits from index 32 through index 47). With this the initialization of the LFSR is complete. This is also shown in figure \ref{fig:hitag2-1}.\\
 
+% NEEDED - change this figure.
+
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=5in]{./figures/hitag2-1.PNG}
@@ -221,6 +221,8 @@ The entire setup of the keystream generator is done in two phases. The first pha
 \end{figure}
 
 \textit{\textbf{2. LFSR Setup.}} During the setup of the LFSR, the 32 bits of IV are used with the remaining 32 bits of the key. The bits in the LFSR are shifted to the right in every clock cycle, and a new value is stored in the leftmost bit (refer section \ref{sec:lfsr}). In every clock cycle, an xor of three bits: one bit from the remaining part of the key (bits from index 16 through 47), one bit from the IV (from \emph{lsb} to \emph{msb}) and the output bit from the non-linear output function, is stored at the leftmost bit of the LFSR. After 32 clock cycles, the internal state is now prepared for keystream generation. This is shown in figure \ref{fig:hitag2-2}.\\
+
+% NEEDED - change this figure.
 
 \begin{figure}[ht!]
 	\centering
@@ -237,15 +239,15 @@ Three different multiplexor functions are used to realize these six instances, a
 \begin{center}
 \small{
 \begin{tabular}{|p{2.2cm}|l|p{2cm}|p{2.8cm}|p{1.5cm}|}
-\hline
-\textbf{Multiplexor instance}	& \textbf{Function}		& \textbf{Data bits}	& \textbf{Address bits (input)}		& \textbf{Output bit}\\ \hline
-\multicolumn{5}{|c|}{Level 1 Multiplexors}\\ \hline
+\hline 
+\textbf{Multiplexor instance}	& \textbf{Function}		& \textbf{Data bits}	& \textbf{Address bits (input)}		& \textbf{Output bit}\\ \hline \hline
+\multicolumn{5}{|c|}{Level 1 Multiplexors}\\ \hline \hline
 MUX 1 			&	$f_a^4$			& 0x2C79			& 1, 2, 4, 5							& $o_1$\\
 MUX 2 			&	$f_b^4$			& 0x6671			& 7, 11, 13, 14						& $o_2$\\
 MUX 3 			&	$f_b^4$			& 0x6671			& 16, 20, 22, 25					& $o_3$\\
 MUX 4 			&	$f_b^4$			& 0x6671			& 27, 28, 30, 32					& $o_4$\\
-MUX 5 			&	$f_a^4$			& 0x2C79			& 33, 42, 43, 45					& $o_5$\\ \hline
-\multicolumn{5}{|c|}{Level 2 Multiplexor}\\ \hline
+MUX 5 			&	$f_a^4$			& 0x2C79			& 33, 42, 43, 45					& $o_5$\\ \hline \hline
+\multicolumn{5}{|c|}{Level 2 Multiplexor}\\ \hline \hline
 MUX 6 			&	$f_c^5$			& 0x7907287B	& $o_1$, $o_2$, $o_3$, $o_4$, $o_5$		& $k_i$\\ \hline
 \end{tabular}}
 \end{center}
@@ -257,11 +259,15 @@ Hence, as mentioned previously, the output bit from the function $f_c^5$ is \emp
 
 The source code for the initialization and setup of the LFSR is shown below in the listing. Here, the function \emph{hitag2\_output} stands for the output function, which we have just described.\\
 
-\lstinputlisting[frame=trBL, caption={HiTag2 initialization code snippet}]{./code-snippets/hitag2_init.c}
+% NEEDED - explain a little about the implementation before the code snippet. 
+
+\lstinputlisting[frame=tb, caption={HiTag2 initialization code snippet}]{./code-snippets/hitag2_init.c}
 
 \textit{\textbf{3. Keystream Generation.}} The output from the function $f_c^5$ constitutes the keystream. In addition, the LFSR state is changed in every clock cycle through the update function. The internal state is updated linearly, in the following fashion: an xor of the taps of the LFSR (which are bits 0, 2, 3, 6, 7, 8, 16, 22, 23, 26, 30, 41, 42, 43, 46 and 47) is written to the leftmost bit of the LFSR. Once the internal state is changed, the output bit gets recomputed, generating the next bit of the keystream. This is shown in figure \ref{fig:hitag2-3}. Following is the code snippet for the function implementing one round of the HiTag2 (\emph{hitag2\_round}), by first updating the state and then calling the output function (\emph{hitag2\_output}).\\
 
-\lstinputlisting[frame=trBL, caption={HiTag2 keystream generation code snippet}]{./code-snippets/hitag2_round.c}
+\lstinputlisting[frame=tb, caption={HiTag2 keystream generation code snippet}]{./code-snippets/hitag2_round.c}
+
+% NEEDED - change this figure.
 
 \begin{figure}[ht!]
 	\centering

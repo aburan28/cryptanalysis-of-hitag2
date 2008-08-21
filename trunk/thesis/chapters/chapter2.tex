@@ -19,14 +19,14 @@ Before we go into more details of the working of time-memory tradeoff attacks on
 
 \textit{\textbf{Simple example.}} Consider the problem of finding the number of \textbf{1}'s in the binary expansion of a non-negative integer $x$ (which takes $4$ bytes). The simplest algorithm to solve this problem would for 32 operations, pick the value of the least significant bit, add it to a global \textit{sum} and shift the integer rightwards by one bit. The \textit{sum} would then be the desired result. The pseudo-code for such an algorithm is shown below.
 
-\begin{verbatim}
-// ones_count(x)
+\begin{lstlisting}[frame=tb]
+/* ones_count(x) */
 sum = 0
 for i = 0 to len(x) - 1
     sum = sum + (x >> i) & 1
 next i
 return sum
-\end{verbatim}
+\end{lstlisting}
 
 Here, $>>$ denotes the right shift operation and \& denotes bitwise binary \emph{and} operation. The algorithm performs 32 operations (based on the length of the integer) and has nearly no memory requirement. The other approach to solve this problem would be to store the required \emph{sum} for each of the possible $2^{32}$ integers in memory. This way, just one memory lookup is required to find the result for $x$. While in this case, we need to have a memory of the order of $2^{32}$. 
 
@@ -185,9 +185,9 @@ The precomputation in BG attack is done by randomly generating states of $n$ bit
 
 \textit{\textbf{Tradeoff equation.}} It can be clearly seen that the following relation holds,
 
-\begin{center}
-\large{$M \times T$ = $2^n$}\\
-\end{center}
+\begin{align}
+\label{eq:tmto-non-random} M \times T = 2^n
+\end{align}
 
 Using this equation, the tradeoff in memory and time can be achieved. It is interesting to compare this equation with the equation for BG attack with random states during precomputation. The latter was based on the birthday paradox, and hence the probability of finding a match is always close to \textbf{1}, but not exactly \textbf{1}. The greater the value of $M \times T$ is as compared to $2^n$, more is this probability closer to \textbf{1}.
 
@@ -259,66 +259,111 @@ As can be seen, computing each state would take $\log_2{d}$ multiplications, and
 
 \subsection{Implementation and results}
 
-Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. In this section, we discuss certain specific implementation requirements for both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
+Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
 \begin{enumerate}
-\item If the precomputation phase is non-random, the state transition matrix is computed, otherwise it is not. To compute the state transition matrix, the update matrix is first initialized with the tap bits of the HiTag2 LFSR and then squared recursively, as discussed in the previous section.
-\item The keystream for the attack is made available. A secret key of size $48$ bits is chosen and used in initializing the HiTag2 LFSR alongwith the serial ID and an initialization vector. Starting from this initial state the LFSR is run and keystream of desired length produced and stored in memory.
-The length of the keystream is defined by the parameter $D$ for the attack.
-\item A hashtable of size $M$ is created. If the precomputation phase is non-random, the state transition matrix is used in computing subsequent states which are stored in the hashtable. Else, states are randomly chosen and stored. $P$ defines the number of times a new state is computed (which is different from number of times a new state is stored in hashtable). As we can see, in this case every time a new state is computed, it is stored in the hashtable, hence $P$ and $M$ are the same. We shall see in later attacks that $P$ and $M$ can be different also. 
-\item Lastly, the attack is started. Overlapping subsequences of the available keystream are selected and matched with the prefixes in the hashtable. The worst case duration of the attack is the number of subsequences that are available, which is $D$. As also, in this case we have $T$ = $D$. In some later attacks we shall see that this does not hold. 
+\item If the precomputation phase is non-random, a matrix of the state transition function is computed, otherwise it is not. To compute the state transition matrix, the update matrix is first initialized with the tap bits of the LFSR used in HiTag2 and then squared recursively, as discussed in the previous section.
+\item The keystream for the attack is made available. A secret key of size $48$ bits is chosen and used in initializing the LFSR alongwith the serial ID and an initialization vector. Starting with this initial state, the stream cipher is run and keystream of desired length produced and stored in memory. The length of the keystream is defined in terms of the parameter $D$ for the attack.
+\item A hashtable of size $M$ is created. If the precomputation phase is non-random, the state transition matrix is used in computing subsequent states which are stored in the hashtable. Else, states are randomly chosen and stored. $P$ defines the number of times a new state is computed (which is not the same as the number of times a new state is stored in hashtable). As we can see, in this case every time a new state is computed, it is stored in the hashtable, hence $P$ and $M$ are the same. We shall see in later attacks that $P$ and $M$ can be different also depending on the algorithm for the precomputation phase. 
+\item Lastly, the attack is started. Overlapping subsequences of the prepared keystream are selected and matched with the prefixes in the hashtable. The worst case duration of the attack is the number of subsequences that are available, which is $D$. And thus, in this case we have $T$ = $D$. In some later attacks we shall see that this does not hold. 
 \end{enumerate}
 
 % a note about the reversing of keys. little bit of implementation details. (or to mention this in the hitag2 section?)
 
 % a note on random function chosen? %
-A random function is required in order to select states for the hashtable in a random precomputation phase. The $rand()$ function provided by C library is not a cryptographically strong function. The 
+A random function is required in order to select states for the hashtable in the random precomputation phase. The $rand()$ function provided by $C$ library is not a cryptographically strong function. We implemented a $C$ program to check the period of the output of the $rand()$ function. Following are the observations after running the program.
 
+\begin{enumerate}
+\item The output of the $rand()$ function is \textbf{16} bits. This is greatly insufficient for our purpose, since we require random numbers of length \textbf{48} bits. 
+\item As expected, the output of the $rand()$ function repeats after around $2^{16}$ calls to the function. The period is unstable, and varies a lot, but remains in the range of $2^{14}$ to $2^{17}$ more or less.
+\end{enumerate}
 
+Since, the inbuilt $rand()$ function does not help us in any way, we implemented a random function which uses the $rand()$ function internally. Also we do not require very high level of security from our random function as we generate random states using it, and not keys. Hence, the function solves our purpose. In addition, the period of the function is $2^{27}$ for random numbers of length \textbf{32} bits, which is pretty good for the attacks, as the order of the memory being considered is of the order of $2^{22}$ in the experiments shown below. The program for checking the period of both the $C$ $rand()$ function and our random function is given in appendix.
 
-Three different keys are randomly chosen, and the attack run for each of them. The values of $M$ and $T$ are varied. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for all the keys. 
+Two different keys are randomly selected for the attacks. These keys are as follows.
 
-\begin{table}[ht!]
-\begin{center}
-%\begin{tabular}{|p{4cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
-\begin{tabular}{|c||@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|@{}c@{}|}
-\hline
-\multicolumn{13}{|c|}{\textbf{Key 0x52b49ea34972}} \\ \hline
-Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
-Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
+\begin{enumerate}
+\item Key $K_1$ = 0x52B49EA34972
+\item Key $K_2$ = 0xD4E98D3DA2F2
+\end{enumerate}
 
-M																&	11 &	11 &	11 &	11 &	11 &	11 &	$2^{21}$ & $2^{21}$ &	$2^{21}$ & $2^{21}$ & $2^{21}$ &	$2^{21}$ \\ \hline
-T	  														&	11 &	11 &	11 &	11 &	11 &	11 &	$2^{26}$ & $2^{27}$ &	$2^{28}$ & $2^{26}$ & $2^{27}$ &	$2^{28}$ \\ \hline
-Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	75 & 74 &	74 &	77 &	76 &	78 \\ \hline
-Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	5 & 11 &	21 &	5 &	11 &	21 \\ \hline
-Time for attack									&	11 &	11 &	11 &	11 &	11 &	11 &	69 & 140 &	278 &	79 &	142 &	288 \\ \hline
-Number of times key is found		&	11 &	11 &	11 &	11 &	11 &	11 &	1 & 1 &	2 &	1 &	1 &	2 \\ \hline
-False Alarms										&	11 &	11 &	11 &	11 &	11 &	11 &	0 & 1 &	1 &	0 &	0 &	0 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Results of TMTO keystream attack for key 0x52b49ea34972}
-\label{tab:keystream-attack-results}
-\end{table}
+We display the results here for these two keys $K_1$ and $K_2$. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to higher degree of false alarms, while high prefix length would not matter since \textbf{56} bits of prefix is sufficient in eliminating false alarms. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}
-\begin{tabular}{|p{3cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
+\begin{tabular}{|p{3cm}||c|c|c|c|c|c|c|c|c|c|}
 \hline
-\multicolumn{13}{|c|}{\textbf{Key 0x49D2AC801F94}} \\ \hline
-Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
-Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
-
-M		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-T	  &	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for attack								&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Number of times key is found	&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-False Alarms									&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
+\multicolumn{11}{|c|}{\textbf{Key $K_1$ = 0x52B49EA34972}} \\ \hline \hline
+Precomputation 	& \multicolumn{5}{c|}{Random} & \multicolumn{5}{c|}{Non-random} \\ \hline
+Prefix length										&	48 				&	48 				&	48 				&	48 				& 56 				&	48 				&	48				&	48 				&	56 				&	56  			\\ \hline
+M																&	$2^{21}$ 	&	$2^{22}$ 	&	$2^{24}$ 	&	$2^{25}$ 	&	$2^{25}$ 	& $2^{21}$ 	&	$2^{21}$ 	&	$2^{21}$ 	&	$2^{21}$ 	& $2^{21}$	\\ \hline
+T	  														&	$2^{26}$ 	&	$2^{25}$ 	&	$2^{25}$ 	&	$2^{25}$	&	$2^{25}$ 	& $2^{26}$ 	&	$2^{27}$ 	&	$2^{28}$ 	& $2^{27}$ 	& $2^{28}$	\\ \hline
+Time for preparing hashtable		&	16 				&	32 				&	128				&	256				&	279 			& 88 				&	87				& 87				&	89	 			& 89				\\ \hline
+Time for preparing keystream		&	6 				&	3 				&	3 				&	3 				&	3 				& 6 				&	12				& 24				&	12				& 24				\\ \hline
+Time for attack									&	54 				&	28 				&	29 				&	31 				&	29 				& 56 				&	113				& 223				&	109				& 221				\\ \hline
+Number of times key is found		&	0 				&	0 				&	0 				&	2 				&	2 				& 1 				&	1					& 2 				&	1 				& 2					\\ \hline
+Number of false alarms					&	0 				&	3 				&	4 				&	7 				&	0 				& 1  				&	2					& 2 				& 0 				& 0					\\ \hline
 \end{tabular}
 \end{center}
-\caption{Results of TMTO keystream attack for key 0x49D2AC801F94}
-\label{tab:keystream-attack-results}
+\caption{Results of TMTO keystream attack for key 0x52B49EA34972}
+\label{tab:keystream-attack-results-key1}
 \end{table}
+
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|p{3cm}||c|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{10}{|c|}{\textbf{Key $K_2$ = 0xD4E98D3DA2F2}} \\ \hline \hline
+Precomputation 	& \multicolumn{4}{c|}{Random} & \multicolumn{5}{c|}{Non-random} \\ \hline
+Prefix length										&	48 				&	48 				&	48 				&	56 				&	48 				&	48				&	48 				&	56 				&	56  			\\ \hline
+M																&	$2^{22}$ 	&	$2^{23}$ 	&	$2^{22}$ 	&	$2^{22}$ 	&	$2^{22}$ 	&	$2^{21}$ 	&	$2^{22}$ 	&	$2^{22}$ 	& $2^{22}$	\\ \hline
+T	  														&	$2^{26}$ 	&	$2^{26}$ 	&	$2^{27}$ 	&	$2^{27}$	&	$2^{25}$ 	&	$2^{26}$ 	&	$2^{26}$ 	& $2^{25}$ 	& $2^{26}$	\\ \hline
+Time for preparing hashtable		&	29 				&	58 				&	30 				&	32 				&	178 			&	88				& 178				&	181 			& 181				\\ \hline
+Time for preparing keystream		&	6 				&	5 				&	10 				&	11 				&	3 				&	6					& 6					&	3					& 6					\\ \hline
+Time for attack									&	70 				&	72 				&	152 			&	148 			&	29 				&	53				& 57 				&	28 				& 55				\\ \hline
+Number of times key is found		&	0 				&	2 				&	4 				&	4 				&	1 				&	0					& 1 				&	1 				& 1					\\ \hline
+Number of false alarms					&	0 				&	0 				&	1 				&	0 				&	1 				&	0					& 2 				& 0 				& 0					\\ \hline
+\end{tabular}
+\end{center}
+\caption{Results of TMTO keystream attack for key 0xD4E98D3DA2F2}
+\label{tab:keystream-attack-results-key2}
+\end{table}
+
+
+The following observations can be made from the above results. 
+\begin{enumerate}
+\item In column 3 of table \ref{tab:keystream-attack-results-key1}, we can see that $K_1$ is not found even once. On doubling $M$ as shown in the next column, it is seen that $K_1$ is found two times. This indicates that the random function we have in place for generating states for the hashtable does not repeat the states yet. Repeating states would lead to wastage of time and space while creating the hashtable. Hence it is confirmed that the random function and it's usage in the program is good.
+
+\item In column 5 of table \ref{tab:keystream-attack-results-key2}, $K_2$ is found even though the product of $M$ and $T$ is less than $2^{48}$. It is thus clear that equation \ref{eq:tmto-non-random} just indicates the worst case relation between $M$ and $T$. Thus, if the product $M \times T$ $\geq$ $2^{48}$, we can be certain that the key would be found. If $M \times T$ $<$ $2^{48}$, then we cannot be certain. In this particular case, $K_2$ is found. But, another combination of $M$ and $T$ shown in column 6 exemplifies this fact.
+
+\item If the product $M \times T$ = $2^{48}$ for the non-random precomputation, then the correct key is found exactly once. However, if the product $M \times T$ = $2.2^{48}$ (by doubling either of $M$ or $T$), then the correct key is found exactly two times. Also, as can be seen from the appendix, the time between the second match and the first match of the key is precisely $T/2$. For the key $K_1$, the attack output of column 10 is shown below. The point to note here is the percentage of the worst case time for the two matches; they differ by 50\%. 
+
+% NEEDED - see if a figure is needed here.
+
+\begin{lstlisting}[frame=tb]
+Match Found! 
+Current State: eb444bbc2057  Prefix: d249629ec6a571
+
+Percentage of the worst case time: 19.833907 I: 53241238
+
+Found Initial State: 58c99e374972
+Found Key: 52b49ea34972
+
+Match Found! 
+Current State: cf258b22b7b5  Prefix: 777609953446b2
+
+Percentage of the worst case time: 69.833907 I: 187458966
+
+Found Initial State: 58c99e374972
+Found Key: 52b49ea34972
+TIME for attack: 221
+\end{lstlisting}
+
+\item It is repeatedly seen that prefix length of 56 bits gives no false alarms, while prefix length of 48 bits does give false alarms. It is clear that 48 bits of prefix are not sufficient to represent a state uniquely. The number of false alarms is not very high though, thus it can also be concluded that for every 48 bit prefix, the number of states giving a same prefix would not be many.
+ 
+\item The attack time for 48 bits prefix is generally more than the time for prefix length 56 bits, under the same $M$ and $T$. This is because false alarms are generated for 48 bit prefixes, and it takes considerable time to find the initial state and then the key from the current state of the LFSR.
+
+\end{enumerate}
 
 \section{Babbage-Golic attack with limited keystream}
 
@@ -365,24 +410,3 @@ In practice, the product of $M$ and $T$ must be larger than $2^n$, since we cons
 
 \subsection{Implementation and results}
 
-
-\begin{table}[ht!]
-\begin{center}
-\begin{tabular}{|p{3cm}||c|c|c|l|l|l|l|l|l|l|l|l|}
-\hline
-\multicolumn{13}{|c|}{\textbf{Key 0x49D2AC801F94}} \\ \hline
-Precomputation & \multicolumn{6}{|c|}{Random} & \multicolumn{6}{|c|}{Non-random} \\ \hline
-Prefix length& \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} & \multicolumn{3}{|c|}{48} & \multicolumn{3}{|c|}{56} \\ \hline \hline
-
-M		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-T	  &	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for preparing hashtable		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for preparing keystream		&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Time for attack								&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-Number of times key is found	&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-False Alarms									&	11 &	11 &	11 &	11 &	11 &	11 &	11 & 11 &	11 &	11 &	11 &	11 \\ \hline
-\end{tabular}
-\end{center}
-\caption{Results of TMTO keystream attack for key 0x49D2AC801F94}
-\label{tab:keystream-attack-results}
-\end{table}
