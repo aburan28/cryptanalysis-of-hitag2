@@ -34,5 +34,5 @@ u64 get_random_32();
 
 int tmto_keystream_attack();
 int tmto_tags_attack();
-int tmdto_hellman_attack(u32, u32, u32, u32, u32, u32, u32, u32);
-int tmdto_rainbow_attack(u32, u32, u32, u32, u32, u32, u32);
+int tmdto_hellman_attack();
+int tmdto_rainbow_attack();

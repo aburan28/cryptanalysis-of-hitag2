@@ -1,12 +1,6 @@
 /*
-	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
-	Used parameters:
-	Key	= 4F 4E 4D 49 4B 52
-	Serial	= 49 43 57 69
-	
-	Available Keystream: 32 bit tags
-	
-	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
+	This program is used to mount a time-memory tradeoff attack on the HiTag2 stream cipher
+	TMTO_tags_attack
 */	
 
 
@@ -50,7 +44,6 @@ int tmto_tags_attack()
 	u64 prefix = 0;
 	u32 i = 0;
 	u32 j = 0;
-	u32 matched = 0;
 	u64 found_current_state = 0;
 	u64 found_initial_state = 0;
 	u64 found_key = 0;
@@ -113,8 +106,6 @@ int tmto_tags_attack()
 		prefix = *c_tags;
 		iv = *(c_tags + 1);
 		
-		//printf("\nCurrent Prefix: %llX", prefix);
-    		
 		k->key = prefix;
         
 		/* Call the hashtable method with key */
@@ -125,22 +116,19 @@ int tmto_tags_attack()
 			found_current_state = found->value;
 			found_initial_state = found_current_state;
 
-			printf("\nA Tag Found! State: %llx for Tag: %llx", found_current_state, prefix);
-			//printf("%llx ", prefix);
-			// Find the Key for the Internal State
+			printf("\nMatch! State: %12llx for Tag: %8llx", found_current_state, prefix);
+
+			/* find the key for this initial state */
 			found_key = hitag2_find_key(found_current_state, serial_id, iv);
-			printf(" Found Key: %llx\n", found_key);			
-			matched = 1;
+			printf(" Found Key: %12llx", found_key);			
 		}
 
 		c_tags = c_tags + 2;
 	}
 		
-	if(matched == 0)
-		printf("\n\nNo Internal State found ...\n");
-
 	time(&time2);
 	sec_diff = difftime(time2,time1);
+	
 	printf("\nTIME for attack: %d", sec_diff);
 	
 	hashtable_destroy(h, 1);
@@ -178,13 +166,12 @@ static struct hashtable * hash_table_setup()
 	 
 	for(i = 0; i < P; i++)
 	{
-		// Save the starting state
+		/* save the starting state */
 		pre_state = state;
 		
-		//call hitag function - get 'prefix_bits' number of bits of keystream (in u64 format)
+		/* call hitag2 prefix function */
 		prefix = hitag2_prefix(&state, prefix_bits);
 		
-		//save prefix and state in the hash table
 		k = (struct key *)malloc(sizeof(struct key));
 		if (NULL == k) 
 		{
@@ -195,18 +182,19 @@ static struct hashtable * hash_table_setup()
 		k->key = prefix;
 		v = (struct value *)malloc(sizeof(struct value));
 		v->value = pre_state;
+		
+		/* insert (prefix,state) pair in the hash table */
 		if (!insert_some(h,k,v)) 
 		{
 			printf("\nError: Could not allocate memory for State ...");
-			exit(-1); /*oom*/
+			exit(-1);
 		}
 		
-		//State transition function
+		/* state transition function */
 		state = pre_state;
 		compute_new_state(&state);
 	}
 
-	printf("\nCreation of Hashtable complete ...");
 	return h;
 }
 

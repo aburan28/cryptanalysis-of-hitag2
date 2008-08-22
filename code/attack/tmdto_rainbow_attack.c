@@ -1,12 +1,6 @@
 /*
 	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
-	Used parameters:
-	Key	= 4F 4E 4D 49 4B 52
-	Serial	= 49 43 57 69
-
-	Available Keystream: 
-
-	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
+	TMDTO_RAINBOW_ATTACK
 */
 
 #include <stdio.h>
@@ -21,7 +15,6 @@
 #include "attack_helper.h"	/* for helper function prototypes */
 #include "attack_dispatcher.h"
 
-
 static struct hashtable * hash_table_setup();
 
 static int
@@ -29,7 +22,6 @@ equalkeys(void *k1, void *k2)
 {
     return (0 == memcmp(k1,k2,sizeof(struct key)));
 }
-
 
 static unsigned int
 hashfromkey(void *ky)
@@ -43,13 +35,7 @@ hashfromkey(void *ky)
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 
-int tmdto_rainbow_attack(u32 _M, 
-			 u32 _T, 
-			 u32 _P, 
-			 u32 _D, 
-			 u32 _m, 
-			 u32 _t, 
-			 u32 _prefix_bits)
+int tmdto_rainbow_attack()
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -74,20 +60,8 @@ int tmdto_rainbow_attack(u32 _M,
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
 
-	/* initialize tradeoff variables */
-	M = _M;
-	T = _T;
-	D = _D;
-	P = _P;
-
-	m = _m;
-	t = _t;
-
-	prefix_bits = _prefix_bits;
-	N = 48;
-	
 	/* open the file pointer */
-	fp = fopen("rainbow_table.txt", "r");
+	fp = fopen("./tables/rainbow_table_M24_t8.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -114,7 +88,7 @@ int tmdto_rainbow_attack(u32 _M,
 	
 	h = (struct hashtable *) hash_table_setup();
 
-	/* Check the size of the hashtable matches the memory_complexity */
+	/* Check the size of the hashtable matches M */
 	if (M != hashtable_count(h))
 	{
 		printf("\nError: Size of Hashtable not correct ...\n");
@@ -184,7 +158,7 @@ int tmdto_rainbow_attack(u32 _M,
 
 				for(j = 0; j < current_t; j++)
 				{
-					mapping_function(&temp_state, (current_t + 1));
+					mapping_function(&temp_state, (j + 1));
 				}
 
 				/* find prefix of the current state */
@@ -193,7 +167,7 @@ int tmdto_rainbow_attack(u32 _M,
 				/* false alarm has occured */
 				if(temp_prefix != prefix)
 				{
-					//printf("\nFalse Alarm generated ...");
+					printf("\nFalse Alarm generated ...temp prefix: %llx, prefix: %llx", temp_prefix, prefix);
 					false_alarms_count++;
 					continue;
 				}
@@ -209,19 +183,22 @@ int tmdto_rainbow_attack(u32 _M,
 					for(j = 0; j < i; j++)
 						hitag2_prev_state(&found_initial_state);
 
-					printf("\nFound Initial State: %llx", found_initial_state);
+					printf("\nMatch!\n");
+					printf("\nFound Initial State: %12llx", found_initial_state);
 
 					/* Find the Key */
-					found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
-					printf("\nFound Key: %llx", rev64(found_key));
+					found_key = hitag2_find_key(found_initial_state, serial_id, init_vector);
+					printf("\nFound Key: %12llx", found_key);
+
+					time(&time2);
+					sec_diff = difftime(time2,time1);
+					printf("\nTIME since starting attack: %d\n", sec_diff);
 
 					matched = 1;
-					//break;
 				}
 			}
 		}
 		
-		//if(matched == 1) break;
 	}
 
 	if(matched == 0)
@@ -260,7 +237,7 @@ static struct hashtable * hash_table_setup()
 
 	for(current_m = 0; current_m < M; current_m++)
 	{
-		/* retrieve the start_state and end_state from file */
+		/* retrieve the start_state and end_state from precomputed file */
 		fscanf(fp, "%llu %llu\n", &start_state, &end_state);
 
 		/* save start_state and end_state in the hash table */

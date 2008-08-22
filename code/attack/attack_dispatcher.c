@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 
 	else if(attack_type == TMTO_TAGS_ATTACK)
 	{
-		M = pow(2,20);
-		T = pow(2,26);
+		M = pow(2,24);
+		T = pow(2,25);
 		P = M;
 		D = T;
 		prefix_bits = 32;
@@ -72,17 +72,30 @@ int main(int argc, char *argv[])
 	else if(attack_type == TMDTO_HELLMAN_ATTACK)
 	{
 		/* independent parameters */
-		m = pow(2,18);
-		t = pow(2,15);
-		D = pow(2,14);
+		m = pow(2,16);
+		t = pow(2,16);
+		r = pow(2,1);
+		D = pow(2,16);
 
 		/* dependent parameters */
-		r = t/D;
-		M = (m*t)/D;
-		T = t*t;
-		P = (m*t*t)/D;
+		
+		M = m*r;
+		P = m*t*r;
+
+		T = t*r*D;		
 
 		prefix_bits = 48;
+
+		/* print the attack parameters */
+		printf("\n\nAttack type: TMDTO HELLMAN ATTACK");
+		printf("\nm = 2 power %u", (u32) log2(m));
+		printf("\nt = 2 power %u", (u32) log2(t));
+		printf("\nD = 2 power %u", (u32) log2(D));
+		printf("\nM = 2 power %u", (u32) log2(M));
+		printf("\nT = 2 power %u", (u32) log2(T));
+		printf("\nP = 2 power %u", (u32) log2(P));
+		printf("\nr = 2 power %u", (u32) log2(r));
+		printf("\nprefix_bits = %u", prefix_bits);
 		
 		/* call the attack module */
 		tmdto_hellman_attack(M, T, P, D, m, t, r, prefix_bits);
@@ -92,18 +105,26 @@ int main(int argc, char *argv[])
 	{
 		/* independent parameters */
 		M = pow(2,24);
-		t = pow(2,24);
-		D = pow(2,16);
+		t = pow(2,8);
+		D = pow(2,17);
 
 		/* dependent parameters */
 		
-		T = t*t/(4*D);
-		t = t/D;
-		
+		T = (t*t*D)/2;
+		P = M*t;
 		prefix_bits = 48;
 		
+		/* print the attack parameters */
+		printf("\n\nAttack type: TMDTO RAINBOW ATTACK");
+		printf("\nM = 2 power %u", (u32) log2(M));
+		printf("\nt = 2 power %u", (u32) log2(t));
+		printf("\nD = 2 power %u", (u32) log2(D));
+		printf("\nT ~ 2 power %u", (u32) log2(T));
+		printf("\nP = 2 power %u", (u32) log2(P));
+		printf("\nprefix_bits = %u", prefix_bits);
+		
 		/* call the attack module */
-		tmdto_rainbow_attack(M, T, P, D, m, t, prefix_bits);
+		tmdto_rainbow_attack();
 	}
 
 }
