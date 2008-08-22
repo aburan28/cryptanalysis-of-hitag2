@@ -29,4 +29,4 @@ tidy:
 	rm *.o
 
 clean: tidy
-	rm -f tmto_keystream_attack tmto_tags_attack old_tmto_attack tmdto_hellman_attack
+	rm -f attack_dispatcher

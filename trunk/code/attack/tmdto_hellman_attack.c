@@ -42,14 +42,7 @@ hashfromkey(void *ky)
 DEFINE_HASHTABLE_INSERT(insert_some, struct key, struct value);
 DEFINE_HASHTABLE_SEARCH(search_some, struct key, struct value);
 
-int tmdto_hellman_attack(u32 _M, 
-			 u32 _T, 
-			 u32 _P, 
-			 u32 _D, 
-			 u32 _m, 
-			 u32 _t, 
-			 u32 _r, 
-			 u32 _prefix_bits)
+int tmdto_hellman_attack()
 {
 	time_t time1, time2;
 	u32 sec_diff = 0;
@@ -76,21 +69,8 @@ int tmdto_hellman_attack(u32 _M,
 	struct hashtable *h = NULL;
 	struct hashtable * hashtable_array[r];
 
-	/* initialize tradeoff variables */
-	M = _M;
-	T = _T;
-	D = _D;
-	P = _P;
-
-	m = _m;
-	t = _t;
-	r = _r;
-
-	prefix_bits = _prefix_bits;
-	N = 48;
-	
 	/* open the file pointer */
-	fp = fopen("tmdto_table.txt", "r");
+	fp = fopen("./tables/hellman_table_16_16_1.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -219,17 +199,16 @@ int tmdto_hellman_attack(u32 _M,
 						found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
 						printf("\nFound Key: %llx", rev64(found_key));
 
+						time(&time2);
+						sec_diff = difftime(time2,time1);
+						printf("\nTIME since starting attack: %d\n", sec_diff);
+
 						matched = 1;
-						break;
 					}
 				}
 
 			}
-			
-			if(matched == 1) break;
 		}
-		
-		if(matched == 1) break;
 	}
 
 	if(matched == 0)

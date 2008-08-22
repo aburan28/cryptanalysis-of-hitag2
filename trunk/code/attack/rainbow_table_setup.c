@@ -15,10 +15,13 @@ u64 get_random(u32 bits)
 	u64 random_number = 0;
 	u64 rand_out = 0;
 
+	/* output of rand() function is 16 bits, so loop runs for (bits - 16) times 
+	 * so random_number is finally of size 'bits' */
+	 
 	for(i = 0; i < bits - 16; i++)
 	{
 		rand_out = rand();
-		random_number = random_number ^ (random_number << 1) ^ (random_number << 2) ^ rand_out;
+		random_number = (random_number << 1) ^ rand_out;
 	}
 
 	return random_number;
@@ -52,9 +55,9 @@ int main()
 	u32 sec_diff = 0;
 			
 	M = pow(2, 24);
-	t = pow(2, 8);
+	t = pow(2, 9);
 		
-	fp = fopen("rainbow_table.txt", "w");
+	fp = fopen("./tables/rainbow_table_M24_t9.dat", "w");
 	
 	fprintf(fp, "%d %d\n", M, t);
 

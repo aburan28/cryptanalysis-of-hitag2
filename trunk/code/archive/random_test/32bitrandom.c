@@ -58,16 +58,16 @@ int main(void)
 	runtime = pow(2,32);
 	
 	//first_random = get_random_plain();
-	first_random = get_random_1(32);
-	//first_random = get_random_2(32);
+	//first_random = get_random_1(48);
+	first_random = get_random_2(48);
 	
 	printf("\nFirst random number: %llx", first_random);
 
 	for(i = 0; i < runtime; i++)
 	{
 		//random = get_random_plain();	
-		random = get_random_1(32);	
-		//random = get_random_2(32);	
+		//random = get_random_1(48);	
+		random = get_random_2(48);	
 		
 		if(random == first_random)
 		{

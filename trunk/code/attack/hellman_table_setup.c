@@ -2,10 +2,11 @@
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */
 #include <math.h>		/* for power function */
+#include <time.h>
+
 #include "common.h"
 #include "hitag2.h"		/* for common definitions */
 #include "hashtable.h"		/* for hashtable */
-#include <time.h>
 
 u32 prefix_bits = 48;
 
@@ -13,12 +14,15 @@ u64 get_random(u32 bits)
 {
 	u32 i = 0;
 	u64 random_number = 0;
-	u64 random_bit = 0;
+	u64 rand_out = 0;
 
-	for(i = 0; i < bits; i++)
+	/* output of rand() function is 16 bits, so loop runs for (bits - 16) times 
+	 * so random_number is finally of size 'bits' */
+	 
+	for(i = 0; i < bits - 16; i++)
 	{
-		random_bit = rand() % 65535;
-		random_number = (random_number << 1) ^ random_bit;
+		rand_out = rand();
+		random_number = (random_number << 1) ^ rand_out;
 	}
 
 	return random_number;
@@ -53,11 +57,11 @@ int main()
 	time_t time1, time2;
 	u32 sec_diff = 0;
 			
-	m = pow(2, 18);
-	t = pow(2, 15);
-	r = pow(2, 1);
+	m = pow(2, 14);
+	t = pow(2, 17);
+	r = pow(2, 2);
 		
-	fp = fopen("hellman_table.txt", "w");
+	fp = fopen("./tables/hellman_table_14_17_2.dat", "w");
 	
 	fprintf(fp, "%d %d %d\n", m, r, t);
 
