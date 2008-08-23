@@ -64,7 +64,7 @@ Lets say $m$ more such chains are needed to cover all possible keys. If we consi
 
 We now compute $M$ and $P$ for the precomputation phase. The size of the memory required for storing all the chains would be of the order of $m$, as there are $m$ chains and a constant number of elements ($SP$ and $EP$) corresponding to each chain are stored. Hence we have $M$ = $m$. Also, as there are $mt$ encryptions performed in the entire table, the precomputation time is give by $P$ = $mt$.\\
 
-\noindent  \textit{\textbf{Attack phase.}} If the required key $K$ exists in among the first $t$ keys in any chain, the ciphertext $C$ would also exist. The possible locations of $K$ in every chain are from $SP_j$ to $K_{j,t-1}$. $EP_j$ is not considered to be a possible key since it is not used in the encryption of $P$. Or in other words, the ciphertext obtained from $K_{j,t}$ is not computed and thus not stored in the chain, hence it cannot be matched with the available ciphertext $C$. So, there are $t$ possible values for $K$ per chain. Looking at this from the perspective of $C$, there are also $t$ possible values of ciphertext in every chain that can match with $C$. These $t$ possible matches correspond to each of the $t$ possible keys, and range from $K_{j,1}$ to $K_{j,t}$.
+\noindent \textit{\textbf{Attack phase.}} If the required key $K$ exists in among the first $t$ keys in any chain, the ciphertext $C$ would also exist. The possible locations of $K$ in every chain are from $SP_j$ to $K_{j,t-1}$. $EP_j$ is not considered to be a possible key since it is not used in the encryption of $P$. Or in other words, the ciphertext obtained from $K_{j,t}$ is not computed and thus not stored in the chain, hence it cannot be matched with the available ciphertext $C$. So, there are $t$ possible values for $K$ per chain. Looking at this from the perspective of $C$, there are also $t$ possible values of ciphertext in every chain that can match with $C$. These $t$ possible matches correspond to each of the $t$ possible keys, and range from $K_{j,1}$ to $K_{j,t}$.
 
 The first possibility is that $C$ lies in $t$'th column of any one of the $m$ chains. This is true only if $C$ equals some $EP_j$ stored in the hashtable. In such a case $K_{j,t-1}$ is the key we are looking for. To find this key, we retrieve $SP_j$ corresponding to $EP_j$ from the hashtable (by giving $EP_j$ as the key, we get the corresponding value $SP_j$), and perform $(t-1)$ encryptions on $P$ starting by $SP_j$ as the key (just in the same way as done during precomputation: using output of one encryption as key for next encryption). After $(t-1)$ encryptions, $K_{t-1}$ is obtained, which is the desired key. 
 
@@ -83,7 +83,7 @@ If $C$ exists in the chains, then the time taken to find $K$ is actually the sam
 
 If $X$ matches an $EP_j$, then $(r-1)$ encryptions are performed to retrieve the key $K_{r-1}$. In all, the number of encryptions performed is $(t-1)$. The attack time is of the order of $t$, thus our attack parameter $T$ = $t$. \\
 
-\noindent  \textit{\textbf{Problems with above approach.}} The approach described above is an ideal case, and some serious problems exist with it.
+\noindent \textit{\textbf{Problems with above approach.}} The approach described above is an ideal case, and some serious problems exist with it.
 
 \begin{enumerate}
 
@@ -121,7 +121,7 @@ $mt^2 = 2^n$.
 In the ideal case, all the keys are covered in the $m$ chains, hence we have $mt$ = $2^n$. If we use this equation in estimating the value of $mt^2$, it can be seen that $mt^2$ is much greater than $2^n$. This ofcourse is not allowed according to the table stopping rule, and thus extensive collisions are bound to take place in our ideal case. Repetition of keys gives rise to the problems of \emph{collision and merge} during the precomputation phase and \emph{false alarms} during the attack phase. We explain these two problems in detail below.
 \end{enumerate}
 
-\noindent  \textit{\textbf{Collision and merge.}} Consider the first two chains in the precomputation table structure. If there is a common key $K_c$ between these chains, then the sequence of keys appearing (in both the chains) after $K_c$ would be the same, as shown in figure \ref{fig:collision-merge}. If the position where $K_c$ appears is the same in both the chains, then the end points of the chains is same. Otherwise, the end points are different. But irrespective of the position of the $K_c$, it can be clearly seen that there are overlapping keys in the two chains, resulting in wastage of precomputation time by adding no extra information.\\
+\noindent \textit{\textbf{Collision and merge.}} Consider the first two chains in the precomputation table structure. If there is a common key $K_c$ between these chains, then the sequence of keys appearing (in both the chains) after $K_c$ would be the same, as shown in figure \ref{fig:collision-merge}. If the position where $K_c$ appears is the same in both the chains, then the end points of the chains is same. Otherwise, the end points are different. But irrespective of the position of the $K_c$, it can be clearly seen that there are overlapping keys in the two chains, resulting in wastage of precomputation time by adding no extra information.\\
 
 \begin{figure}[ht!]
 	\centering
@@ -130,7 +130,7 @@ In the ideal case, all the keys are covered in the $m$ chains, hence we have $mt
 	\label{fig:collision-merge}
 \end{figure}
 
-\noindent  \textit{\textbf{False alarms.}} Colliding and merging chains during precomputation effect the attack phase as well. Consider the same example of the two chains colliding at $K_c$. Suppose that the required key $K$ appears in the first chain. During the attack phase keys are computed starting from $C$ till one of these keys matches some end point in the hashtable. 
+\noindent \textit{\textbf{False alarms.}} Colliding and merging chains during precomputation effect the attack phase as well. Consider the same example of the two chains colliding at $K_c$. Suppose that the required key $K$ appears in the first chain. During the attack phase keys are computed starting from $C$ till one of these keys matches some end point in the hashtable. 
 In the example, a match would occur at $EP_0$ since $EP_0$ is one of the keys in the path from $C$ to $EP_1$ and $EP_0$ exists in the hashtable. The hashtable would return the starting point as $SP_0$ for the match, and thus a key is derived from $SP_0$ ($K_{false}$) which is different from the desired key $K$. It can be seen that $K$ lies in a different chain, but as the two chains collide and merge, the desired key not obtained from the the correct chain. A false alarm is said to have occured here.
 
 The occurence of false alarms can be easily checked and ignored. It is expected that the ciphertext obtained by encrypting $P$ under the derived key be the same as $C$. If $K_{false}$ is used, the ciphertext obtained is not the same as $C$ as both the keys are different, and there is no possi. This confirms that $K_{false}$ is not the right key. 
@@ -144,7 +144,7 @@ The only problem with false alarms is that they waste time during the attack pha
 	\label{fig:collision-not-merge}
 \end{figure}
 
-\noindent  \textit{\textbf{Solving the problem of collision.}} The inclusion of reduction function does not help in solving the problem of collision. Collisions still have the same effect if mapping function $F$ is used instead of encryption function $E$. But, if we use different reduction functions (hence, different mapping functions) for two colliding chains, the two chains do not merge and produce different keys from the colliding point $K_c$. Even though the ciphertext computed using $K_c$ is the same, different reduction functions in the two chains lead to different keys, thus preventing merging of the chains. Such a scenario is shown in figure \ref{fig:collision-not-merge}. As shown in the figure, the two chains end at different end points. As a result, the correct end point is retrieved from the hashtable during the attack phase and consequently the correct key is obtained. 
+\noindent \textit{\textbf{Solving the problem of collision.}} The inclusion of reduction function does not help in solving the problem of collision. Collisions still have the same effect if mapping function $F$ is used instead of encryption function $E$. But, if we use different reduction functions (hence, different mapping functions) for two colliding chains, the two chains do not merge and produce different keys from the colliding point $K_c$. Even though the ciphertext computed using $K_c$ is the same, different reduction functions in the two chains lead to different keys, thus preventing merging of the chains. Such a scenario is shown in figure \ref{fig:collision-not-merge}. As shown in the figure, the two chains end at different end points. As a result, the correct end point is retrieved from the hashtable during the attack phase and consequently the correct key is obtained. 
 
 
 But practically, using $m$ different mapping functions for building the table has problems. Stamp and Low quote in \cite{stamp2007acb} that having $m$ mapping functions would make storing these functions very resource intensive, and thus that it's not a good idea. An apparent and more serious problem though, with having $m$ mapping functions, is that the attack phase would take a lot of time. During the attack phase, the given $C$ is evaluated for all the different mapping functions because the attacker does not know the chain in which $C$ appears. The attack time in such a case becomes proportional to $mt$. Hence, the idea of having different mapping function for each chain is not feasible. But, it provides a basis for the more practical table structure called the Hellman tables. 
@@ -219,6 +219,7 @@ From the last two equations, we have $r$ = $t$. Hence, the number of tables is e
 M^{2}T = 2^k
 \end{align*}
 
+% NEEDED - compare hellman tables with precomputed key tables - argue that hellman tables does not reduce precomputation time, but it does reduce memory requirement
 
 \section{Hellman tables for stream ciphers}
 
