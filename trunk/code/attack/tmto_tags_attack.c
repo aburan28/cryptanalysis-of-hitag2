@@ -82,7 +82,7 @@ int tmto_tags_attack()
         	return 1;
     	}
 	
-	/* Prepare a long keystream */
+	/* Prepare tags */
 	printf("\n\nPreparing tags of length %d bits ...", prefix_bits);
 	time(&time1);
 	prepare_tags(c_tags);

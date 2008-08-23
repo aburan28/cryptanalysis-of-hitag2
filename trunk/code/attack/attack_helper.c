@@ -33,24 +33,16 @@ void prepare_tags(u64 * c_tags)
 	u64 iv = 0;
 
 	time_t seconds;
-	
 	time(&seconds);
-	
 	srand(seconds);
 	
-	for(;i < T; i++)
+	for(;i < D; i++)
 	{
-		
 		iv = get_random(32);
-		//printf("\n%llx ", iv);	
-		
 		state = hitag2_init(secret_key, serial_id, iv);
-
 		*c_tags = (u64) hitag2_prefix(&state, prefix_bits); 
-		//printf("\nNew Tag: %llx ", *c_tags);
 		c_tags++;
 		*c_tags = (u64) iv; 
-		//printf(" New IV: %llx", *c_tags);
 		c_tags++;
 	}
 	
