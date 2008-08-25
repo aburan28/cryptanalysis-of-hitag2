@@ -51,7 +51,7 @@ int tmdto_rainbow_attack()
 	u64 temp_prefix = 0;
 	u64 found_initial_state = 0;
 	u64 found_start_state = 0;
-	u64 matched_state = 0;
+	u64 found_current_state = 0;
 	u64 found_key = 0;
 	u32 function_number = 0;
 	u32 false_alarms_count = 0;
@@ -61,7 +61,7 @@ int tmdto_rainbow_attack()
 	struct hashtable *h = NULL;
 
 	/* open the file pointer */
-	fp = fopen("./tables/rainbow_table_M24_t8.dat", "r");
+	fp = fopen("./tables/rainbow_table_M24_t9.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -161,6 +161,8 @@ int tmdto_rainbow_attack()
 					mapping_function(&temp_state, (j + 1));
 				}
 
+				found_current_state = temp_state;
+				
 				/* find prefix of the current state */
 				temp_prefix = hitag2_prefix(&temp_state, prefix_bits);
 
@@ -173,22 +175,20 @@ int tmdto_rainbow_attack()
 				}
 				else
 				{
-					/* Find the Matched State */
-					for(j = 0; j < 48; j++) hitag2_prev_state(&temp_state);
-					matched_state = temp_state;
+					found_initial_state = found_current_state;
 
-					found_initial_state = matched_state;
-
-					/* Find the Initial State */
+					/* Find the Initial State from the Current State of the LFSR */
 					for(j = 0; j < i; j++)
 						hitag2_prev_state(&found_initial_state);
 
 					printf("\nMatch!\n");
-					printf("\nFound Initial State: %12llx", found_initial_state);
+					printf("\nStatus:- D: %u, Found column: %u", (i+1), (current_t + 1));
+					printf("\nFound prefix: %llu", prefix);
+					printf("\nFound Initial State: %llx", found_initial_state);
 
 					/* Find the Key */
 					found_key = hitag2_find_key(found_initial_state, serial_id, init_vector);
-					printf("\nFound Key: %12llx", found_key);
+					printf("\nFound Key: %llx", found_key);
 
 					time(&time2);
 					sec_diff = difftime(time2,time1);

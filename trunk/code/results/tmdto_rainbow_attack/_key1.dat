@@ -1,0 +1,799 @@
+
+
+-----------------------------------------
+Time of attack: Sun Aug 24 03:09:01 2008
+-----------------------------------------
+
+**** Secret key used: 0x52b49ea34972 ****
+
+
+Attack type: TMDTO RAINBOW ATTACK
+M = 2 power 24
+t = 2 power 9
+D = 2 power 15
+T ~ 2 power 32
+P = 2 power 33
+prefix_bits = 48
+Current Time: Sun Aug 24 03:09:01 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 62 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+False Alarm generated ...temp prefix: 650e686032b2, prefix: 6b1c5513d927
+False Alarm generated ...temp prefix: ccf7f8d7a0c6, prefix: 663911d0b957
+False Alarm generated ...temp prefix: b27c00be04ca, prefix: 331cecb38f04
+False Alarm generated ...temp prefix: fd9130d75ba4, prefix: 722171d29707
+False Alarm generated ...temp prefix: e87d5b2ab254, prefix: edf24c98a756
+False Alarm generated ...temp prefix: 1c6b47b873e7, prefix: 2da22e5df7b0
+False Alarm generated ...temp prefix: 56e871d54117, prefix: e5e1a848b8af
+False Alarm generated ...temp prefix: 143c450a7ad9, prefix: d4245c57a1a4
+False Alarm generated ...temp prefix: cfad1738199f, prefix: 5c57a1a44477
+False Alarm generated ...temp prefix: 645189f4fef, prefix: d2223b95797a
+False Alarm generated ...temp prefix: 6326f6b9d949, prefix: 5ac3a3aceda9
+False Alarm generated ...temp prefix: b886e3076138, prefix: f0c9766807c1
+False Alarm generated ...temp prefix: 44c1af420ee1, prefix: 1f068c560821
+False Alarm generated ...temp prefix: 60e2c1f292e6, prefix: 582086ead8f5
+False Alarm generated ...temp prefix: 88fb11aaa977, prefix: cadd2a9b2a43
+False Alarm generated ...temp prefix: 608c95d95f84, prefix: 7c35867c8f72
+False Alarm generated ...temp prefix: 1756a870eb99, prefix: 36c3413b84c0
+False Alarm generated ...temp prefix: 5a4e9d20712f, prefix: 2c6f28b20345
+False Alarm generated ...temp prefix: 43ab2a334c8e, prefix: 19a036100fa8
+False Alarm generated ...temp prefix: d6c99d2e3640, prefix: a8751d286637
+False Alarm generated ...temp prefix: 2a08f26d0a02, prefix: ea3a50cc6ff8
+False Alarm generated ...temp prefix: f327f2f23e91, prefix: 3a50cc6ff818
+False Alarm generated ...temp prefix: 7e706d1a2b6e, prefix: 3cf2e420577a
+False Alarm generated ...temp prefix: 89665b802e8, prefix: 71dadd33d52d
+False Alarm generated ...temp prefix: 147a191c3037, prefix: a1085449c792
+False Alarm generated ...temp prefix: bc679fd33ef7, prefix: 3c2576b3697d
+False Alarm generated ...temp prefix: 7944981f350b, prefix: 330b5440a0a8
+False Alarm generated ...temp prefix: b9c200343f3, prefix: 338c9809e371
+False Alarm generated ...temp prefix: 97d9da921115, prefix: 31ffe6bee9a8
+False Alarm generated ...temp prefix: ec6b5682c950, prefix: 93667bb11326
+False Alarm generated ...temp prefix: 9a5e223d9de0, prefix: cc1213c1060a
+False Alarm generated ...temp prefix: 79c5f9856409, prefix: 9f3c951d2396
+False Alarm generated ...temp prefix: 4523c5ebb2af, prefix: 54748e5a3b5d
+False Alarm generated ...temp prefix: 6311a4115a39, prefix: 1d23968ed774
+False Alarm generated ...temp prefix: 3b3bf766d295, prefix: 688b721309a3
+False Alarm generated ...temp prefix: de256a3ebebc, prefix: 721309a32521
+False Alarm generated ...temp prefix: 9380342d35e7, prefix: d7aacc78de4c
+False Alarm generated ...temp prefix: 70b186c561f7, prefix: ea0a589bbded
+False Alarm generated ...temp prefix: 358b951fd012, prefix: 9fefe939b241
+False Alarm generated ...temp prefix: 54b2b7fbc986, prefix: 483a35d8021f
+False Alarm generated ...temp prefix: 222e9bc7ccf8, prefix: 8021f5c2a03a
+False Alarm generated ...temp prefix: 772168b15c18, prefix: 5a79125f5e13
+False Alarm generated ...temp prefix: a7a3c148839e, prefix: 2e004cd92333
+False Alarm generated ...temp prefix: c49fe9a5637, prefix: d92333d42377
+False Alarm generated ...temp prefix: f4e1c759bf90, prefix: ccf508dde0ee
+False Alarm generated ...temp prefix: f4d522ecd00a, prefix: bc1dc239a88b
+False Alarm generated ...temp prefix: 6d236cbf10d, prefix: f2d38b50040f
+False Alarm generated ...temp prefix: 73578f1e7763, prefix: 87258de8d029
+False Alarm generated ...temp prefix: 9f4d705c49c4, prefix: 82f22ce12412
+False Alarm generated ...temp prefix: de3f4fe68fe3, prefix: cbab88dbea88
+False Alarm generated ...temp prefix: 6257f022e518, prefix: c52b0acab0f3
+False Alarm generated ...temp prefix: cc2b4f20da6c, prefix: db516c33a524
+False Alarm generated ...temp prefix: 8debb6be6460, prefix: ef014d7bdc81
+False Alarm generated ...temp prefix: f5eee3abc16b, prefix: 7f52f335ed8f
+False Alarm generated ...temp prefix: 76ac39316289, prefix: a9799af6c7ab
+False Alarm generated ...temp prefix: 978263adb43a, prefix: 1eafaa748aba
+False Alarm generated ...temp prefix: 67366aff6b7e, prefix: d53a455d085e
+False Alarm generated ...temp prefix: d7fb4b2febc, prefix: 517899e9f6cc
+False Alarm generated ...temp prefix: 7880b6ea02a9, prefix: 926363bcc2bb
+False Alarm generated ...temp prefix: 53efb5983610, prefix: 85760b65e3d8
+False Alarm generated ...temp prefix: a45b0e5e5a7c, prefix: 85760b65e3d8
+False Alarm generated ...temp prefix: 7facc7a238ac, prefix: 78d6e7408e10
+False Alarm generated ...temp prefix: 8413f97ab0b4, prefix: 6e7408e1078c
+False Alarm generated ...temp prefix: 44984831ba4a, prefix: 998b5840d142
+False Alarm generated ...temp prefix: f97905c88336, prefix: 26f642890fc3
+False Alarm generated ...temp prefix: 942c932f4fe, prefix: 43f0ead14aca
+False Alarm generated ...temp prefix: 37fb4028d383, prefix: 423132b13649
+False Alarm generated ...temp prefix: 3733b95900b5, prefix: 2b21e00ae2dc
+False Alarm generated ...temp prefix: bf069829a5be, prefix: 9eefd1b9b2d2
+False Alarm generated ...temp prefix: 2b66ae5f113b, prefix: d873be0fcb19
+False Alarm generated ...temp prefix: 9e8b4221fc64, prefix: d8ba4fc7201
+False Alarm generated ...temp prefix: ab543a57a73b, prefix: ee045ac9e989
+False Alarm generated ...temp prefix: 286352392ae3, prefix: 824b72aa73aa
+False Alarm generated ...temp prefix: 997bdb6481e4, prefix: 5328863ee77f
+False Alarm generated ...temp prefix: dc79d6297ace, prefix: 4ca218fb9dff
+False Alarm generated ...temp prefix: 7b99a0cea982, prefix: 994431f73bff
+False Alarm generated ...temp prefix: d72b4fd8e506, prefix: bcaa62625fc7
+False Alarm generated ...temp prefix: d8ae95e75b04, prefix: 25fc77d04efc
+False Alarm generated ...temp prefix: 8238ffad341a, prefix: e3113a596c9e
+False Alarm generated ...temp prefix: c8b543dd1596, prefix: b92a76d02101
+False Alarm generated ...temp prefix: 4ef71846615c, prefix: b68108085a72
+False Alarm generated ...temp prefix: cbe8e333ff4a, prefix: 4f2a03440116
+False Alarm generated ...temp prefix: 6c979a88991e, prefix: 35d1b6834bf8
+False Alarm generated ...temp prefix: 72cf5bcad222, prefix: 746da0d2fe18
+False Alarm generated ...temp prefix: faee43845861, prefix: 5753c18bcfec
+False Alarm generated ...temp prefix: cccf7812ad42, prefix: 40540dbf2a83
+False Alarm generated ...temp prefix: 3a73561f2b20, prefix: 4bb7df7b787f
+False Alarm generated ...temp prefix: 4535c35748f3, prefix: 4bb7df7b787f
+False Alarm generated ...temp prefix: 7585d7c1606e, prefix: df9e979aaf3a
+False Alarm generated ...temp prefix: c976d9e94227, prefix: 7a5e6abcebc8
+False Alarm generated ...temp prefix: 516b52ac7386, prefix: 5e75e425d807
+False Alarm generated ...temp prefix: 63cde8b1ad13, prefix: 1f914cb94b0
+False Alarm generated ...temp prefix: 2327a79d1176, prefix: 140765b034fa
+False Alarm generated ...temp prefix: 9ee44a0b8b6a, prefix: bc028371900c
+False Alarm generated ...temp prefix: baf7893de473, prefix: 561bd464c2eb
+False Alarm generated ...temp prefix: 630f4c011add, prefix: bb73088327d3
+False Alarm generated ...temp prefix: 15d95caa297d, prefix: be906876ba90
+False Alarm generated ...temp prefix: 6ca9161eae14, prefix: e906876ba90a
+False Alarm generated ...temp prefix: b60f745463f7, prefix: f77f2d3b148c
+False Alarm generated ...temp prefix: a051cd9aee8b, prefix: 52313e768c79
+False Alarm generated ...temp prefix: aa4d4fd8ace1, prefix: f333e750cb9a
+False Alarm generated ...temp prefix: 4fb080d10a83, prefix: 50cb9acf718d
+False Alarm generated ...temp prefix: 52aafe7f969, prefix: c7f113707929
+False Alarm generated ...temp prefix: 17c77f15bda1, prefix: ec3f934fbc1f
+False Alarm generated ...temp prefix: f6e31274dd1c, prefix: e0faf33feb32
+False Alarm generated ...temp prefix: 46c227522626, prefix: 3feb32e14cf3
+False Alarm generated ...temp prefix: 45e611aae18, prefix: b8533ce4bc69
+False Alarm generated ...temp prefix: bd7a71c94dc, prefix: f1ff0bb4f1eb
+False Alarm generated ...temp prefix: cd7db7247e19, prefix: ff85da78f599
+False Alarm generated ...temp prefix: 6096613d4b7f, prefix: 674d3c09c753
+False Alarm generated ...temp prefix: 4f009f5f2101, prefix: 8d69995ffc85
+False Alarm generated ...temp prefix: 9f6dd7e599dd, prefix: 77fb978323d9
+False Alarm generated ...temp prefix: c1ee3c2caaa9, prefix: de2528da0c52
+False Alarm generated ...temp prefix: fec01efc63f5, prefix: 7894a368314a
+False Alarm generated ...temp prefix: 7e29a2f48193, prefix: 3992feddd510
+False Alarm generated ...temp prefix: 7b99d6dd6bdf, prefix: de923a152d03
+False Alarm generated ...temp prefix: 33d6add13200, prefix: 4742a5a06250
+False Alarm generated ...temp prefix: 12cafb2cbb2e, prefix: 25cdd6a3abe2
+False Alarm generated ...temp prefix: ba54dca9fe89, prefix: bad4757c5a7b
+False Alarm generated ...temp prefix: 46cb4274cb1f, prefix: ed40dbc8e52e
+False Alarm generated ...temp prefix: 7b7323d268c5, prefix: 92b9a2185849
+False Alarm generated ...temp prefix: f5f37edd39c9, prefix: 7b13e596a615
+False Alarm generated ...temp prefix: dbc7897c095e, prefix: abe621379c13
+False Alarm generated ...temp prefix: 8858b5f84844, prefix: ce2fc3d55b93
+False Alarm generated ...temp prefix: 3e5ab7b5adb, prefix: 4b92cc30563d
+False Alarm generated ...temp prefix: f31f5346170a, prefix: 9400b6f7e209
+False Alarm generated ...temp prefix: c2a89fce9ac5, prefix: 9354f1164603
+False Alarm generated ...temp prefix: 704e0ba739ea, prefix: a9e22c8c0685
+False Alarm generated ...temp prefix: 2e946718a477, prefix: bd3361188fbd
+False Alarm generated ...temp prefix: 1f418c42d18e, prefix: f68dae8fa4aa
+False Alarm generated ...temp prefix: 84bd37817865, prefix: 9a55a016349
+False Alarm generated ...temp prefix: d28db3c1660d, prefix: 5ba94193c9d6
+False Alarm generated ...temp prefix: 753eed7a4522, prefix: 3f249da13f6d
+False Alarm generated ...temp prefix: 1766dd67391f, prefix: bfc84811d12a
+False Alarm generated ...temp prefix: 956551820aec, prefix: add02aa2ac3c
+False Alarm generated ...temp prefix: c6f65856c4e8, prefix: c3cd9bb94a54
+False Alarm generated ...temp prefix: f28f90dcc943, prefix: d9bb94a54685
+False Alarm generated ...temp prefix: 763dee66112c, prefix: 42e971b60210
+False Alarm generated ...temp prefix: 96ba89ae831, prefix: a8f43fb6a3a3
+False Alarm generated ...temp prefix: b01fcee2a302, prefix: dc07ff118c9b
+False Alarm generated ...temp prefix: 3dded0106b49, prefix: c64d8a03eb20
+False Alarm generated ...temp prefix: f1ff3d96e61, prefix: 8460d39b5c57
+False Alarm generated ...temp prefix: be3a21193315, prefix: d3980e2c4333
+False Alarm generated ...temp prefix: b6504ae9730f, prefix: afb3e18bb7d4
+False Alarm generated ...temp prefix: 5e7b2c5b64b2, prefix: f9a7732009e2
+False Alarm generated ...temp prefix: d6bc2acacc24, prefix: 3f9b64c8ed0d
+False Alarm generated ...temp prefix: d5eb45c2398c, prefix: 23b435d834c5
+False Alarm generated ...temp prefix: 6af47e04bdd5, prefix: 142befaa72a9
+False Alarm generated ...temp prefix: fdb5a6fe9258, prefix: 639ba7c2776
+False Alarm generated ...temp prefix: 782779e5a0a2, prefix: 35e43febaf07
+False Alarm generated ...temp prefix: 8d7cf56dbad8, prefix: 472820ccee12
+False Alarm generated ...temp prefix: 808db9f0d05d, prefix: 184f150d507d
+False Alarm generated ...temp prefix: fcce848f1c37, prefix: 1f4b35b3677b
+False Alarm generated ...temp prefix: 8806c14de8f2, prefix: 966b66cef7db
+False Alarm generated ...temp prefix: 927d24fee665, prefix: be2701523724
+False Alarm generated ...temp prefix: f6b355a504cf, prefix: 964c6ab87641
+False Alarm generated ...temp prefix: 2ac3b278da8b, prefix: bd9dc420cd3f
+False Alarm generated ...temp prefix: 57fa1577834f, prefix: 8264e1169063
+False Alarm generated ...temp prefix: bed870397a95, prefix: 5719c9f29098
+False Alarm generated ...temp prefix: 76f89ce8a6b1, prefix: 647deeda7638
+False Alarm generated ...temp prefix: f6217253e50d, prefix: b0427787d7d7
+False Alarm generated ...temp prefix: 4b5fda3a5112, prefix: 13bc3ebeb882
+False Alarm generated ...temp prefix: 5009c5a41602, prefix: 5c3a95b13e05
+False Alarm generated ...temp prefix: 6ca4be42c399, prefix: 13e0538c362a
+False Alarm generated ...temp prefix: 8ef0f4e03b54, prefix: 5c56d2f0f656
+False Alarm generated ...temp prefix: b429c844d3e5, prefix: 15b4bc3d9597
+False Alarm generated ...temp prefix: ab0e6afd1717, prefix: 9787b2b2fc87
+False Alarm generated ...temp prefix: 9e10e21b380d, prefix: a4eddfd8ba48
+False Alarm generated ...temp prefix: 4e0869acaeb0, prefix: ae510cce7da9
+False Alarm generated ...temp prefix: ea110103d281, prefix: 3bf0f5b666f1
+False Alarm generated ...temp prefix: 854aeb210a56, prefix: 21cd4323e2c0
+False Alarm generated ...temp prefix: 908cca16a09c, prefix: c036946f134e
+False Alarm generated ...temp prefix: 1c72b18cefd9, prefix: c4d3bbb5e138
+False Alarm generated ...temp prefix: 4fe4b2d8257f, prefix: 2cb841f3e537
+False Alarm generated ...temp prefix: a6f1fd269f44, prefix: 7f99dc26a00c
+False Alarm generated ...temp prefix: 7efa42f37db, prefix: 67ff7374055e
+False Alarm generated ...temp prefix: 47a370ef175b, prefix: 1578ae9e804
+False Alarm generated ...temp prefix: 78f623bbcb3f, prefix: 5e2ba7a012c8
+False Alarm generated ...temp prefix: ab0f83d676cb, prefix: fe1eef937609
+False Alarm generated ...temp prefix: 8d7ff65af967, prefix: 23a3e6e7b24c
+False Alarm generated ...temp prefix: c0bb86240928, prefix: 988a8d375e46
+False Alarm generated ...temp prefix: 7c8723ccbf50, prefix: 22a34dd7919b
+False Alarm generated ...temp prefix: 5af2bcde6d92, prefix: fb1e2b7d1664
+False Alarm generated ...temp prefix: 1239b9b50d53, prefix: 8adf459916ef
+False Alarm generated ...temp prefix: 957326f2b99c, prefix: 5363583c8690
+False Alarm generated ...temp prefix: b9f3b9d29b54, prefix: bc6b9757bb78
+False Alarm generated ...temp prefix: 930056910017, prefix: e34aa72c8c89
+False Alarm generated ...temp prefix: 94bac7db7cc6, prefix: 1f22f4c0cde8
+False Alarm generated ...temp prefix: e3f3d5a6d827, prefix: 2ded13051ad4
+False Alarm generated ...temp prefix: e97b65b64d87, prefix: 56aec2f5cb63
+False Alarm generated ...temp prefix: 8015152f647e, prefix: b0bd72d8d763
+False Alarm generated ...temp prefix: f88d04d06349, prefix: b0bd72d8d763
+False Alarm generated ...temp prefix: f8da668af9a7, prefix: a3234a7d8209
+False Alarm generated ...temp prefix: 32fd4b248f3a, prefix: 80be23ae9671
+False Alarm generated ...temp prefix: 34a3cd0954b0, prefix: c02101a0b70d
+False Alarm generated ...temp prefix: dfc4f19db86f, prefix: 48140c8c25ac
+False Alarm generated ...temp prefix: 8d3f25f9cc41, prefix: 5fa6a6d1ade0
+False Alarm generated ...temp prefix: 6fce8174d037, prefix: 40ae7f891f21
+False Alarm generated ...temp prefix: cd1a9610de15, prefix: 2c12daedb317
+False Alarm generated ...temp prefix: 8db9330b75b2, prefix: 7f061c7f5edb
+False Alarm generated ...temp prefix: 80cd35ea7653, prefix: ddaaef5f49c8
+False Alarm generated ...temp prefix: 3bb62ebd1e61, prefix: a43ed6887c67
+False Alarm generated ...temp prefix: c60ac52607bf, prefix: ec4916c4d361
+False Alarm generated ...temp prefix: 732cd5bf8bcd, prefix: 6281071ea952
+False Alarm generated ...temp prefix: 87c41bab7544, prefix: 71ea9526197
+False Alarm generated ...temp prefix: 2da9e0f3a0f4, prefix: 1c7aa549865e
+False Alarm generated ...temp prefix: 1f31060ca6c, prefix: 116bb64cb8f7
+False Alarm generated ...temp prefix: f75d0bbf1fa9, prefix: a6cab35c853c
+False Alarm generated ...temp prefix: ba353e88bf12, prefix: d1d33108ee2b
+False Alarm generated ...temp prefix: ef1c96d70900, prefix: 998847715def
+False Alarm generated ...temp prefix: 3e7522a29e37, prefix: 27389a1c839b
+False Alarm generated ...temp prefix: 35745a97808c, prefix: 2f7ba1135eda
+False Alarm generated ...temp prefix: f9a87b8af397, prefix: 4226bdb45943
+False Alarm generated ...temp prefix: cbb90b6341b, prefix: af6d1650d00d
+False Alarm generated ...temp prefix: f328686e726c, prefix: f06711d97dcd
+False Alarm generated ...temp prefix: 4350c8ac9cfe, prefix: b2fb9ae1ce94
+False Alarm generated ...temp prefix: d727a7989078, prefix: fb9ae1ce94ca
+False Alarm generated ...temp prefix: 952ef35b0f1a, prefix: f75320c0537d
+False Alarm generated ...temp prefix: 414c840c51bb, prefix: d860fe600481
+False Alarm generated ...temp prefix: 9b0fab8b99a8, prefix: 5e1e27091133
+False Alarm generated ...temp prefix: 27cdac6a5fe5, prefix: e27091133dba
+False Alarm generated ...temp prefix: 2755773f200, prefix: f3ac93d269cd
+False Alarm generated ...temp prefix: 114b34e05b43, prefix: 69cd13b5b51f
+False Alarm generated ...temp prefix: f42a9ca9d4ef, prefix: 5c56204d96e0
+False Alarm generated ...temp prefix: b814226f99fd, prefix: 7c24e05a39d6
+False Alarm generated ...temp prefix: 4e50cf4881b8, prefix: a39d62edad0a
+False Alarm generated ...temp prefix: aed4074e7500, prefix: 82a70424d075
+False Alarm generated ...temp prefix: b5c4cfe75566, prefix: 341d77b63dd4
+False Alarm generated ...temp prefix: 2152bd2411a0, prefix: eea4a3e91c1e
+False Alarm generated ...temp prefix: db8fa8d31588, prefix: dd4947d2383d
+False Alarm generated ...temp prefix: d0214ed8ec1b, prefix: b4bfbfda030a
+False Alarm generated ...temp prefix: 6f9d5e44b5fd, prefix: 70afeb676671
+False Alarm generated ...temp prefix: a81845c79cae, prefix: 19b811da32a3
+False Alarm generated ...temp prefix: 2fe505c8bcc6, prefix: 11da32a3fd28
+False Alarm generated ...temp prefix: 51a560613107, prefix: fd28877c9908
+False Alarm generated ...temp prefix: 2219118ccc6f, prefix: 26422f7e2780
+False Alarm generated ...temp prefix: d7c8a6c2929e, prefix: fe268bd19e1a
+False Alarm generated ...temp prefix: 33d3ac0dc77e, prefix: 67938264f4cd
+False Alarm generated ...temp prefix: 95382e3fd5a4, prefix: de168a092286
+False Alarm generated ...temp prefix: 722ea0519a8c, prefix: 9d803ed04538
+False Alarm generated ...temp prefix: a1cd23242a6, prefix: d628e256695c
+False Alarm generated ...temp prefix: 74f1322c0a02, prefix: 12b34ae57a3d
+False Alarm generated ...temp prefix: 3629762dd58e, prefix: ef486b1c6871
+False Alarm generated ...temp prefix: 2fdc5dbdb187, prefix: 24416b2935d6
+False Alarm generated ...temp prefix: 1eb93cb72f4f, prefix: 1dc7788eaf43
+False Alarm generated ...temp prefix: b262070795ad, prefix: e3bc4757a1a3
+False Alarm generated ...temp prefix: 83542adc4262, prefix: 826939187791
+False Alarm generated ...temp prefix: f415123b5105, prefix: bc8e9c2f0f57
+False Alarm generated ...temp prefix: 1e18bf34e21a, prefix: 6c554b0c9ccb
+False Alarm generated ...temp prefix: 970fb43ff10e, prefix: d8a413b99781
+False Alarm generated ...temp prefix: c1fe365b170f, prefix: cbc080ac503c
+False Alarm generated ...temp prefix: bfddfd6ae2c2, prefix: 7fd0488c6ca6
+False Alarm generated ...temp prefix: faf6a6e59116, prefix: 9ed643ada5b0
+False Alarm generated ...temp prefix: 1938c447a8b7, prefix: 90eb696c11bc
+False Alarm generated ...temp prefix: 8de768b2b0b, prefix: f3e95ae7ae4b
+False Alarm generated ...temp prefix: d3d8e629d3e5, prefix: 6e4655ee54e0
+False Alarm generated ...temp prefix: df8bfd349330, prefix: 6b3246e8ea7
+False Alarm generated ...temp prefix: 61a95b73ac94, prefix: 9b7c3c2f74dd
+False Alarm generated ...temp prefix: 9c8aa8fbf1f4, prefix: 44d085220168
+False Alarm generated ...temp prefix: ff6f30b34fca, prefix: 10a4402d1609
+False Alarm generated ...temp prefix: ea75c0ea53f9, prefix: dc7143f888b
+False Alarm generated ...temp prefix: 6be0c373bfb9, prefix: 68a10e7b2506
+False Alarm generated ...temp prefix: 4574c88d55a6, prefix: 7ad945e473ba
+False Alarm generated ...temp prefix: 3078f4905f1, prefix: 6cfcddbeebd7
+False Alarm generated ...temp prefix: 1a71ac442ed0, prefix: 574c644bd714
+False Alarm generated ...temp prefix: a8ec34130b22, prefix: 4e139b6e9cb0
+False Alarm generated ...temp prefix: daa20194cd05, prefix: 736dd3960ca5
+False Alarm generated ...temp prefix: 8371be1b583c, prefix: cdb74e583297
+False Alarm generated ...temp prefix: 150109f257f1, prefix: cb0652f12936
+False Alarm generated ...temp prefix: 2f8e550c4c89, prefix: 99e9979264b0
+False Alarm generated ...temp prefix: e4209297b898, prefix: 88c071d2263c
+
+No Internal State found ...
+
+TIME for attack: 16091
+COUNT of false alarms: 271
+
+-----------------------------------------
+Time of attack: Sun Aug 24 18:45:21 2008
+-----------------------------------------
+
+**** Secret key used: 0x52b49ea34972 ****
+
+
+Attack type: TMDTO RAINBOW ATTACK
+M = 2 power 24
+t = 2 power 9
+D = 2 power 15
+T ~ 2 power 32
+P = 2 power 33
+prefix_bits = 48
+Current Time: Sun Aug 24 18:45:21 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 146 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+False Alarm generated ...temp prefix: a5dd6ff390a5, prefix: fa93c43406d6
+False Alarm generated ...temp prefix: 85100ecb19f4, prefix: be4048a90e54
+False Alarm generated ...temp prefix: b1218a37c59, prefix: 2d9470b2030b
+False Alarm generated ...temp prefix: fb9bdbd08a73, prefix: 94b28a9ec061
+False Alarm generated ...temp prefix: 64a8b180ed02, prefix: 2e4604f56c20
+False Alarm generated ...temp prefix: 41ff40c74474, prefix: 723027ab6102
+False Alarm generated ...temp prefix: c4e05b9cfd9, prefix: 8c09ead8409b
+False Alarm generated ...temp prefix: 25c84caf782f, prefix: 23d92a7057bf
+False Alarm generated ...temp prefix: 403c533a9456, prefix: 4eb228128bfd
+False Alarm generated ...temp prefix: d6ca513c4c2a, prefix: ee2e22c08479
+False Alarm generated ...temp prefix: 33c2a9e887a6, prefix: 211e7f2be4d
+False Alarm generated ...temp prefix: 636fd801c9f4, prefix: 512e92584dd3
+False Alarm generated ...temp prefix: 8c8789558190, prefix: c5b3947e9059
+False Alarm generated ...temp prefix: 313826597143, prefix: b6728fd20b36
+False Alarm generated ...temp prefix: db04b7f60e9c, prefix: 9b0c061d4b62
+False Alarm generated ...temp prefix: 410169766337, prefix: 1464bae95a9c
+False Alarm generated ...temp prefix: 93bee9bfca09, prefix: 8c975d2b538e
+False Alarm generated ...temp prefix: 7bfa744e696b, prefix: 75d2b538ecfa
+False Alarm generated ...temp prefix: 8dd27aaccd0e, prefix: 454b7d7e3f57
+False Alarm generated ...temp prefix: b6e2b0f8f30c, prefix: f57226e29422
+False Alarm generated ...temp prefix: 208841928171, prefix: 41a07afe606e
+False Alarm generated ...temp prefix: e79967c13a58, prefix: b91c3c6cbc94
+False Alarm generated ...temp prefix: 988a9b1d7a44, prefix: 3a713e5c01e1
+False Alarm generated ...temp prefix: 54a79d7531b4, prefix: ed3ee8cbdbba
+False Alarm generated ...temp prefix: dbede00c257b, prefix: 5662bc60eb91
+False Alarm generated ...temp prefix: 362c2bd52605, prefix: 79777f3952f
+False Alarm generated ...temp prefix: b3371bd93cc6, prefix: 5cca1dbe9332
+False Alarm generated ...temp prefix: 7372dbb9d3b3, prefix: abe20ca350c9
+False Alarm generated ...temp prefix: cc4df220cc34, prefix: e3afbdae451
+False Alarm generated ...temp prefix: 6fce51c22a6b, prefix: ddad2ff46994
+False Alarm generated ...temp prefix: de3c695c764, prefix: c3140715b0fc
+False Alarm generated ...temp prefix: cf011aa466a0, prefix: 55bedd94ebf0
+False Alarm generated ...temp prefix: ce342aeedb4f, prefix: 53afc30b5a61
+Match!
+
+Status:- D: 4800, Found column: 49
+Found prefix: 196721643589477
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 2396
+
+False Alarm generated ...temp prefix: 640ac417863e, prefix: fe36a0cb2b16
+False Alarm generated ...temp prefix: ffb39ff77ae5, prefix: 65958b469f57
+False Alarm generated ...temp prefix: 8c00d6842cfb, prefix: 6611170f09c
+False Alarm generated ...temp prefix: 18e401bfbf71, prefix: e5818837ff30
+False Alarm generated ...temp prefix: 979199d26402, prefix: 620dffcc32c
+False Alarm generated ...temp prefix: 2ed7ab1fc6ee, prefix: cb2b9455e0a7
+False Alarm generated ...temp prefix: b9b584323ac9, prefix: f339051093c1
+False Alarm generated ...temp prefix: 37633162770a, prefix: fe4e5008f2f6
+False Alarm generated ...temp prefix: f172b8a45f52, prefix: 9ca011e5ed76
+False Alarm generated ...temp prefix: 311b4e4ec4ce, prefix: cbed2eaafd37
+False Alarm generated ...temp prefix: e2587a65279, prefix: baabf4de3e29
+False Alarm generated ...temp prefix: 7e72337f857d, prefix: b67f23d289c2
+False Alarm generated ...temp prefix: fe2af39951b9, prefix: 304fe0054cea
+False Alarm generated ...temp prefix: 8de052d4a938, prefix: 1533ab8af4c
+False Alarm generated ...temp prefix: 6fe23758cf4b, prefix: 2637d42ac39b
+False Alarm generated ...temp prefix: bc504828e452, prefix: bea1561cd9b3
+False Alarm generated ...temp prefix: dd66d0982b1, prefix: 42ac39b36630
+False Alarm generated ...temp prefix: d512bdac368c, prefix: 1561cd9b3181
+False Alarm generated ...temp prefix: 7a1428f4a703, prefix: cd9b3181be65
+False Alarm generated ...temp prefix: 388ca42f554f, prefix: 553038c9ee50
+False Alarm generated ...temp prefix: ec720c88eb5b, prefix: 9623a83fa79
+False Alarm generated ...temp prefix: 5884ac9fd78, prefix: 9623a83fa792
+False Alarm generated ...temp prefix: 166acb09c42c, prefix: a966a76e2b4c
+False Alarm generated ...temp prefix: a2971e2aafce, prefix: b48c2e95b370
+False Alarm generated ...temp prefix: a295f50b7e34, prefix: 8a1fc9b51146
+False Alarm generated ...temp prefix: 994e9fae798f, prefix: 631d1233b229
+False Alarm generated ...temp prefix: eb5d69d88d67, prefix: 220558cd4cdd
+False Alarm generated ...temp prefix: 6b5a01172c0d, prefix: ddc54a889a50
+False Alarm generated ...temp prefix: 3d1f2109e5f7, prefix: 2694276fec78
+False Alarm generated ...temp prefix: 7734d844fe89, prefix: 8614091c67e3
+False Alarm generated ...temp prefix: 6d81a94e0026, prefix: 18edca01da3f
+False Alarm generated ...temp prefix: 466211719e34, prefix: b47e9765760e
+False Alarm generated ...temp prefix: 39acca871820, prefix: e9a7d0f0fcde
+Match!
+
+Status:- D: 8948, Found column: 376
+Found prefix: 175405180515009
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 4480
+
+False Alarm generated ...temp prefix: 7bf62e34d8bd, prefix: 5f4646fb200d
+False Alarm generated ...temp prefix: f84de95ac3e3, prefix: fb666753d4da
+False Alarm generated ...temp prefix: 2f90718da1da, prefix: a20637a306b3
+False Alarm generated ...temp prefix: 8aec24699b8, prefix: 440c6f460d66
+False Alarm generated ...temp prefix: ad197089300, prefix: 61fe1ce947ee
+False Alarm generated ...temp prefix: 85ac960fc07c, prefix: 1cccabd6d293
+False Alarm generated ...temp prefix: dd8b418b100c, prefix: 18bfa9440077
+False Alarm generated ...temp prefix: 4a868d2a4f55, prefix: e398d53b1738
+False Alarm generated ...temp prefix: eab832fc8043, prefix: 72cf7abba774
+False Alarm generated ...temp prefix: 31a9d0a3ec61, prefix: 52129d8d40ba
+False Alarm generated ...temp prefix: d905f1d8768c, prefix: 8bd6357c13c6
+False Alarm generated ...temp prefix: 48f6a7ad6a2d, prefix: 4f181f13c07
+False Alarm generated ...temp prefix: 46e275f229d0, prefix: 87b6ec1686b4
+False Alarm generated ...temp prefix: c35d287186f3, prefix: 4d702896248e
+False Alarm generated ...temp prefix: 9bd4c83311b1, prefix: c998cca61d1c
+False Alarm generated ...temp prefix: 15518ad17507, prefix: 6332987470fc
+False Alarm generated ...temp prefix: 3c123008ff17, prefix: 94e2f70a1aa4
+False Alarm generated ...temp prefix: ea7e07914536, prefix: 719938ef2ca8
+False Alarm generated ...temp prefix: 2231a758bded, prefix: 2aa19e55a2b7
+False Alarm generated ...temp prefix: ffa0aa7e5a7c, prefix: dea80f5fe978
+False Alarm generated ...temp prefix: e61c24789167, prefix: 5e2fe643ef4c
+False Alarm generated ...temp prefix: e5f5e4b145f4, prefix: fe643ef4ca0d
+False Alarm generated ...temp prefix: 108f2a48437, prefix: 37ada6200121
+False Alarm generated ...temp prefix: 93f54c90d055, prefix: 1f09d9c20426
+False Alarm generated ...temp prefix: b2cfd398209, prefix: 276708109a4f
+False Alarm generated ...temp prefix: fcaf3dce3666, prefix: fc0f9c79ab10
+False Alarm generated ...temp prefix: 6f9bb8ac0e3b, prefix: bd267c734ca0
+False Alarm generated ...temp prefix: d9dbc2fd2eab, prefix: 889691ce493
+False Alarm generated ...temp prefix: 7c36c23aff3a, prefix: 790ebfa19cac
+False Alarm generated ...temp prefix: c31fa3bab9b2, prefix: 3afe8672b2b9
+False Alarm generated ...temp prefix: a0141c8eeee7, prefix: 895a4d55305
+False Alarm generated ...temp prefix: 37938a9d11a1, prefix: a4d553058704
+False Alarm generated ...temp prefix: f134b55d35e, prefix: 64dd7610dccd
+False Alarm generated ...temp prefix: b01673d91970, prefix: fe612e5f8a6c
+False Alarm generated ...temp prefix: ab678d51052f, prefix: 34d0e506f0f6
+False Alarm generated ...temp prefix: ff427fa4c23e, prefix: f20bb3935e49
+False Alarm generated ...temp prefix: 9965c5a4c389, prefix: 6aeaa1170634
+False Alarm generated ...temp prefix: 196da1e7fac5, prefix: 613883945b39
+False Alarm generated ...temp prefix: 2567c3887529, prefix: 9d8984cc0407
+False Alarm generated ...temp prefix: 57c08c8c5dc0, prefix: 8080692b5dd9
+/* Terminated */
+
+
+
+
+
+-----------------------------------------
+Time of attack: Mon Aug 25 10:41:14 2008
+-----------------------------------------
+
+**** Secret key used: 0x52b49ea34972 ****
+
+
+Attack type: TMDTO RAINBOW ATTACK
+M = 2 power 24
+t = 2 power 8
+D = 2 power 16
+T ~ 2 power 31
+P = 2 power 32
+prefix_bits = 48
+Current Time: Mon Aug 25 10:41:14 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 158 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+False Alarm generated ...temp prefix: b1218a37c59, prefix: 2d9470b2030b
+False Alarm generated ...temp prefix: c4e05b9cfd9, prefix: 8c09ead8409b
+False Alarm generated ...temp prefix: d6ca513c4c2a, prefix: ee2e22c08479
+False Alarm generated ...temp prefix: 8c8789558190, prefix: c5b3947e9059
+False Alarm generated ...temp prefix: 410169766337, prefix: 1464bae95a9c
+False Alarm generated ...temp prefix: 8dd27aaccd0e, prefix: 454b7d7e3f57
+False Alarm generated ...temp prefix: 54a79d7531b4, prefix: ed3ee8cbdbba
+False Alarm generated ...temp prefix: 7372dbb9d3b3, prefix: abe20ca350c9
+False Alarm generated ...temp prefix: cc4df220cc34, prefix: e3afbdae451
+Match!
+
+Status:- D: 4800, Found column: 49
+Found prefix: 196721643589477
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 595
+
+False Alarm generated ...temp prefix: ffb39ff77ae5, prefix: 65958b469f57
+False Alarm generated ...temp prefix: 2ed7ab1fc6ee, prefix: cb2b9455e0a7
+False Alarm generated ...temp prefix: 7e72337f857d, prefix: b67f23d289c2
+False Alarm generated ...temp prefix: 6fe23758cf4b, prefix: 2637d42ac39b
+False Alarm generated ...temp prefix: 7a1428f4a703, prefix: cd9b3181be65
+False Alarm generated ...temp prefix: 166acb09c42c, prefix: a966a76e2b4c
+False Alarm generated ...temp prefix: a2971e2aafce, prefix: b48c2e95b370
+False Alarm generated ...temp prefix: a295f50b7e34, prefix: 8a1fc9b51146
+False Alarm generated ...temp prefix: 994e9fae798f, prefix: 631d1233b229
+False Alarm generated ...temp prefix: 466211719e34, prefix: b47e9765760e
+False Alarm generated ...temp prefix: 85ac960fc07c, prefix: 1cccabd6d293
+False Alarm generated ...temp prefix: 4a868d2a4f55, prefix: e398d53b1738
+False Alarm generated ...temp prefix: eab832fc8043, prefix: 72cf7abba774
+False Alarm generated ...temp prefix: 31a9d0a3ec61, prefix: 52129d8d40ba
+False Alarm generated ...temp prefix: d905f1d8768c, prefix: 8bd6357c13c6
+False Alarm generated ...temp prefix: c35d287186f3, prefix: 4d702896248e
+False Alarm generated ...temp prefix: 3c123008ff17, prefix: 94e2f70a1aa4
+False Alarm generated ...temp prefix: e5f5e4b145f4, prefix: fe643ef4ca0d
+False Alarm generated ...temp prefix: b2cfd398209, prefix: 276708109a4f
+False Alarm generated ...temp prefix: ab678d51052f, prefix: 34d0e506f0f6
+False Alarm generated ...temp prefix: 9965c5a4c389, prefix: 6aeaa1170634
+False Alarm generated ...temp prefix: e5d35e1319bd, prefix: fe28608d18ad
+False Alarm generated ...temp prefix: 6ca5570f4d15, prefix: 55798bd9c119
+False Alarm generated ...temp prefix: 44d5023b3ca5, prefix: e34bfa59da8e
+False Alarm generated ...temp prefix: 262d759c6af1, prefix: b2255b772c72
+False Alarm generated ...temp prefix: 3e9905e8935c, prefix: 2b274dcacc37
+False Alarm generated ...temp prefix: 1d502b865a00, prefix: 7331b1e73ff7
+False Alarm generated ...temp prefix: f2a40e29350d, prefix: 29d381ba6acf
+False Alarm generated ...temp prefix: 9a7418ed8166, prefix: dae298d386
+False Alarm generated ...temp prefix: 57abb2827506, prefix: 20ca8ab82f75
+False Alarm generated ...temp prefix: 52e7c8c1904, prefix: a1dc8cc5061d
+False Alarm generated ...temp prefix: 6c24dff67703, prefix: b0f0ab64b31c
+False Alarm generated ...temp prefix: 7c68588b2b72, prefix: 86148c22c22b
+False Alarm generated ...temp prefix: 3484f6159dac, prefix: 2cae2d9a4103
+False Alarm generated ...temp prefix: 948c56fa611b, prefix: d8a5f5f2586a
+False Alarm generated ...temp prefix: 86957756ef23, prefix: aacf764f383c
+False Alarm generated ...temp prefix: 73d99b9cbbad, prefix: 8c517b080e33
+False Alarm generated ...temp prefix: 1705626ae911, prefix: cf5fe93fe3d5
+False Alarm generated ...temp prefix: 46181a4766b8, prefix: 4c0dc5abd091
+False Alarm generated ...temp prefix: cf89ff6eedc2, prefix: 86f7e02bc00a
+Match!
+
+Status:- D: 25582, Found column: 78
+Found prefix: 58280745858493
+Found Initial State: 77b5984db5d8
+Found Key: eda6756b5d8
+TIME since starting attack: 3175
+
+False Alarm generated ...temp prefix: a121b37cdbc5, prefix: fc9236495f09
+False Alarm generated ...temp prefix: b4c3a3fb8378, prefix: 335827687bc8
+False Alarm generated ...temp prefix: 57d209084dc7, prefix: c3444d3c348c
+False Alarm generated ...temp prefix: cdb3b5186f0f, prefix: ee51c73563b
+False Alarm generated ...temp prefix: ed5fb1d130a0, prefix: e39ab1dff127
+False Alarm generated ...temp prefix: 7a3a6c7c0494, prefix: 84e947bfb7ff
+False Alarm generated ...temp prefix: e58c8e52285c, prefix: d87e8fe186ec
+False Alarm generated ...temp prefix: 896a6b73384a, prefix: 268883973910
+False Alarm generated ...temp prefix: 79d5fc925dd6, prefix: 381628be2f75
+False Alarm generated ...temp prefix: a6be6bf30663, prefix: f8bdd4ee7fd8
+False Alarm generated ...temp prefix: 689a65f75da7, prefix: 94c5e5579d8c
+False Alarm generated ...temp prefix: b2ccad005fe3, prefix: 137f359ef757
+False Alarm generated ...temp prefix: cb74909ad432, prefix: cc4e626386f2
+False Alarm generated ...temp prefix: b4763a61b94c, prefix: 7c94990a02a7
+False Alarm generated ...temp prefix: 51762f8ac6d3, prefix: c850153bb75d
+False Alarm generated ...temp prefix: 34f316d5d0c7, prefix: cf76c9b65725
+False Alarm generated ...temp prefix: 3ad48bad49c5, prefix: 594d2cc2b07
+False Alarm generated ...temp prefix: 69704a4e82d5, prefix: 2a5d018c2d18
+False Alarm generated ...temp prefix: 7c76bfa1e3dd, prefix: cdfdec08eaf8
+False Alarm generated ...temp prefix: 7c6cbf8a5786, prefix: f068855fa7c7
+False Alarm generated ...temp prefix: 4ad7ba2dd3e7, prefix: 7a709645f440
+False Alarm generated ...temp prefix: f3e3f22222bf, prefix: 6e45ff1dc18
+False Alarm generated ...temp prefix: 1a8f8f1c0f2e, prefix: 2ff8ee0c4eef
+False Alarm generated ...temp prefix: 19c4a13856b9, prefix: e29da236db56
+False Alarm generated ...temp prefix: b4147fc5b1b, prefix: 1efa9a02b78
+False Alarm generated ...temp prefix: f56b5476414e, prefix: ee07b34fe354
+False Alarm generated ...temp prefix: 4b4ef01a7716, prefix: 8308b9e3fbe5
+False Alarm generated ...temp prefix: dfb85c866e31, prefix: fe7efcbe145e
+False Alarm generated ...temp prefix: 407a3a599ab8, prefix: 1c636fabb477
+False Alarm generated ...temp prefix: 46064c50bf35, prefix: 18de657f4407
+False Alarm generated ...temp prefix: 84ca4b21ca12, prefix: dd09fda9df32
+False Alarm generated ...temp prefix: 6891d1ad9889, prefix: 286b999360e5
+False Alarm generated ...temp prefix: 561921a8996, prefix: d77109fab2f4
+False Alarm generated ...temp prefix: abc0019d237d, prefix: 8c9219c6c987
+False Alarm generated ...temp prefix: 9f719ab34404, prefix: 21adb039424b
+False Alarm generated ...temp prefix: 4adc6b8136ff, prefix: 1b7289e1dafe
+Match!
+
+Status:- D: 42431, Found column: 197
+Found prefix: 136338336615718
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 5265
+
+False Alarm generated ...temp prefix: 1a921028a80e, prefix: ab3d51dfae6f
+False Alarm generated ...temp prefix: 69882ea956e8, prefix: 48e72ce471d6
+False Alarm generated ...temp prefix: 6d925aeaf05a, prefix: b391c75bb074
+False Alarm generated ...temp prefix: a7619609198c, prefix: 4f23a55c5107
+False Alarm generated ...temp prefix: 56e329bb18d, prefix: fea04b0fb16c
+False Alarm generated ...temp prefix: e49dea153c96, prefix: 5293ab1e2b42
+False Alarm generated ...temp prefix: cbb74b311926, prefix: c1b5107d7a35
+False Alarm generated ...temp prefix: 27d2415edac7, prefix: 3886a65edd8d
+False Alarm generated ...temp prefix: a2337ce25cf0, prefix: d8d6462e69a0
+Match!
+
+Status:- D: 48963, Found column: 132
+Found prefix: 258146339910110
+Found Initial State: 177d6c08177
+Found Key: 45dcc14e8177
+TIME since starting attack: 6074
+
+False Alarm generated ...temp prefix: 81f81361365d, prefix: 99aabf12c21c
+False Alarm generated ...temp prefix: c288f2d5e852, prefix: 45d066676b76
+False Alarm generated ...temp prefix: 6536702e69e0, prefix: ed6ed8b3c6ab
+False Alarm generated ...temp prefix: 144ccd1699fe, prefix: 241b620acc92
+False Alarm generated ...temp prefix: 5f2d5daeecd6, prefix: 6d2f50a6bed9
+False Alarm generated ...temp prefix: 411dda3ac8ad, prefix: 5156d47bf956
+False Alarm generated ...temp prefix: 6dd4ef7bb0e2, prefix: 770613749293
+False Alarm generated ...temp prefix: 5f0e29a011d6, prefix: 60d6fd093b98
+False Alarm generated ...temp prefix: ff57cd74559, prefix: 69bf8cd6e817
+False Alarm generated ...temp prefix: 31aa54636f34, prefix: 793803018967
+False Alarm generated ...temp prefix: 6623bf95e756, prefix: 312cf8562ee4
+False Alarm generated ...temp prefix: 2c695ac40e41, prefix: 21e98b89c23a
+False Alarm generated ...temp prefix: 4f356e99554a, prefix: 87dc3f22a808
+False Alarm generated ...temp prefix: 573dc0d01ce0, prefix: 8829fda2b4f7
+False Alarm generated ...temp prefix: 9b3c17e9d8e1, prefix: 829fda2b4f78
+False Alarm generated ...temp prefix: 768c51db739c, prefix: c7c9b20ccc24
+False Alarm generated ...temp prefix: 35b2090197d2, prefix: b491a821c2d
+False Alarm generated ...temp prefix: 8df17c74f2d3, prefix: c5899de0f7af
+False Alarm generated ...temp prefix: 964489d89b53, prefix: c60502341482
+False Alarm generated ...temp prefix: 47f4365519d2, prefix: 829055d08f24
+False Alarm generated ...temp prefix: b7f10d3a6080, prefix: 63d44fcced6a
+False Alarm generated ...temp prefix: a4eae3fbb47c, prefix: 4d8f13fbf92a
+False Alarm generated ...temp prefix: 8bfef4c411f5, prefix: 94503b0ab00
+False Alarm generated ...temp prefix: 3e992f075a23, prefix: 6b9d35583ee3
+False Alarm generated ...temp prefix: a4158d837cc2, prefix: 76372e549df6
+False Alarm generated ...temp prefix: 43a848c86f79, prefix: 84ea40249a5e
+False Alarm generated ...temp prefix: f9b606c0840c, prefix: d03361493f98
+False Alarm generated ...temp prefix: 25f1ccbd168c, prefix: 28509b0fcfe7
+False Alarm generated ...temp prefix: dcc98c0891a7, prefix: e1505a8c422b
+False Alarm generated ...temp prefix: 6ebb8b17fd99, prefix: 81dd14de265a
+False Alarm generated ...temp prefix: f23d9a507da6, prefix: 1b241f60c278
+False Alarm generated ...temp prefix: 45fd26b9e470, prefix: 408113b105bb
+False Alarm generated ...temp prefix: fbadaf7840df, prefix: bddf1c74ea08
+False Alarm generated ...temp prefix: cbf4a1c93efb, prefix: 7578e5e6f2fb
+False Alarm generated ...temp prefix: e009f1cbb5d2, prefix: 3a81d1e9d734
+False Alarm generated ...temp prefix: d85c3ae18614, prefix: 63637d947771
+False Alarm generated ...temp prefix: 93de3b9440ea, prefix: f7bd14ba73bc
+False Alarm generated ...temp prefix: a0e67563bf9, prefix: 3ec66666e3e3
+False Alarm generated ...temp prefix: 230a4e9d7225, prefix: be0f4647b5f7
+False Alarm generated ...temp prefix: 8e57ea2c884f, prefix: ed46a0eb5830
+False Alarm generated ...temp prefix: dcb1930dac57, prefix: 72cb79c56c7e
+False Alarm generated ...temp prefix: 674aec18787d, prefix: 82f2ae1de0d7
+False Alarm generated ...temp prefix: a34976fbc439, prefix: 8406b7cba98e
+False Alarm generated ...temp prefix: 47e7ed3272ae, prefix: de53ef6b395c
+False Alarm generated ...temp prefix: f08fc31c0ab3, prefix: ce0aa70b70c5
+TIME for attack: 8128
+COUNT of false alarms: 139
+
+-----------------------------------------
+Time of attack: Mon Aug 25 17:53:42 2008
+-----------------------------------------
+
+**** Secret key used: 0x52b49ea34972 ****
+
+
+Attack type: TMDTO RAINBOW ATTACK
+M = 2 power 24
+t = 2 power 9
+D = 2 power 15
+T ~ 2 power 32
+P = 2 power 33
+prefix_bits = 48
+Current Time: Mon Aug 25 17:53:42 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 78 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+False Alarm generated ...temp prefix: a5dd6ff390a5, prefix: fa93c43406d6
+False Alarm generated ...temp prefix: 85100ecb19f4, prefix: be4048a90e54
+False Alarm generated ...temp prefix: b1218a37c59, prefix: 2d9470b2030b
+False Alarm generated ...temp prefix: fb9bdbd08a73, prefix: 94b28a9ec061
+False Alarm generated ...temp prefix: 64a8b180ed02, prefix: 2e4604f56c20
+False Alarm generated ...temp prefix: 41ff40c74474, prefix: 723027ab6102
+False Alarm generated ...temp prefix: c4e05b9cfd9, prefix: 8c09ead8409b
+False Alarm generated ...temp prefix: 25c84caf782f, prefix: 23d92a7057bf
+False Alarm generated ...temp prefix: 403c533a9456, prefix: 4eb228128bfd
+False Alarm generated ...temp prefix: d6ca513c4c2a, prefix: ee2e22c08479
+False Alarm generated ...temp prefix: 33c2a9e887a6, prefix: 211e7f2be4d
+False Alarm generated ...temp prefix: 636fd801c9f4, prefix: 512e92584dd3
+False Alarm generated ...temp prefix: 8c8789558190, prefix: c5b3947e9059
+False Alarm generated ...temp prefix: 313826597143, prefix: b6728fd20b36
+False Alarm generated ...temp prefix: db04b7f60e9c, prefix: 9b0c061d4b62
+False Alarm generated ...temp prefix: 410169766337, prefix: 1464bae95a9c
+False Alarm generated ...temp prefix: 93bee9bfca09, prefix: 8c975d2b538e
+False Alarm generated ...temp prefix: 7bfa744e696b, prefix: 75d2b538ecfa
+False Alarm generated ...temp prefix: 8dd27aaccd0e, prefix: 454b7d7e3f57
+False Alarm generated ...temp prefix: b6e2b0f8f30c, prefix: f57226e29422
+False Alarm generated ...temp prefix: 208841928171, prefix: 41a07afe606e
+False Alarm generated ...temp prefix: e79967c13a58, prefix: b91c3c6cbc94
+False Alarm generated ...temp prefix: 988a9b1d7a44, prefix: 3a713e5c01e1
+False Alarm generated ...temp prefix: 54a79d7531b4, prefix: ed3ee8cbdbba
+False Alarm generated ...temp prefix: dbede00c257b, prefix: 5662bc60eb91
+False Alarm generated ...temp prefix: 362c2bd52605, prefix: 79777f3952f
+False Alarm generated ...temp prefix: b3371bd93cc6, prefix: 5cca1dbe9332
+False Alarm generated ...temp prefix: 7372dbb9d3b3, prefix: abe20ca350c9
+False Alarm generated ...temp prefix: cc4df220cc34, prefix: e3afbdae451
+False Alarm generated ...temp prefix: 6fce51c22a6b, prefix: ddad2ff46994
+False Alarm generated ...temp prefix: de3c695c764, prefix: c3140715b0fc
+False Alarm generated ...temp prefix: cf011aa466a0, prefix: 55bedd94ebf0
+False Alarm generated ...temp prefix: ce342aeedb4f, prefix: 53afc30b5a61
+Match!
+
+Status:- D: 4800, Found column: 49
+Found prefix: 196721643589477
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 2691
+
+False Alarm generated ...temp prefix: 640ac417863e, prefix: fe36a0cb2b16
+False Alarm generated ...temp prefix: ffb39ff77ae5, prefix: 65958b469f57
+False Alarm generated ...temp prefix: 8c00d6842cfb, prefix: 6611170f09c
+False Alarm generated ...temp prefix: 18e401bfbf71, prefix: e5818837ff30
+False Alarm generated ...temp prefix: 979199d26402, prefix: 620dffcc32c
+False Alarm generated ...temp prefix: 2ed7ab1fc6ee, prefix: cb2b9455e0a7
+False Alarm generated ...temp prefix: b9b584323ac9, prefix: f339051093c1
+False Alarm generated ...temp prefix: 37633162770a, prefix: fe4e5008f2f6
+False Alarm generated ...temp prefix: f172b8a45f52, prefix: 9ca011e5ed76
+False Alarm generated ...temp prefix: 311b4e4ec4ce, prefix: cbed2eaafd37
+False Alarm generated ...temp prefix: e2587a65279, prefix: baabf4de3e29
+False Alarm generated ...temp prefix: 7e72337f857d, prefix: b67f23d289c2
+False Alarm generated ...temp prefix: fe2af39951b9, prefix: 304fe0054cea
+False Alarm generated ...temp prefix: 8de052d4a938, prefix: 1533ab8af4c
+False Alarm generated ...temp prefix: 6fe23758cf4b, prefix: 2637d42ac39b
+False Alarm generated ...temp prefix: bc504828e452, prefix: bea1561cd9b3
+False Alarm generated ...temp prefix: dd66d0982b1, prefix: 42ac39b36630
+False Alarm generated ...temp prefix: d512bdac368c, prefix: 1561cd9b3181
+False Alarm generated ...temp prefix: 7a1428f4a703, prefix: cd9b3181be65
+False Alarm generated ...temp prefix: 388ca42f554f, prefix: 553038c9ee50
+False Alarm generated ...temp prefix: ec720c88eb5b, prefix: 9623a83fa79
+False Alarm generated ...temp prefix: 5884ac9fd78, prefix: 9623a83fa792
+False Alarm generated ...temp prefix: 166acb09c42c, prefix: a966a76e2b4c
+False Alarm generated ...temp prefix: a2971e2aafce, prefix: b48c2e95b370
+False Alarm generated ...temp prefix: a295f50b7e34, prefix: 8a1fc9b51146
+False Alarm generated ...temp prefix: 994e9fae798f, prefix: 631d1233b229
+False Alarm generated ...temp prefix: eb5d69d88d67, prefix: 220558cd4cdd
+False Alarm generated ...temp prefix: 6b5a01172c0d, prefix: ddc54a889a50
+False Alarm generated ...temp prefix: 3d1f2109e5f7, prefix: 2694276fec78
+False Alarm generated ...temp prefix: 7734d844fe89, prefix: 8614091c67e3
+False Alarm generated ...temp prefix: 6d81a94e0026, prefix: 18edca01da3f
+False Alarm generated ...temp prefix: 466211719e34, prefix: b47e9765760e
+False Alarm generated ...temp prefix: 39acca871820, prefix: e9a7d0f0fcde
+Match!
+
+Status:- D: 8948, Found column: 376
+Found prefix: 175405180515009
+Found Initial State: fe6e391b4972
+Found Key: 52b49ea34972
+TIME since starting attack: 5018
+
+False Alarm generated ...temp prefix: 7bf62e34d8bd, prefix: 5f4646fb200d
+False Alarm generated ...temp prefix: f84de95ac3e3, prefix: fb666753d4da
+False Alarm generated ...temp prefix: 2f90718da1da, prefix: a20637a306b3
+False Alarm generated ...temp prefix: 8aec24699b8, prefix: 440c6f460d66
+False Alarm generated ...temp prefix: ad197089300, prefix: 61fe1ce947ee
+False Alarm generated ...temp prefix: 85ac960fc07c, prefix: 1cccabd6d293
+False Alarm generated ...temp prefix: dd8b418b100c, prefix: 18bfa9440077
+False Alarm generated ...temp prefix: 4a868d2a4f55, prefix: e398d53b1738
+False Alarm generated ...temp prefix: eab832fc8043, prefix: 72cf7abba774
+False Alarm generated ...temp prefix: 31a9d0a3ec61, prefix: 52129d8d40ba
+False Alarm generated ...temp prefix: d905f1d8768c, prefix: 8bd6357c13c6
+False Alarm generated ...temp prefix: 48f6a7ad6a2d, prefix: 4f181f13c07
+False Alarm generated ...temp prefix: 46e275f229d0, prefix: 87b6ec1686b4
+False Alarm generated ...temp prefix: c35d287186f3, prefix: 4d702896248e
+False Alarm generated ...temp prefix: 9bd4c83311b1, prefix: c998cca61d1c
+False Alarm generated ...temp prefix: 15518ad17507, prefix: 6332987470fc
+False Alarm generated ...temp prefix: 3c123008ff17, prefix: 94e2f70a1aa4
+False Alarm generated ...temp prefix: ea7e07914536, prefix: 719938ef2ca8
+False Alarm generated ...temp prefix: 2231a758bded, prefix: 2aa19e55a2b7
+False Alarm generated ...temp prefix: ffa0aa7e5a7c, prefix: dea80f5fe978
+False Alarm generated ...temp prefix: e61c24789167, prefix: 5e2fe643ef4c
+False Alarm generated ...temp prefix: e5f5e4b145f4, prefix: fe643ef4ca0d
+False Alarm generated ...temp prefix: 108f2a48437, prefix: 37ada6200121
+False Alarm generated ...temp prefix: 93f54c90d055, prefix: 1f09d9c20426
+False Alarm generated ...temp prefix: b2cfd398209, prefix: 276708109a4f
+False Alarm generated ...temp prefix: fcaf3dce3666, prefix: fc0f9c79ab10
+False Alarm generated ...temp prefix: 6f9bb8ac0e3b, prefix: bd267c734ca0
+False Alarm generated ...temp prefix: d9dbc2fd2eab, prefix: 889691ce493
+False Alarm generated ...temp prefix: 7c36c23aff3a, prefix: 790ebfa19cac
+False Alarm generated ...temp prefix: c31fa3bab9b2, prefix: 3afe8672b2b9
+False Alarm generated ...temp prefix: a0141c8eeee7, prefix: 895a4d55305
+False Alarm generated ...temp prefix: 37938a9d11a1, prefix: a4d553058704
+False Alarm generated ...temp prefix: f134b55d35e, prefix: 64dd7610dccd
+False Alarm generated ...temp prefix: b01673d91970, prefix: fe612e5f8a6c
+False Alarm generated ...temp prefix: ab678d51052f, prefix: 34d0e506f0f6
+False Alarm

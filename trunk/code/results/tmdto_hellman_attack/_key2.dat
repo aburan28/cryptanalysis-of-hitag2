@@ -1,0 +1,93 @@
+
+
+-----------------------------------------
+Time of attack: Sun Aug 24 22:00:14 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 16
+t = 2 power 16
+D = 2 power 15
+M = 2 power 17
+T = 2 power 32
+P = 2 power 33
+r = 2 power 1
+prefix_bits = 48
+Current Time: Sun Aug 24 22:00:14 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 1 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 5648, Table number: 2, Column number: 28547
+Found prefix: 156294406343217
+Found Current State: 8bd7c4eb9469
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 3990
+
+Match!
+Status:- D: 21907, Table number: 1, Column number: 11220
+Found prefix: 237721655273704
+Found Current State: 28483c70dda
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 15496
+
+TIME for attack: 23177
+COUNT of false alarms: 33009
+
+-----------------------------------------
+Time of attack: Mon Aug 25 03:33:49 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 16
+t = 2 power 16
+D = 2 power 15
+M = 2 power 17
+T = 2 power 32
+P = 2 power 33
+r = 2 power 1
+prefix_bits = 48
+Current Time: Mon Aug 25 03:33:49 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 1 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 5648, Table number: 2, Column number: 28547
+Found prefix: 156294406343217
+Found Current State: 8bd7c4eb9469
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 4131
+
+Match!
+Status:- D: 21907, Table number: 1, Column number: 11220
+Found prefix: 237721655273704
+Found Current State: 28483c70dda
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 16091
+
+TIME for attack: 24097
+COUNT of false alarms: 33009
