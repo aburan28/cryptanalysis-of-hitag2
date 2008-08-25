@@ -49,6 +49,7 @@ int main(void)
 	u64 runtime = 0;
 	u64 i = 0;
 	u64 first_random = 0;
+	u64 next_random = 0;
 
 	u64 random = 0;
 
@@ -58,8 +59,9 @@ int main(void)
 	runtime = pow(2,32);
 	
 	//first_random = get_random_plain();
-	//first_random = get_random_1(48);
-	first_random = get_random_2(48);
+	//first_random = get_random_1(32);
+	first_random = get_random_plain();
+	next_random = get_random_plain();
 	
 	printf("\nFirst random number: %llx", first_random);
 
@@ -71,8 +73,12 @@ int main(void)
 		
 		if(random == first_random)
 		{
-			printf("\n\n Repetition of random number! Period: %llu\n", i);
-			break;
+			random = get_random_plain();
+			if(random == next_random)
+			{
+				printf("\n\n Repetition of random number! Period: %llu\n", i);
+				break;
+			}
 		}
 	}
 }			

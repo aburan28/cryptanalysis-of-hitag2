@@ -17,5 +17,10 @@ int main()
 	found_key = hitag2_find_key(state, rev32 (0x69574349), rev32 (0x72456E65));
 	printf("\nFound Key: %llx", rev64(found_key));
 	
+	
+	state = 0xc5fb10110004ULL;
+	found_key = hitag2_find_key(state, 0x69574349, 0x72456E65);
+	printf("\nFound Key: %llx", found_key);
+
 	return 1;
 }

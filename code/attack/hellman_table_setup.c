@@ -59,9 +59,9 @@ int main()
 			
 	m = pow(2, 14);
 	t = pow(2, 17);
-	r = pow(2, 2);
+	r = pow(2, 1);
 		
-	fp = fopen("./tables/hellman_table_14_17_2.dat", "w");
+	fp = fopen("./tables/hellman_table_14_17_1.dat", "w");
 	
 	fprintf(fp, "%d %d %d\n", m, r, t);
 

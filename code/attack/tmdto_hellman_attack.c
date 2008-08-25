@@ -59,7 +59,7 @@ int tmdto_hellman_attack()
 	u64 temp_prefix = 0;
 	u64 found_initial_state = 0;
 	u64 found_start_state = 0;
-	u64 matched_state = 0;
+	u64 found_current_state = 0;
 	u64 found_key = 0;
 	u32 table_number = 0;
 	u32 false_alarms_count = 0;
@@ -70,7 +70,7 @@ int tmdto_hellman_attack()
 	struct hashtable * hashtable_array[r];
 
 	/* open the file pointer */
-	fp = fopen("./tables/hellman_table_16_16_1.dat", "r");
+	fp = fopen("./tables/hellman_table_14_17_2.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
@@ -171,33 +171,33 @@ int tmdto_hellman_attack()
 						mapping_function(&temp_state, table_number);
 					}
 
+					found_current_state = temp_state;
+
 					/* find prefix of the current state */
 					temp_prefix = hitag2_prefix(&temp_state, prefix_bits);
-	
+						
 					/* false alarm has occured */
 					if(temp_prefix != prefix)
 					{
-						//printf("\nFalse Alarm generated ...");
 						false_alarms_count++;
 						continue;
 					}
 					else
 					{
-						/* Find the Matched State */
-						for(j = 0; j < 48; j++) hitag2_prev_state(&temp_state);
-						matched_state = temp_state;
+						found_initial_state = found_current_state;
 						
-						found_initial_state = matched_state;
-						
-						/* Find the Initial State */
+						/* Find the Initial State from the Current State of the LFSR */
 						for(j = 0; j < i; j++)
 							hitag2_prev_state(&found_initial_state);
 
-						printf("\nFound Initial State: %llx", found_initial_state);
+						printf("\nMatch!");
+						printf("\nStatus:- D: %u, Table number: %u, Column number: %u", (i+1), (current_r + 1), (current_t + 1));
+						printf("\nFound prefix: %llu", prefix);
+						printf("\nFound Current State: %llx\nFound Initial State: %llx", found_current_state, found_initial_state);
 		
 						/* Find the Key */
-						found_key = hitag2_find_key(found_initial_state, rev32 (0x69574349), rev32 (0x72456E65));
-						printf("\nFound Key: %llx", rev64(found_key));
+						found_key = hitag2_find_key(found_initial_state, serial_id, init_vector);
+						printf("\nFound Key: %llx", found_key);
 
 						time(&time2);
 						sec_diff = difftime(time2,time1);
@@ -206,7 +206,6 @@ int tmdto_hellman_attack()
 						matched = 1;
 					}
 				}
-
 			}
 		}
 	}

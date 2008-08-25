@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	time(&time1);
 
 	N = 48;
-	secret_key = KEY3;
+	secret_key = KEY1;
 	serial_id = SERIAL_ID; 
 	init_vector = INITIALIZATION_VECTOR;
 	
@@ -51,8 +51,8 @@ int main(int argc, char *argv[])
 
 	else if(attack_type == TMTO_TAGS_ATTACK)
 	{
-		M = pow(2,24);
-		T = pow(2,25);
+		M = pow(2,23);
+		T = pow(2,27);
 		P = M;
 		D = T;
 		prefix_bits = 32;
@@ -72,16 +72,15 @@ int main(int argc, char *argv[])
 	else if(attack_type == TMDTO_HELLMAN_ATTACK)
 	{
 		/* independent parameters */
-		m = pow(2,16);
-		t = pow(2,16);
-		r = pow(2,1);
-		D = pow(2,16);
-
-		/* dependent parameters */
+		m = pow(2,14);
+		t = pow(2,17);
+		r = pow(2,2);
 		
+		D = pow(2,15);
+		
+		/* dependent parameters */
 		M = m*r;
 		P = m*t*r;
-
 		T = t*r*D;		
 
 		prefix_bits = 48;
@@ -98,20 +97,22 @@ int main(int argc, char *argv[])
 		printf("\nprefix_bits = %u", prefix_bits);
 		
 		/* call the attack module */
-		tmdto_hellman_attack(M, T, P, D, m, t, r, prefix_bits);
+		tmdto_hellman_attack();
 	}
 	
 	else if(attack_type == TMDTO_RAINBOW_ATTACK)
 	{
 		/* independent parameters */
 		M = pow(2,24);
-		t = pow(2,8);
-		D = pow(2,17);
+		t = pow(2,9);
+		
+		D = pow(2,15);
 
 		/* dependent parameters */
 		
-		T = (t*t*D)/2;
 		P = M*t;
+		T = (t*t*D)/2;
+		
 		prefix_bits = 48;
 		
 		/* print the attack parameters */
