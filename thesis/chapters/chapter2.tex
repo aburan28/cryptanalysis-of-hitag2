@@ -76,7 +76,7 @@ The general birthday paradox is used in cryptography in determining collisions i
 
 We can generalize the above situation in the following way. We have two groups of random elements each having different number elements, say $n_1$ and $n_2$. The elements are non-negative integers, with both the groups having the same range $m$ for all the integers. According to \cite{menezes}, the probability of at least one coincidence in such a case is given by,
 \begin{center}
-\large{$P(m, n_1, n_2) = 1 -(1 -\frac{n_2}{m})^{n_1}$}
+$P(m, n_1, n_2) = 1 -(1 -\frac{n_2}{m})^{n_1}$
 \end{center}
 
 For the condition that $m \rightarrow \infty$, the above relation is reduced to,
@@ -86,9 +86,12 @@ For the condition that $m \rightarrow \infty$, the above relation is reduced to,
 
 For there to be at least one coincidence, the probability must be $1$. Replacing $P(m, n_1, n_2)$ by $1$ and taking the limit $m \rightarrow \infty$, we get the following condition.
 \begin{center}
-\large{$n_1 \times n_2$ = $\frac{\pi}{4} \times m$ (or)\\}
-\large{$n_1 \times n_2 \geq m$}
+$n_1 \times n_2$ = $\frac{\pi}{4} \times m$ (or)\\
 \end{center}
+
+\begin{align}
+\label{eq:bday-paradox2} n_1 \times n_2 \geq m
+\end{align}
 
 The last equation above is the birthday paradox we would be using the analysis of most of the TMTO attacks on HiTag2.
 
@@ -114,6 +117,7 @@ The last equation above is the birthday paradox we would be using the analysis o
 
 \subsection{Hash tables}
 \label{sec:hash-tables}
+
 
 Hash tables are used during the precomputation phase as a data structure to store the (prefix, state) pairs in memory. The advantage that hash tables offer is in terms of the search time. The search time provided by hash tables in the best case and the average case is close to $O(1)$, while the worst case search time is $O(n)$ occurring with very less probability. A very important role is played by the hash function chosen for the table. 
 
@@ -287,7 +291,7 @@ Three different keys are randomly selected for the attacks. These keys are as fo
 \item Key $K_3$ = 0x49D2AC801F94
 \end{enumerate}
 
-We display the results here for the first two keys $K_1$ and $K_2$. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to higher degree of false alarms, while high prefix length would not matter since \textbf{56} bits of prefix is sufficient in eliminating false alarms. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
+We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to higher degree of false alarms, while high prefix length would not matter since \textbf{56} bits of prefix is sufficient in eliminating false alarms. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -416,37 +420,42 @@ The implementation module for TMTO tags attack executes the complete attack by c
 \begin{enumerate}
 
 \item Only the non-random precomputation phase for this attack is chosen. Hence the first step is to initialize the update function matrix and state transition matrix.
-\item The hashtable is prepared. A fixed 48 bit value is used as the starting state, and equidistant states and their prefixes are stored in the hashtable, with the prefix as the hashkey and state as the hashvalue. The size of the hashtable is $M$, and thus the distance between each state stored is fixed to $2^{48}/M$. Also, the time for preparing the hashtable is $P$, since each state computed is stored in the hashtable.  
-\item The required number of tags for the attack are prepared. It is assumed that the attacker captures 32 bit tags and the IV sent along with it while authentication takes place between the car and the car key. We emulate this scenario by generating a random IV and subsequently the 32 bits of keystream (tag) using this IV. The (tag, IV) pair is stored in memory, and used when the attack starts. If the data requirement is of an order $D$, then $D$ tags are prepared. 
-\item The attack is started. Each prepared tag is searched in the hashtable. For each match, the initial state from hashtable is reversed using the prepared tag's IV and the serial ID (which is same for all tags) to give a key. All such matched keys are stored, and any matched key repeating more than once is the required key. 
+\item The hashtable is prepared. A fixed 48 bit value is used as the starting state, and equidistant states and their prefixes are stored in the hashtable, with the prefix as the hashkey and state as the hashvalue. The size of the hashtable is $M$, and thus the distance between each state stored is fixed to $2^{48}/M$. Also, the time for preparing the hashtable is $P = M$, since each state computed during precomputation is stored in the hashtable.  
+\item The required number of tags for the attack are prepared. It is assumed that the attacker captures 32 bit tags and the IV sent along with it when one run of the authentication protocol takes place between the car and the car key. We emulate this scenario in implementation by generating a random IV and subsequently the 32 bits of keystream (tag) using this IV. The (tag, IV) pair is stored in memory, and used when the attack starts. If the data requirement is of an order $D$, then $D$ such tags and corresponding IV's are prepared. 
+\item The attack is started. Each prepared tag is searched in the hashtable. For each match, the initial state from hashtable is reversed using the IV corresponding to the matched tag and the constant serial ID, to give a key. All the keys computed using the matched tags are stored and the number of times each key repeats is noted. 
 \end{enumerate}
 
-Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e. the number of times key is found. 
+With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e. the number of times correct key is found. The results of the attacks is shown in table \ref{tab:tags-attack-results}.
 
-\begin{table}[ht!]
-\begin{center}
-\begin{tabular}{|p{3.7cm}||c|c|c||c|c|c|}
+\begin{table}[h!]
+\begin{flushleft}
+\small{
+\begin{tabular}{|p{2.5cm}||c|c|c||c|c|c|c|}
 \hline
-Key & \multicolumn{3}{c||}{\textbf{$K_1$}} & \multicolumn{3}{c|}{\textbf{$K_2$}} \\ \hline \hline
-M																&	$2^{23}$ 	&	$2^{23}$ 	&	$2^{24}$ 	&	$2^{23}$ 	&	$2^{23}$ 	&	$2^{24}$ 	\\ \hline
-T	  														&	$2^{25}$ 	&	$2^{26}$ 	&	$2^{25}$ 	&	$2^{25}$	&	$2^{26}$ 	&	$2^{25}$ 	\\ \hline
-Time for preparing hashtable		&	332				&	331				&	666				&	332				&	331 			&	667				\\ \hline
-Time for preparing tags					&	199				&	399				&	200				&	199				&	399				&	199				\\ \hline
-Time for attack									&	29 				&	57 				&	29				&	29  			&	56				&	29				\\ \hline
-Number of tags matched 					&	66121			&	132559		&	132141		&	66036			&	132106		&	131401		\\
-																&$\approx 2^{16}$&	$\approx 2^{17}$&	$\approx 2^{17}$&	$\approx 2^{16}$&	$\approx 2^{17}$&	$\approx 2^{17}$	\\ \hline
-Number of times key is found		&	0 				&	2 				&	2 				&	1 				&	0 				&	3					\\ \hline
-\end{tabular}
-\end{center}
+Key & \multicolumn{3}{c||}{\textbf{$K_1$}} & \multicolumn{4}{c|}{\textbf{$K_2$}} \\ \hline \hline
+M																&	$2^{23}$ 	&	$2^{23}$ 	&	$2^{24}$ 	&	$2^{23}$ 	&	$2^{23}$ 	&	$2^{23}$	&	$2^{24}$ 	\\ \hline
+T	  														&	$2^{25}$ 	&	$2^{26}$ 	&	$2^{25}$ 	&	$2^{25}$	&	$2^{26}$ 	&	$2^{27}$	&	$2^{25}$ 	\\ \hline
+Time for preparing hashtable		&	332				&	331				&	666				&	332				&	331 			&	320				&	667				\\ \hline
+Time for preparing tags					&	199				&	399				&	200				&	199				&	399				&	783				&	199				\\ \hline
+Time for attack									&	29 				&	57 				&	29				&	29  			&	56				&	128				& 29				\\ \hline
+Number of tags matched 					&	66121			&	132559		&	132141		&	66036			&	132106		&	265457		& 131401		\\
+																&$\approx 2^{16}$&	$\approx 2^{17}$&	$\approx 2^{17}$&	$\approx 2^{16}$&	$\approx 2^{17}$&	$\approx 2^{18}$ &	$\approx 2^{17}$	\\ \hline
+Number of times key is found		&	0 				&	2 				&	2 				&	1 				&	0 				&	4			& 3		\\ \hline
+\end{tabular}}
+\end{flushleft}
 \caption{Results of TMTO tags attack for $K_1$ and $K_2$}
 \label{tab:tags-attack-results}
 \end{table}
 
-From the above results, the following conclusions can be drawn. 
+The following comments are made based on these results. 
 
 \begin{enumerate}
-\item It is almost certain that if the parameters $M$ and $T$ are chosen according to 
+\item Consider the values in column 1 for key $K_1$. The estimated probability of getting a particular tag matched in the hashtable is $P_1$ = $M/2^{32}$ = $2^{23}/2^{32}$ = $1/2^{9}$. Then, if we have $T$ tags, the expected total number of matches is $T \times P_1$ = $2^{25} \times 1/2^{9}$ = $2^{16}$. As discussed, we expect $P_1$ to be less than this value, due to repetition of 32 bit prefixes. But from the experimental results, the number of tags matched is slightly more than $2^{16}$. This is not what was expected, but there is a reason for this.
+Since the RNG is based on the C $rand()$ function, which uses a linear congruence geenrator, an output can be repeated within the same period of the generator (without the sequence of outputs repeating). Hence, if in our implementation the same IV repeats resulting in the same tag, then the tag is matched at the same place in the hashtable. This adds to the total number of matches. For all the values of $M$ and $T$ for each key, the observed number of tags matched is slightly higher than the expected number due to this reason.
 
-\item The probability.
+\item The key is not found even once for the parameters shown in column 2 for key $K_2$. The key is expected to be found atleast two times. Though, on doubling the time $T$ for the attack, the number of matches also double and the correct key is found four times, as expected. 
 
+\item If the time for preparing the hashtable for this case is compared with the same in the case of non-random precomputation with unlimited keystream, then it is seen that the former is less than the latter. This is due to the fact that here we are dealing with 32 bit prefixes, while for unlimited keystream we computed prefixes of length 48 bits. The result is that the hashtable is prepared quickly in this case. 
+
+\item the random number is not repeating. 
 \end{enumerate}
