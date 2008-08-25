@@ -21,3 +21,13 @@ in hellman, rainbow tables, time is dependent on other parameters also. in simpl
 2. P and D are the most important parameters - as P.D >= N.
 
 But in tradeoff equations, we are more interested in finding a relation between T, M and D. In BG attacks, M = P and T = D, so they are simple to understand. 
+
+3. compare the tmto-keystream/tags attack with tmdto hellman/rainbow attack. explain the differences in general.
+
+
+
+Future Work.
+
+1. The implementation for rainbow and hellman are 48 bits. And we can also see wrong keys being found. So, 56 bits can be implemented.
+
+2. 
