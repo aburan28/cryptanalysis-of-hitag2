@@ -45,8 +45,11 @@ This procedure is repeated for all the columns, until in a worst case scenario, 
 \begin{align*}
 &= 0 + 1 + 2 + \cdots + (t-1)\\
 &= t(t-1)/2\\
-&\approx t^2/2
 \end{align*}
+
+\begin{align}
+\label{eq:time-rainbow-single-prefix} &\approx t^2/2
+\end{align}
 
 The attack time then is of the order of $t^2/2$, thus $T$ = $t^2/2$.\\
 
@@ -71,11 +74,15 @@ The tradeoff equation then comes to be,
 
 We derive a general tradeoff equation for attacks on stream ciphers using the rainbow table. An analysis similar to that done by Biryukov and Shamir for Hellman tables is described in section \ref{sec:compare-hellman-rainbow}. 
 
-We start by saying that the number of chains in the rainbow table is $M$ and $t$ states exist in each chain. The total number of states in the table is $P = Mt$. Also, $D$ states occur during the attach phase. According to equation \ref{eq:bday-paradox2}, the product of $P$ and $D$ must satisfy the relation $P \times D \geq 2^n$. Considering the lower bound for $P$ and $D$, we have $P \times D = 2^n \Rightarrow MtD = 2^n$.
- 
-This relation allows us to select the parameters $M$, $t$ and $D$ in a manner such that the parameters determining the precomputation phase and those determining the attack phase are independent of each other. The time for searching a prefix in the hashtable is $t^2/2$. Hence, the total attack time for $D$ prefixes is $T = t^2D/2$. 
+The number of chains in the rainbow table is $M$ and $t$ states exist in each chain. The total number of states in the table is $P = Mt$. Also, $D$ states occur during the attack phase. Then, again according to equation \ref{eq:bday-paradox2}, the product of $P$ and $D$ must satisfy the relation $P \times D \geq N$. Considering the lower bound for $P$ and $D$, we have $P \times D = N$ giving us the general tradeoff equation as follows.
 
-\noindent \textbf{\textit{Implementation}}. Since there is just one table storing the states in rainbow table, only one hashtable is required for storing the starting and end points. Just as in the implementation of Hellman tables for stream ciphers, we have implemented a separate program which computes this table and stores it on the local disk in the form of a ASCII file. The attack module reads the starting and end points from this file, and prepares the hashtable. Keystream of appropriate length depending on the value of $D$ is prepared for the attack. 
+\begin{align}
+\label{eq:general-rainbow-stream} Mt \times D = N
+\end{align}
+ 
+This relation allows us to select the parameters $M$, $t$ and $D$ in a manner such that the precomputation phase and the attack phase can be carried out without any dependencies on each other. The attack phase runs in the same way as for block ciphers. The time for searching a prefix in the hashtable is $t^2/2$, as from equation \ref{eq:time-rainbow-single-prefix}. Hence, the total attack time for $D$ match attempts is $T = t^2D/2$. \\
+
+\noindent \textbf{\textit{Implementation}}. Since there is just one table storing all the states, only one hashtable is required for storing the starting and end point of each chain. Similar to the precomputation phase using Hellman tables, we have implemented a separate program which computes the rainbow table and stores it on the local disk in the form of an ASCII file. The attack module reads the starting and end points from this file, and prepares the hashtable. Keystream of appropriate length depending on the value of $D$ is prepared for the attack. 
 
 Following are the results of the attack for keys $K_1$ and $K_2$. 
 
@@ -107,7 +114,7 @@ The following comments can be made based on the results from table \ref{tab:rain
 
 \item The time for preparing the hashtable must be the same for all the cases (and both the keys), since $M$ is the same. But, we notice certain irregularity in the time, and this can be attributed to the machine on which the attack is run, as it is shared between various users. 
 
-\item The correct key is found atleast once in all the cases, which is a good sign. Though, along with correct key, wrong keys are also being found in the attack. This must not be mistaken with the false alarms. These cases arise because of a prefix having more than one generating state or preimage. As a result, the prefix correctly exists in the rainbow table with the undesired state as its preimage. This state is found by the attack, resulting in a wrong key. We call such cases as false keys, and stress that they are different from false alarms. The only way of avoiding false keys is by increasing the length of prefix to 56 bits. As we have seen for TMTO keystream and tags attacks, 56 bits of prefix is sufficient in order to supress false keys. 
+\item The correct key is found atleast once in all the cases, which is a good sign. Though, along with correct key, wrong keys are also being found in the attack. This must not be mistaken with the false alarms. These cases arise because of a prefix having more than one generating state or preimage. As a result, the prefix correctly exists in the rainbow table but with the wrong state as its preimage. This state is found by the attack, resulting in a wrong key. We call such cases as false keys, and stress that they are different from false alarms. The only way of avoiding false keys is by increasing the length of prefix to 56 bits. As we have seen for TMTO keystream and tags attacks, 56 bits of prefix is sufficient in order to supress false keys. 
 
 \item The time for attack is the total time taken for searching all the subsequences of the keystream. We have continued the attack even after the correct key is found, to know other results for the complete attack and the time taken for the same. For example, for the parameters in column 1 of $K_1$, the key is found for the first time in 595 seconds. The output from the attack is shown below.
 
@@ -125,19 +132,54 @@ It also says that the key is found in the 49'th column of the rainbow table, for
 \end{enumerate}
 
 
-
-
 \section{Comparison of Hellman and rainbow table}
 \label{sec:compare-hellman-rainbow}
 
-In the case of Hellman tables, Biryukov and Shamir proposed changes to the table structure for block ciphers, in order to use them for stream ciphers. Just like Hellman tables, rainbow table has been proposed for block ciphers. Hence, they cannot be directly applied on stream ciphers. In the literature, we have not been able to find any considerable work in this direction. The paper by Erguler and Anarim is only work in this direction, to be best of our knowledge. Though 
+For using Hellman tables for stream ciphers, Biryukov and Shamir proposed changes by modifying the table structure using the parameter $D$. The original idea of rainbow table has been proposed for block ciphers and thus similar modification in the table structure needs to be done to apply them on stream ciphers. The paper \cite{erguler2005nct} by Erguler and Anarim is the only work in this direction, to be best of our knowledge. It discusses an approach on similar lines of Biryukov and Shamir approach. The tradeoff described here was designed independently by us. Only later it came to our knowledge that the idea has already been published by Erguler and Anarim.
 
-The rainbow table discussed for block ciphers cannot be directly used for stream ciphers since we need to consider the data available for the attack. Clearly thus, the only change that is required is reducing the number of states in the rainbow table in proportion to the number of states in $D$. Let us say that $M$ chains exist in the table. Then the number of states in the table is $Mt$. If the number of states is to be reduced, then either $M$ or $t$ or both would be reduced. We have identified these possibilities in the following table. 
+Since we have data available for stream ciphers, the number of states in the rainbow table should be reduced by a factor of $D$. The number of states existing in the rainbow table is $Mt$ \footnote{The parameters $M$ and $t$ here represent the original rainbow table, and are not related with the parameters described in the general tradeoff equation in previous section}. If they have to be reduced, then either $M$ or $t$ or both should be reduced. Three such possibilities are identified in the following table. 
 
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c||c||c c c|}
+\hline
+			& Biryukov-Shamir approach 	& \multicolumn{3}{c|}{Approach for rainbow tables}					\\ \hline \hline
+M			&	M/D		&	M/D				&	M						& $M/\sqrt{D}$	\\
+t			&	t			&	t					&	t/D					& $t/\sqrt{D}$	\\ \hline \hline
+P			&	Mt/D	&	Mt/D			&	Mt/D				& Mt/D					\\ 
+T			&	$t^2$	&	$t^2D/2$	&	$t^2/2D$		& $t^2/2$				\\ \hline
+\end{tabular}
+\end{center} 
+\caption{Possible cases for modifying $M$ and $t$ for rainbow tables}
+\label{tab:parameters-rainbow-table}
+\end{table}
 
-As we can see, if $M$ is reduced to $M/D$, then $T$ becomes $t^2D/2$, which is a very large value as compared to $t^2$ for Hellman tables. Also, if we decrease $t$ to $t/D$, then $M$ increases by factor $D$ as compared again with the Hellman tables.The only optimum value of both $M$ and $t$ is achieved in the third case. In this case, $M$ is increased by a factor of $\sqrt{D}$, while we can see that $T$ reduces by 2. Hence, this configuration of the rainbow table provides a good way of comparison with the performance of Hellman tables. 
+The first case for rainbow tables is reducing $M$ to $M/D$. Though memory required for the attack reduces, the time for the attack increases considerably to $t^2D/2$. It is interesting to note that for Hellman tables, the attack time depends on both $t$ and the number of tables. So, if $M$ is decreased, the number of tables decreases, thus reducing the attack time to $t^2$. On the other hand, for rainbow tables, the attack time depends just on $t$. Hence, reducing the memory does not reduce the time for the attack by a factor $D$.
 
+In the next case, we reduce $t$ to $t/D$. The problem with this option is the increased memory requirement which is $M$. The third option is a middle way between the first two options. We reduce $M$ and $t$ by a factor of $\sqrt{D}$. The attack time now becomes ${(t/\sqrt{D})}^2/2 \times D$ = $t^2/2$. As we see, this makes it comparable to the attack time for Hellman tables. Rainbow tables provide the same advantage for stream ciphers in this context, as they do for block ciphers i.e. they reduce the attack time by a factor of 2. But, as can be seen, for stream ciphers the memory requirement is increased $\sqrt{D}$ times, which is a disadvantage of using rainbow tables with these parameters.
+
+Let us denote the memory requirement and the number of states in each chain by $M'$ and $t'$ for the modified rainbow table. Then we have $M' = M/\sqrt{D}$ and $t' = t/\sqrt{D}$. Replacing these values in the general tradeoff equation \ref{eq:general-rainbow-stream}, we get the following tradeoff equation.
 
 \begin{align}
 \label{eq:tmdto-rainbow-stream} 2TM^2D^2 &= N^2
 \end{align}
+
+For comparing the performance of Hellman and rainbow tables using their tradeoff equations, we select the following values of the required parameters. 
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c c||c c|}
+\hline
+			& \multicolumn{2}{c||}{$M = 2^{32}$, $t = 2^{16}$, $D = 2^{14}$} 	& \multicolumn{2}{c|}{$M = 2^{31}$, $t = 2^{17}$, $D = 2^{16}$}	\\ \hline \hline
+			&	Hellman				&	Rainbow					&	Hellman					& Rainbow				\\ \hline \hline
+M			&	$2^{18}$			&	$2^{25}$				&	$2^{15}$				& $2^{23}$			\\ \hline 
+m			&	$2^{16}$			&		-							&	$2^{14}$				& 	-						\\ \hline 
+r			&	$2^{2}$				&		-							&	$2^{1}$					& 	-						\\ \hline 
+t			&	$2^{16}$			&	$2^{9}$					&	$2^{17}$				& $2^{9}$				\\ \hline 
+P			&	$2^{34}$			&	$2^{34}$				&	$2^{32}$				& $2^{32}$			\\ \hline 
+T			&	$2^{32}$			&	$2^{31}$				&	$2^{34}$				& $2^{33}$			\\ \hline 
+\end{tabular}
+\end{center} 
+\caption{Parameters for comparison of Hellman and rainbow table}
+\label{tab:parameters-comparison}
+\end{table}
