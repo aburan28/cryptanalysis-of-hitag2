@@ -1,12 +1,13 @@
 \chapter{Time-memory-data tradeoff using Hellman tables}
 \label{chapter:tmdto-hellman}
 
-\paragraph{Summary}
 
-Time-memory tradeoff attacks were first conceived on block ciphers by Hellman in 1980. In this approach, Hellman proposed a method for carrying out the precomputation phase of the attack i.e. computing the precomputation tables. We refer to these tables as Hellman tables for block ciphers, in the remainder of the thesis. The proposed idea is based on the birthday paradox, and is thus probabilistic in nature, as we shall see in a moment. 
+\footnotesize
+\indent \textbf{\textit{Summary.}} Time-memory tradeoff attacks were first conceived on block ciphers by Hellman in 1980. In this approach, Hellman proposed a method for carrying out the precomputation phase of the attack i.e. computing the precomputation tables. We refer to these tables as Hellman tables for block ciphers, in the remainder of the thesis. The proposed idea is based on the birthday paradox, and is thus probabilistic in nature, as we shall see in a moment. 
 
-Later, using this approach as the basis, Shamir and Biryukov proposed a table structure for stream ciphers. This takes into account the amount of keystream available for the attack. We call these tables as Hellman tables for stream ciphers. We start by explaining the original idea of Hellman based on block ciphers. This is done by first presenting a naive approach to building tables for time-memory tradeoff attacks on block ciphers. Then, we point out limitations to the approach and explain how they are improved, consequently leading to the original idea of Hellman. From there, we provide the idea of Shamir and Biryukov, which is used for implementing a time-memory-data tradeoff attack on HiTag2 cipher. 
+Later, using this approach as the basis, Shamir and Biryukov proposed a table structure for stream ciphers. This takes into account the amount of keystream available for the attack. We call these tables as Hellman tables for stream ciphers. We start by explaining the original idea of Hellman based on block ciphers. This is done by first presenting a naive approach to building tables for time-memory tradeoff attacks on block ciphers. Then, we point out limitations to the approach and explain how they are improved, consequently leading to the original idea of Hellman. From there, we provide the idea of Shamir and Biryukov, which is used for implementing a time-memory-data tradeoff attack on HiTag2 cipher.
 
+\normalsize
 \section{Hellman tables for block ciphers}
 
 A block cipher is an encryption algorithm, which takes in a plaintext block of $n$ bits (called the block size) and a key of $k$ bits, and returns a ciphertext block of $n$ bits. Figure \ref{fig:block-cipher} illustrates a simple block cipher, with plaintext, ciphertext and key represented by $P$, $C$ and $K$ respectively. The encryption function is denoted by $E$ such that $C$ = $E_K(P)$ and implying encryption of $P$ under $K$.
@@ -292,13 +293,13 @@ In the next section results of the performance of Hellman tables for breaking Hi
 
 The implementation of the Hellman tables for stream ciphers differs from the implementation of previously discussed TMTO attacks in certain ways. For every table a separate hashtable is constructed. This is because every table has its own reduction function. Each table is identified by a table number $i$ such that $1 \geq i \geq r$. The reduction function used for the table $i$ is shown in equation \ref{eq:reduction-function}, where $k$ represents a column in the chain $j$.
 
-\begin{align*}
+\begin{align}
 \label{eq:reduction-function} S_{j,k+1} = f_i(S_{j,k}) = R_i(Prefix(S_{j,k})) = Prefix(S_{j,k}) \oplus i
-\end{align*}  
+\end{align}  
 
 This ofcourse is a very simple reduction function and more complicated functions can be constructed. Though in the literal sense, this is not a reduction function since the input and output of the function are of same size which is 48 bits. This function is rather a permutation function and maps one element in the state space to another element in the same space. If prefixes of length 56 bits are used, then these 56 bits must be mapped to 48 bits of state. In this case, the terminology for the reduction function would be appropriate. But, we continue using the same name in the case of 48 bit prefixes in order to avoid creating new terms for special cases. 
 
-The number of hashtables required is $r$ and the starting and end points of each table are stored in separate hashtables. In the implementation, we execute a separate program carry out the precomputation phase of the attack. This program computes the starting and end points for each table and stores them in a particular file on the local disk. The reason for doing this is that the precomputation takes hours to complete, for example for $P = 2^33$, the time taken is 13 hours. Hence, storing the tables in a file is a better idea instead of generating the precomputation tables each time the attack is executed.
+The number of hashtables required is $r$ and the starting and end points of each table are stored in separate hashtables. In the implementation, we execute a separate program carry out the precomputation phase of the attack. This program computes the starting and end points for each table and stores them in an ASCII file on the local disk. The reason for doing this is that the precomputation takes hours to complete, for example for $P = 2^33$, the time taken is 13 hours. Hence, storing the tables in a file is a better idea instead of generating the precomputation tables each time the attack is executed.
 
 The following steps are performed in sequence as part of the complete attack. 
 

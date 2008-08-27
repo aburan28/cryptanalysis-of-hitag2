@@ -6,23 +6,19 @@
 
 \section{Cryptography}
 
-Cryptography is the mathematical science of protecting secret information by transforming it into a form which is illegible. Generally, the original secret information is called the plaintext while the transformed information is called ciphertext. Once the plaintext is transformed into ciphertext, it can be sent over an insecure channel to its destination. At the destination, the reverse transformation takes place yielding back the original information. Transformation of plaintext to ciphertext is referred to as encryption, while the reverse process is called decryption.
+Cryptography is the mathematical science of protecting secret information by transforming it into a form which is illegible. Generally, the original information is called \textit{plaintext} while the transformed information is called \textit{ciphertext}. Once plaintext is transformed into ciphertext, the latter can then be sent over an insecure channel to its destination. At the destination, the reverse transformation takes place yielding back the original information. Transformation of plaintext to ciphertext is referred to as \textit{encryption}, while the reverse process is called \textit{decryption}. A secret information called \textit{key} is used in both encryption and decryption. The key can be compared with the key for locks used to keep items safe. If the key is lost, then the lock can be broken by the holder of the key and the item can be stolen. Similarly, if an attacker knows the cryptographic key he can know the plaintext by decrypting the ciphertext.  
 
-This is just one application of cryptography in modern security systems, namely providing confidentiality to secret information; though it was the application with which the idea of cryptography was first conceived. Modern cryptography is capable of also providing message integrity (with or without providing confidentiality), authentication between two parties (by providing guarantee that you are talking to the right party), non-repudiation (implying a party cannot deny the fact that it has carried through a transaction, if it has really done so) etc. 
+This is just one application of cryptography in modern security systems, namely providing confidentiality to secret information; though it was this application with which the idea of cryptography was first conceived. Modern cryptography is also capable of providing message integrity (that a message has not been modified), authentication between two parties (the guarantee that we are talking with the expected party), non-repudiation (that a party cannot deny the fact that it has carried through a transaction, if it has really done so) and so on. 
 
-In the late 19th century, Kerckhoff published a very important principle which has become the basis of modern security systems using cryptography \cite{kerckhoff}. He said that the security of a cryptographic algorithm must rest solely in the secrecy of its key, not in the secrecy of the algorithm itself. In other words, while designing a security system with cryptography, all cryptographic algorithms must be openly published, while the only secret parameter should be the keys used by the algorithms. This helps in the cryptanalysis of the algorithms and weaknesses can be found out by researchers and cryptanalysts. Though this is a very important principle, still design of some security systems continue to be based on propreitary algorithms. More information on certain secret algorithms and successful reverse-engineering techniques is provided in section \ref{sec:hitag2-background}.
+In the late 19th century, Kerckhoff published a very important principle \cite{kerckhoff} which has become the basis of modern security systems using cryptography. He said that the security of a cryptographic encryption-decryption algorithm must rest solely in the secrecy of its key, not in the secrecy of the algorithm itself. In other words, while designing a security system with cryptography, all cryptographic algorithms must be openly published, while the only secret parameter should be the keys used by the algorithms. This helps in the cryptanalysis of the algorithms and weaknesses can be found out by researchers and cryptanalysts. Though this is a very important principle, still the design of security systems continue to be based on propreitary algorithms. More information on certain secret algorithms and successful reverse-engineering techniques is provided in section \ref{sec:hitag2-background}.
 
-% symmetric and asymmetric key cryptosystems
+Two kinds of cryptosystems exist, depending on the manner in which keys are used: symmetric-key and asymmetric-key. In symmetric-key cryptography, a single key is shared between two communicating parties, such that one party encrypts plaintext using the shared key and the other party decrypts the received ciphertext using the same key. In such systems, the secrecy of the shared key becomes extremely critical. Also, if the number of parties grows, the number of keys required in the system becomes large, since each communicating pair would hold a different key. In addition, sharing keys between each pair requires secure key establishment protocols. 
 
-Two kinds of cryptosystems exist, depending on the manner in which keys are used: symmetric-key and asymmetric-key. In symmetric-key cryptography, a single key is shared between two communicating parties, such that if one party encrypts a message using the shared key, the other party is able to decrypt the ciphertext using the same key. In such systems, the secrecy of the shared key becomes extremely important. Also, if the number of parties grows, the number of keys required in the system becomes large, since each communicating pair would hold a different key. In addition, sharing keys between parties requires secure protocols. 
+Symmetric-key cryptography was the only known kind of encryption before 1976, when Diffie and Hellman introduced the concept of asymmetric-key cryptography \cite{diffie1976ndc} for the first time. In asymmetric-key cryptography, the encryption and corresponding decryption are performed with different keys. Every party holds two keys: one public and one private. If \emph{Alice} wants to send a message to \emph{Bob}, she will encrypt the plaintext with the public key of \emph{Bob}. At the other end, \emph{Bob} would decrypt this ciphertext using his private key. The public-private key pair are related, but it is unfeasible to determine \emph{Bob}'s private key from his public key. Since every party holds two keys, the total number of keys is reduced considerably when compared to symmetric-key cryptosystems. Also, no key establishment protocols are needed as the public keys are distributed through public channels.
 
-Symmetric-key cryptography was the only known kind of encryption before 1976, when Diffie and Hellman introduced the concept of asymmetric-key cryptography \cite{diffie1976ndc} for the first time. In asymmetric-key cryptography, the encryption and corresponding decryption are performed with different keys. Every party holds two keys: one public and one private. If \emph{Alice} wants to send a message to \emph{Bob}, she will encrypt the message with the public key of \emph{Bob}. At the other end, \emph{Bob} would decrypt this ciphertext using his private key. The public-private key pair are related, but it is unfeasible to determine \emph{Bob}'s private key from his public key. Since every party holds two keys, the total number of keys is reduced considerably when compared to symmetric-key cryptosystems. Also, there is no overhead in sharing the keys, as the public keys are distributed through public channels.
+Symmetric-key algorithms are further classified into two different types, based on the manner in which plaintext is used by the encryption algorithm. These are block ciphers and stream ciphers. Block ciphers divide the plaintext into blocks of data, and each block is then encrypted separately. The sizes of the input and output blocks are same, irrespective of the size of the key. Successive output blocks are then connected to each other in some way, depending on the mode of operation of the block cipher. \emph{DES} (data encryption standard) has been one of the most widely used block ciphers with block size of 64 bits and key size of 56 bits. \emph{DES} has been recently replaced by \emph{AES} (advanced encryption standard) as the approved standard, through a public competition which called for new block cipher designs to replace \emph{DES}.
 
-% explain block cipher
-Symmetric-key algorithms are further classified into two different types, based on the manner in which plaintext is used by the encryption algorithm: block ciphers and stream ciphers. Block ciphers divide the plaintext into blocks of data, and each such block is then encrypted separately. The sizes of the input and output blocks are same, irrespective of the size of the key. Successive output blocks are then connected to each other in some way, depending on the mode of operation of the block cipher. \emph{DES} has been one of the most widely used block ciphers with block size of 64 bits and key size of 56 bits. \emph{DES} has been recently replaced by \emph{AES} as the standard, through a public competition which called for new block cipher designs to replace \emph{DES}.
-
-% explain stream cipher
-Stream ciphers on the other hand, have a different functional structure and working. Stream ciphers consist of an internal state, which is used in deriving one output bit through a output function. The internal state changes over successive clock cycles using a defined update function, consequently producing a stream of bits at the output. The plaintext bits are then bitwise \emph{xor}'ed with the output bits, to produce the ciphertext. The working of stream ciphers is explained in much detail in section \ref{sec:stream-cipher}. 
+Stream ciphers on the other hand, have a different functional structure and working. Stream ciphers consist of an internal state, which is used in deriving one output bit through an output function. The internal state changes over successive clock cycles using an update function, consequently producing a stream of bits at the output. Bits of the plaintext are picked up in sequence and then \emph{xor}'ed bitwise with the output bits of the stream cipher to produce the ciphertext bits. The working of stream ciphers is explained in much detail in section \ref{sec:stream-cipher}. 
 
 \section{Stream cipher}
 \label{sec:stream-cipher}
@@ -39,14 +35,15 @@ Before we explain the working of stream ciphers, it is important that we underst
 	\label{fig:one-time-pad}
 \end{figure}
 
-The key bits are required to be completely random, without any statistical correlation between them. With this pre-condition, there is no way that an adversary could determine the secret key just by knowing the ciphertext. Since the key bits are derived from a truly random source, there could be several combinations of the plaintext and the key which result in the given ciphertext. The attacker would, in such a scenario, never be able to determine which of the specific combination is the right one, even with infinite computing power at hand \cite{one-time-pads-link}. If the attacker knows certain bits of the plaintext, then the corresponding bits of the key can be determined. If the key is not truly random, the attacker can predict some of the remaining bits of the key and thus decipher the remaining plaintext. Hence, the key should be truly random. 
-Shannon in 1949, used his notion of information theory to formally prove that one-time pads are unbreakable \cite{shannon1949cts}, and termed them as having perfect secrecy.
+The key bits are required to be completely random, without any statistical correlation between them. With this pre-condition, there is no way that an adversary could determine the secret key just by knowing the ciphertext. Since the key bits are derived from a truly random source, there could be several combinations of the plaintext and the key which result in the given ciphertext. The attacker would, in such a scenario, never be able to determine which of the specific combination is the right one, even with infinite computing power at hand \cite{one-time-pads-link}.
 
-But for practical purposes, one-time pads have several weaknesses. These are explained in the following two points.
+If the attacker knows certain bits of the plaintext, then the corresponding bits of the key can be determined. If the key is not truly random, the attacker can predict some of the remaining bits of the key and thus decipher the remaining plaintext. Hence, the key should be truly random. 
+
+Shannon in 1949, used his notion of information theory to formally prove that one-time pads are unbreakable \cite{shannon1949cts}, and termed them as having perfect secrecy. But for practical purposes, one-time pads have several weaknesses. These are explained in the following two points.
 \begin{itemize}
-\item The length of the key has to be equal to the length of the plaintext so that all the plaintext bits are encrypted. Thus, in order to encrypt a long plaintext, large number of `random' key bits would have to be generated. Managing such a huge set of key bits is not practical, since the storage and transfer need to be carried out securely. 
+\item The length of the key has to be equal to the length of the plaintext so that all the plaintext bits are encrypted. Thus to encrypt a long plaintext, large number of `random' key bits need to be generated. Managing such a huge set of key bits is not practical, since the storage and transfer need to be carried out securely. 
 
-\item As the name of one-time pad suggests, a key can be used for just one transaction. If the same key is used for encrypting two different plaintext messages, the chances that the key being broken are extremely high. The chances are precisely zero when the key is used just for one encryption and is derived from a true random source. But, the same chances are extremely high if the key is re-used in another encryption. 
+\item As the name of one-time pad suggests, a key can be used for just one transaction. If the same key is used for encrypting two different plaintext messages, the chances that the key being broken are extremely high. These chances are precisely zero when the key is used just for one encryption and is derived from a true random source. So it is suggested that a previous key not be used again.
 \end{itemize}
 
 Considering the above points, rather than transmitting the key then, it is a better idea to transmit the plaintext itself through the secure channel. Clearly, one-time pads are not good enough for being deployed in practical systems, but they reveal a strong design basis for stream ciphers. The component missing between one-time pads and stream ciphers is the pseudo-random sequence generator, which is discussed next. 
@@ -56,7 +53,7 @@ Considering the above points, rather than transmitting the key then, it is a bet
 \subsection{Pseudo-random sequence generators}
 \label{sec:psrg}
 
-Pseudo-random sequence generator (PRSG) is used to derive a seemingly random sequence of bits called the \emph{keystream}, using a small initial seed value. PRSG's are finite state machines having an internal state, which is initialized using the secret key, along with some more initialization parameters if required. There are two important functions part of the PRSG.
+Pseudo-random sequence generator (PRSG) is used to derive a seemingly random sequence of bits called the \emph{keystream}, using a small initial seed value. PRSG's are finite state machines having an internal state, which is initialized using the secret key, along with some more initialization parameters if required. A PRSG uses the following two functions internally.
 \begin{itemize}
 \item A linear \emph{update function} is used to derive the next state using the current state.
 \item A linear or non-linear \emph{output function} is used to generate an output bit from the current state. 
@@ -69,149 +66,151 @@ Pseudo-random sequence generator (PRSG) is used to derive a seemingly random seq
 	\label{fig:prsg}
 \end{figure}
 
-Figure \ref{fig:prsg} shows the internal model of a PRSG. A stream of the output bits (occuring as the PRSG changes states) constitutes the keystream. It is important to note that the keystream is not truly random, but as the name of the generator suggests, it is pseudo or seemingly random. 
+Figure \ref{fig:prsg} shows the internal model of a PRSG. A stream of the output bits (occuring as the PRSG changes states in every clock cycle) constitutes the keystream. It is important to note that the keystream is not truly random, but as the name of the generator suggests, it is pseudo or seemingly random. 
 
 \paragraph{\textit{Use in stream cipher construction.}}
 \label{para:stream-construction} 
-We need to use secret keys of fixed length independent of the length of plaintext, in the construction of stream ciphers. Typically the key lengths are 128, 256 or 512 bits, which are considered secure by the standards of the computational power existing today. % check this and need a reference here %
-The small secret key is used in the initialization of the PRSG thus generation a long keystream which replaces the long secret key in the one-time pads. The trade-off here is that the keystream is not truly random, since it is derived using the pseudo-random bit generator. As a result, the perfect secrecy of one-time pads does not apply to stream ciphers, but at the same time, the strength of the pseudo-random sequence generator becomes extremely important in determining how strong the stream cipher is cryptographically.
+We need to use secret keys of fixed length independent of the length of plaintext, in the construction of stream ciphers. Typically the key lengths are 128, 256 or 512 bits, which are considered secure by the standards of the computational power existing today. 
+% NEEDED - check this and need a reference here %
+The small secret key is used in the initialization of the PRSG thus generating a long keystream which replaces the long secret key in the one-time pads. The trade-off here is that the keystream is not truly random. As a result, the perfect secrecy of one-time pads does not apply to stream ciphers, but at the same time, the strength of the pseudo-random sequence generator becomes extremely important in determining how strong the stream cipher is cryptographically.
 
-An overview of a stream cipher design is shown in figure \ref{fig:stream-cipher}. The secret key and other initialization parameters like initialization vector (IV) etc. are used to initialize the internal state of the pseudo-random sequence generator. Once the initial state is prepared, the pseudo-random sequence generator is ready to generate a stream of random looking bits or the keystream. Bits of the plaintext are \emph{xor}'ed along with corresponding bits from the keystream to generate a stream of encrypted bits. In effect, the plaintext and the keystream are used to produce the ciphertext.
+An overview of a stream cipher design is shown in figure \ref{fig:stream-cipher}. The secret key and other initialization parameters like initialization vector (IV) etc. are used to initialize the internal state. Once the initial state is prepared, the PRSG is ready to generate the keystream. Bits of the plaintext are \emph{xor}'ed along with corresponding bits from the keystream to generate a stream of encrypted bits. In effect, the plaintext and the keystream are used to produce the ciphertext.
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=4.5in]{./figures/stream-cipher.PNG}
-	\caption{A stream cipher}	
+		\includegraphics[width=4in]{./figures/stream-cipher.PNG}
+	\caption{Deployment of PRSG in a stream cipher}	
 	\label{fig:stream-cipher}
 \end{figure}
 
-At the receiver end, the pseudo-random sequence generator is initialized using the same parameters. Any change in the initialization of the pseudo-random sequence generator would result in a different keystream being produced, which would lead to incorrect decryption of the received ciphertext. Using the correct keystream, the ciphertext is decrypted to give the original plaintext. 
+At the receiver end, the PRSG is initialized using the same parameters. Any change in the initialization results in the generation of a different keystream leading to incorrect decryption of the received ciphertext. With the correct keystream, ciphertext is decrypted giving the correct plaintext. 
 
 % security of PRSG %
-As briefly mentioned before, the security of the stream cipher much depends on the security properties of PRSG. The output sequence is required to behave as a true random sequence. Two most important considerations for ascertaining adequate security are mentioned below \cite{robshaw1995sct}.
-\begin{enumerate}
-\item The period of the keystream should be large. This becomes extremely important when the length of the plaintext is large. If the keystream repeats, the same sequence would then be encrypting different parts of the plaintext. If the attacker has knowledge of some initial part of the plaintext, then the initial keystream encrypting the known plaintext can be recovered. The repeated keystream can then be used to decrypt part of the ciphertext which the attacker does not know. 
+As briefly mentioned before, the security of the stream cipher much depends on the security properties of PRSG. The output sequence is required to behave as a true random sequence. One very important consideration in ascertaining adequate security \cite{robshaw1995sct} is mentioned below.
 
-Even if the attacker has no knowledge of plaintext, certain properties about the plaintext can be derived from the two ciphertexts which are encrypted using the same keystream. On the other hand, the requirement on how large the period should be depends on the plaintext a particular application expects to encrypt.
+The period of the keystream should be large. This becomes extremely important when the length of the plaintext is large. If the keystream repeats, the same sequence would encrypt different parts of the plaintext. If the attacker has knowledge of some initial part of the plaintext, then the initial keystream encrypting the known plaintext can be recovered. This initial keystream can later be used to decrypt part of the ciphertext which the attacker does not know. Even if the attacker has no knowledge of plaintext, certain properties of the plaintext can be derived from the two ciphertexts encrypted using the same keystream. 
 
-\item The 
-\end{enumerate}
+On the other hand, the requirement on how large the period should be depends on the amount plaintext expected to be encrypted.
 
 \subsection{Linear feedback shift registers} 
 \label{sec:lfsr}
-The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences exist as well. Since we are mainly going to deal with the use of LFSR based generators in this thesis, we would concentrate only on them. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. For an introduction to these methods, we refer to \cite{zeng1991pbg}. 
+The most widespread implementation of PRSG's is done using a linear feedback shift register (LFSR). Other methods for generating pseudo-random sequences exist as well. Since we are mainly going to deal with an LFSR based generator (HiTag2) in this thesis, we would describe only them here. Other methods of generating pseudo-random sequences are linear congruence generators and non-linear feedback shift registers. For an introduction to these methods, we point to \cite{zeng1991pbg}. 
 % reason why LFSR are widely used, and why are we more interested in them %
 % more info on other generators %
 
 It is important to note that LFSR constitutes only the \emph{update function} of the PRSG. The \emph{output function} of the PRSG needs to be implemented on top of the LFSR. An LFSR consists of two important components which are a shift register and a linear feedback function.\\
 
-\textbf{\emph{Shift Register.}} A shift register holds a fixed number of bits, and shifts each of them into corresponding adjacent positions (all in a particular direction) on every clock cycle. If the direction of the shift is taken to be rightwards, then in every clock cycle there is a new bit on the leftmost position of the register, and the rightmost bit is excluded from the register, as shown in the figure \ref{fig:shift-register}. If the $n$ bits of the shift register are represented by $s_n$, $s_{n-1}$, $\ldots$, $s_{1}$, $s_{0}$, then on every clock cycle we have the following transformations: $s_{out}$ = $s_{0}$, $s_{0}$ = $s_{1}$, $\ldots$, $s_{n-2}$ = $s_{n-1}$, $s_{n-1}$ = $s_{new}$; where $s_{out}$ is the bit which is excluded from the register and $s_{new}$ is a new bit. The application implementing the shift register decides how the $s_{new}$ bit is initialized and the manner in which $s_{out}$ is handled.
+\textbf{\emph{Shift Register.}} A shift register holds a fixed number of bits, and shifts each of them into corresponding adjacent positions (all in a particular direction) on every clock cycle. If the direction of the shift is taken to be rightwards, then in every clock cycle there is a new bit on the leftmost position of the register, and the rightmost bit is excluded from the register, as shown in the figure \ref{fig:shift-register}. If the $n$ bits of the shift register are represented by $s_{n-1}$, $s_{n-2}$, $\ldots$ , $s_{1}$, $s_{0}$, then on every clock cycle we have the following transformations: $s_{out}$ = $s_{0}$, $s_{0}$ = $s_{1}$, $\ldots$, $s_{n-2}$ = $s_{n-1}$, $s_{n-1}$ = $s_{in}$; where $s_{out}$ is the bit which is excluded from the register and $s_{in}$ is the new bit. The application implementing the shift register decides how the $s_{in}$ and $s_{out}$ bits are handled.
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/shift-register.PNG}
-	\caption{A simple shift register and its state after one round of shift}	
+		\includegraphics[width=4in]{./figures/shift-register.PNG}
+	\caption{A simple shift register and its state after one clock cycle}	
 	\label{fig:shift-register}
 \end{figure}
 
-For example, one of the uses of shift registers has been in the conversion of sequential (or serial) data to parallel data, and vice versa \cite{lfsr-link}. A sequence of bits can be stored in the shift register over a period of $n$ clock cycles, and retrieved in a parallel form in the $(n+1)'th$ clock cycle. Hence, $s_{new}$ bits are initialized from the input sequential stream and $s_{out}$ bits are not just excluded. 
+For example, one of the uses of shift registers has been in the conversion of sequential (or serial) data to parallel data, and vice versa \cite{lfsr-link}. A sequence of bits can be stored in the shift register over a period of $n$ clock cycles, and retrieved in a parallel form in the $(n+1)$'th clock cycle. Hence, $s_{in}$ bit is taken from the input sequential stream, while $s_{out}$ bit is not used. 
 
-For parallel-to-sequential data conversion, a parallel stream of $n$ bits is stored in the shift register in one cycle, and retrieved sequentially over the next $n$ clock cycles. The bit $s_{new}$ is not important in this case (since it is not being used later) and $s_{out}$ would hold bits of the sequential output stream.\\
+For parallel-to-sequential data conversion, a parallel stream of $n$ bits is stored in the shift register in one cycle, and retrieved sequentially over the next $n$ clock cycles. The bit $s_{in}$ is not used in this case and $s_{out}$ stores bits of the sequential output stream.\\
 
-%-----
-% figure serial-to-parallel and parallel-to-serial conversion
-%-----
-
-\textbf{\emph{Linear feedback.}} A feedback function defines the $s_{new}$ bit as a function of one or more bits from among the $n$ bits of the shift register. If the function is linear, it said to be a \emph{linear feedback function}. Linearity is incorporated in the design generally by the use of $xor$ as the feedback function. Other boolean functions which are linear are negation, logical biconditional, tautology, and contradiction. According to the Wikipedia page on linearity \cite{linear-wiki}, 
+\textbf{\emph{Linear feedback.}} A \textit{feedback function} defines the $s_{in}$ bit as a function of one or more bits from among the $n$ bits of the shift register. If the function is \textit{linear}, it said to be a \textit{linear feedback function}. Linearity is incorporated in the design generally by the use of $xor$ as the feedback function. Other boolean functions which are linear are negation, logical biconditional, tautology, and contradiction. According to the Wikipedia page on linearity \cite{linear-wiki}, 
 \begin{quote}
-A Boolean function is linear if A) In every row of the truth table in which the value of the function is 'T', there are an even number of 'T's assigned to the arguments of the function; and in every row in which the truth value of the function is 'F', there are an odd number of 'T's assigned to arguments; or B) In every row in which the truth value of the function is 'T', there are an odd number of 'T's assigned to the arguments and in every row in which the function is 'F' there is an even number of 'T's assigned to arguments.
+\footnotesize{A Boolean function is linear if (1) In every row of the truth table in which the value of the function is `T', there are an even number of `T's assigned to the arguments of the function; and in every row in which the truth value of the function is `F', there are an odd number of `T's assigned to arguments; or (2) In every row in which the truth value of the function is `T', there are an odd number of `T's assigned to the arguments and in every row in which the function is `F' there is an even number of `T's assigned to arguments.
+}
 \end{quote}
 
 The above properties can be easily checked to hold in the truth table of the \emph{xor} function.
 
-%One way of designing feedback, as mentioned above, is to define $s_{new}$ as a function of the $n$ bits of the shift register. An LFSR based on such a function is called \emph{Fibonacci LFSR}. A different type of LFSR, called \emph{Galois LFSR}, implements the linear function between some specific bits of the shift register. Thus, the shift register no longer shifts bits directly to adjacent positions, but does apply a function on some of the bits before shifting them. Such an LFSR can be seen in figure ??. It is important to note here that we are going to concentrate only on Fibonacci LFSR's in this thesis. As a result, in the remaining part of this thesis, the use of LFSR would refer to a Fibonacci LFSR, unless otherwise quoted.
-%
-%-----
-% figure Galois LFSR
-%-----
-
-A simple example of an LFSR is shown in figure \ref{fig:lfsr-example1}. Let us examine the linear feedback function more closely for this example. As can be seen, certain selected bits from the shift register are \emph{xor}'ed, and the resulting value is assigned to the leftmost bit only in the next clock cycle (in addition to the shifting of bits). As a result, the internal state of the LFSR is changed. If we number the bits as \emph{1, 2,} $\ldots$ $, n$, then the bits 11, 13, 14 and 16 are used in the feedback function. These bits are referred to as \emph{tap sequence} or $taps$ of the LFSR. In general, the outputs that effect the input of the LFSR are called $taps$.\\
+A simple example of an LFSR is shown in figure \ref{fig:lfsr-example1}. Let us examine the linear feedback function more closely for this example. As can be seen, certain selected bits from the shift register are \emph{xor}'ed, and the resulting value is assigned to the leftmost bit, but only in the next clock cycle (in addition to the shifting of bits). As a result, the internal state of the LFSR is changed. If we number the bits from \emph{1, 2,} $\ldots$ , and so on, then the bits 11, 13, 14 and 16 are used in the feedback function. These bits are referred to as \emph{tap sequence} or $taps$ of the LFSR. In general, the outputs that affect the input of the LFSR are called $taps$.\\
 
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/lfsr-example.PNG}
+		\includegraphics[width=4in]{./figures/lfsr-example.PNG}
 	\caption{A simple LFSR of size 16 bits and tap bits 11, 13, 14 and 16}	
 	\label{fig:lfsr-example1}
 \end{figure}
 
-\noindent \textit{\textbf{Maximal length tap sequence.}} Based on this tap sequence, the complete cycle of various states of the LFSR is determined. Depending on the initial state, the LFSR would run through a set of states, and then return back to the initial state. This forms a cycle of states. In order to use the LFSR for generating a pseudo-random sequence, we want to have the longest cycle of the LFSR states. In other words, we want the LFSR to traverse through all possible states, which is equal to $2^n$, where $n$ is the number of bits in the shift register. This is important since it is desired that the pseudo-random sequence has a large period, as mentioned in the requirements for PSRG in section \ref{para:stream-construction}.
+\noindent \textit{\textbf{Maximal length tap sequence.}} Depending on the initial state, the LFSR runs through a set of states and then returns back to the initial state. This forms a cycle of states. In order to use the LFSR for generating a pseudo-random sequence, we want to have the longest cycle of the LFSR states. In other words, we want the LFSR to traverse through all possible states, which is equal to $2^n$, where $n$ is the number of bits in the shift register. This is important since it is desired that the pseudo-random sequence has a large period, as mentioned in the requirements for PSRG in section \ref{para:stream-construction}.
 
-It is important to note that if the LFSR is in a state where all the bits are \textbf{0}, then the next state would also be the same. This condition occurs because the \textit{xor} of any number of \textbf{0}'s is always \textbf{0}. Such a state is called the \textit{trivial state}. As a result, no cycle is formed if the initial state is the trivial state. Hence the maximum number of different states in the LFSR becomes $2^n-1$. A tap sequence which generates the particular cycle of states such that the period of the LFSR is $2^n-1$, is called the maximal length tap sequence. Hence it is desirable that the LFSR contains a maximal length tap sequence, so that the largest period is obtained. The tap sequence for the LFSR in figure \ref{fig:lfsr-example1} is a maximal length tap sequence. In order to verify maximal length tap sequences, the polynomial representation of the tap sequence is considered.\\
+It is important to note that if the LFSR is in a state where all the bits are \textbf{0}, then the next state would also be the same. This condition occurs because the \textit{xor} of any number of \textbf{0}'s is always \textbf{0}. Such a state is called the \textit{trivial state}. As a result, no cycle is formed if the initial state is the trivial state. Hence the maximum number of different states in the LFSR becomes $2^n-1$. A tap sequence which generates the particular cycle of states such that the period of the LFSR is $2^n-1$, is called the maximal length tap sequence. 
 
-\noindent \textit{\textbf{Polynomial representation of tap sequence.}} Once we have a tap sequence, we can express it in the form of a polynomial with modular 2 coefficients. For the example shown in figure \ref{fig:lfsr-example1}, the polynomial representation of the tap sequence is
+The tap sequence for the LFSR in figure \ref{fig:lfsr-example1} is a maximal length tap sequence. In order to verify maximal length tap sequences, the polynomial representation of the tap sequence is considered.\\
+
+\noindent \textit{\textbf{Polynomial representation of tap sequence.}} Once we have a tap sequence, we can express it in the form of a polynomial with modular \textbf{2} coefficients. For the example shown in figure \ref{fig:lfsr-example1}, the polynomial representation of the tap sequence is
 
 \begin{center}
 $p(x)$ =  1 + $x^{11}$ + $x^{13}$ + $x^{14}$ + $x^{16}$
 \end{center}
 
-The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{new}$ bit, since $s_{new}$ can be interpreted to be existing at the \textbf{0}'th position of the shift register. $s_{new}$ becomes $s_1$ in the next clock cycle, but in the current clock cycle, $s_{new}$ is $s_0$ (which exists just theoretically). It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
+The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{in}$ bit, since $s_{in}$ can be interpreted to exist at the \textbf{0}'th position of the shift register (this existence is just theoretical). A given tap sequence is a maximal length tap sequence if the polynomial representing it is irreducible i.e. the polynomial cannot be factored into nontrivial polynomials.
+
+It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
 
 \begin{align*}
-p'(x) &= x^{17} + x^{6} + x^{4} + x^{3} + x\\
-p'(x) &= x*(x^{16} + x^{5} + x^{3} + x^{2} + 1)\\
-p'(x) &= x^{16} + x^{5} + x^{3} + x^{2} + 1
+p'(x) &= x^{17} + x^{6} + x^{4} + x^{3} + x
 \end{align*}
+
+\begin{align}
+\label{eq:poly-1} p'(x) &= x*(x^{16} + x^{5} + x^{3} + x^{2} + 1)\\
+\label{eq:poly-2} p'(x) &= x^{16} + x^{5} + x^{3} + x^{2} + 1
+\end{align}
+
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/lfsr-example-reverse.PNG}
+		\includegraphics[width=4in]{./figures/lfsr-example-reverse.PNG}
 	\caption{A different numbering of the bit positions for the same LFSR}	
 	\label{fig:lfsr-example2}
 \end{figure}
 
-Since the important polynomial in the second equation is the one inside the brackets, we rewrite $p'(x)$ after ignoring the factor $x$ in the last equation. The polynomial $p'(x)$ must be the same as the polynomial $p(x)$. This is also mentioned on the Wikipedia page for LFSR at \cite{lfsr-wiki} stating,
+The ploynomial in equation \ref{eq:poly-1} is irreducible only if the term $(x^{16} + x^{5} + x^{3} + x^{2} + 1)$ is irreducible, so we rewrite $p'(x)$ after ignoring the factor $x$ in the equation. Since both $p'(x)$ and $p(x)$ represent the same LFSR, they should be related in some way. The Wikipedia page for LFSR at \cite{lfsr-wiki} states the following in this context,
 
 \begin{quote}
-Once one maximal tap sequence has been found, another automatically follows. If the tap sequence, in an $n$ bit LFSR, is [n,A,B,C,0], where the \textbf{0} corresponds to the $x^0$ = 1 term, then the corresponding 'mirror' sequence is [n,n-C,n-B,n-A,0].
+\footnotesize{
+Once one maximal tap sequence has been found, another automatically follows. If the tap sequence, in an $n$ bit LFSR, is [n,A,B,C,0], where the \textbf{0} corresponds to the $x^0$ = 1 term, then the corresponding `mirror' sequence is [n,n-C,n-B,n-A,0].}
 \end{quote}
 
-In our example, the tap sequence [16,14,13,11,0] has a mirror tap sequence [16,5,3,2,0], which are represented by the polynomials $p(x)$ and $p'(x)$. A given tap sequence is a maximal length tap sequence if its polynomial representation is a \emph{primitive polynomial}. A primitive polynomial is irreducible by any other polynomial, except \textbf{1} and itself. 
+In our example, the tap sequence [16,14,13,11,0] has a mirror tap sequence [16,5,3,2,0], which are represented by the polynomials $p(x)$ and $p'(x)$.
 
-\subsection{Some stream ciphers}
+Hence, the choice of an appropriate polynomial for the LFSR is important in order to guarantee that the LFSR moves through all the possible internal states before the first state repeats.
+
+%
+% NEEDED - \subsection{Some stream ciphers}
+%
 
 \section{The HiTag2 stream cipher}
 \label{sec:hitag2}
 
 \subsection{Background}
 \label{sec:hitag2-background}
-HiTag2 is a stream cipher originally designed by Philips Semiconductors (now NXP Semiconductors) and used for mutual authentication between a car remote control and controller in the car. Such systems (called remote keyless entry or RKE systems) have been widely implemented in modern electronic cars, and facilitate unlocking of car doors upon just a button press from within a certain maximum distance from the car. The HiTag2 stream cipher provides two-way authentication, authenticating each of the two entities to each other one by one. But, this is just one use of the cipher, and other applications could use the cipher for authentication as well as encryption. It is important to understand here that if a stream cipher is used for authentication, the keystream bits are sent directly, since the challenge/response nonces are sent in plain previously. Hence, \emph{xor} of the nonce and keystream would hide nothing. While when encryption is desired, the message bits are \emph{xor}'d with the keystream bits before sending over the public channel. 
+HiTag2 is a stream cipher originally designed by Philips Semiconductors (now NXP Semiconductors) and used for mutual authentication between a car remote control and controller in the car. Such systems (called remote keyless entry or RKE systems) have been widely implemented in modern electronic cars, and facilitate unlocking of car doors upon just a button press from within a certain maximum distance from the car. The HiTag2 stream cipher provides two-way authentication, authenticating the two entities to each other one by one. In such a protocol, a nonce is sent across from the initiator to the responder. The responder initializes the stream cipher using the nonce as IV, additionally using the secret key and its fixed ID. Some fixed length of the keystream is then sent back to the initiator as authenticator. The similar protocol is executed to authenticate the initiator to the responder. 
 
-HiTag2 was kept secret by Philips until it was reverse-engineered using the cipher's software implementation. The microcode (or assembly code) of HiTag2 was decompiled from the implementation available in the car remote controls and the RKE receivers. The C code for the cipher is availabe on the website \cite{hitag2-code}. A full system level specification of the RKE system by Philips (titled Active Tag and IC) implementing the HiTag2 cipher is available \cite{active-tag-datasheet}. HiTag2 now is the intellectual property of NXP, but the specification document holds the name of Philips since NXP did not come into existence at that time in 2005. Also, since the cryptography (HiTag2) on the RKE system was kept secret at that time, HiTag2 modes are just mentioned without any further information on the functional working of the cipher.
+But, this is just one use of the cipher, and other applications could use the cipher for authentication as well as encryption. If hiding the plaintext is desired, the message bits are \emph{xor}'ed with the keystream bits before sending them over the public channel. 
+
+HiTag2 was kept secret by Philips until it was reverse-engineered using the cipher's software implementation. The microcode (or assembly code) of HiTag2 was decompiled from the implementation available in the car remote controls and the RKE receivers. The C code for the cipher is availabe on the website \cite{hitag2-code}. A full system level specification of the RKE system by Philips (titled Active Tag and IC) implementing the HiTag2 cipher is also available \cite{active-tag-datasheet}. HiTag2 now is the intellectual property of NXP, but the specification document holds the name of Philips since NXP did not come into existence at that time in 2005. Also, since the cryptography (HiTag2) on the RKE system was kept secret at that time, HiTag2 modes are just mentioned without any further information on the functional working of the cipher.
 
 The design of HiTag2 is very similar to a recently reverse-engineered \cite{NohlESP-2008-usenix} stream cipher called Crypto-1, which is used in Mifare Classic smartcards by NXP. The Mifare family comprises of contactless smart cards and card readers, with a variety of different features including memory availability on the cards to store data and read/write permissions on the cards. As a result of these features, Mifare system is widely used in applications requiring more than just authentication. Some such applications are ticketing system for public transportation (OV-Chipkaart in Netherlands, Oyster cards in UK etc.) and access control in buildings. Crypto-1 cipher used in Mifare Classic cards and readers was proprietary until recently when Nohl et. al. \cite{NohlESP-2008-usenix} reverse-engineered the algorithm from its silicon implementation.
 
-In addition, the same Mifare Classic cards and readers are shown to be easily clonable \cite{dekoninggans2008pam} by researchers at Radboud University. They have analyzed the communication protocol between Mifare Classic cards and readers, and have been been able to show that the there are several weaknesses in the Crypto-1 cipher. They have been able to recover the necessary keystream by analyzing the protocol messages. The details of this protocol analysis complements the work by Nohl et. al., and using both the ideas, mounting brute-force attacks on the cipher have been made possible. 
+In addition, the same Mifare Classic cards and readers are shown to be easily clonable \cite{dekoninggans2008pam} by researchers at Radboud University. They have analyzed the communication protocol between the card and the reader, and have been been able to show that the there are several weaknesses in the Crypto-1 cipher. They have been able to recover the necessary keystream by analyzing the protocol messages. The details of this protocol analysis complements the work by Nohl et. al., and using both the ideas, mounting brute-force attack on the cipher has been made possible. 
 
 Apart from reverse-engineering from software or hardware implementations, a black-box reverse-engineering has also been applied to break secret algorithms. The DST RFID tag (using the DST stream cipher) was broken in 2005 using black-box reverse-engineering \cite{bono2005sac}, i.e. by selecting certain input formats and using both the input and output combinations to deduce the structure and working of the cipher. The most common application of Texas Instrument's DST tag is in vehical immobilizer systems and electronic payment systems \cite{dst-rfid-analysis}. 
 
-Next, we describe the working of the HiTag2 cipher, and after that we carry out a brief security analysis of the cipher.
+In the next section, the working of HiTag2 is described.
 
 \subsection{Cipher Description}
-The various components of the HiTag2 stream cipher are outlined below. 
+The basic components of the HiTag2 stream cipher are outlined below.
 \begin{itemize}
 \item 48 bit key
 \item 32 bit serial ID
 \item 32 bit initialization vector (IV)
 \item 48 bit internal state with linear update function (basically, an LFSR)
-\item Non-linear output function based on multiplexor, with fixed data bits and address bits depending on the current internal state
+\item Non-linear output function based on multiplexor, with data bits being constant and address bits depending on the current internal state
 \end{itemize}
 
-The entire setup of the keystream generator is done in two phases. The first phase is the initialization of the LFSR, which sets the internal state to a non-zero value using the key and the serial ID. The second phase is the setup of the LFSR during which the LFSR is clocked (resulting in the shifting of bits) and the key and IV bits are used in the process. Once the LFSR is set, the keystream is ready to be generated from the internal state right away. We describe these phases in detail here.\\ 
+The entire setup of the keystream generator is done in two phases. The first phase is the initialization of the LFSR, which sets the internal state to a non-zero value using the key and the serial ID. The second phase is the setup of the LFSR during which the LFSR is clocked (resulting in the shifting of bits) using the key and IV bits in the process. Once the LFSR is set, the keystream is ready to be generated from the internal state right away. We describe these phases in detail here.\\ 
 
-\textit{\textbf{1. LFSR Initialization.}} The initialization step of the LFSR is straightforward. Instead of initializing the LFSR with zeros, the bits are initialized with the serial ID and initial part of the key. The 32 bits of the serial ID (from \emph{lsb} to \emph{msb}) are stored in the first 32 bits of the LFSR (bits from index 0 through index 31). Then, the first 16 bits of the key (again, from \emph{lsb} to \emph{msb}) are stored in the remaining 16 bits of the LFSR (bits from index 32 through index 47). With this the initialization of the LFSR is complete. This is also shown in figure \ref{fig:hitag2-1}.\\
-
-% NEEDED - change this figure.
+\noindent \textit{\textbf{1. LFSR Initialization.}} The initialization step of the LFSR is straightforward. Instead of initializing the LFSR with random bits, the serial ID and an initial part of the key are used. The 32 bits of the serial ID are stored in the least significant 32 bits of the LFSR (bits from index 0 through index 31). Then, the least significant 16 bits of the key are stored in the remaining 16 bits of the LFSR (bits from index 32 through index 47), as shown in figure \ref{fig:hitag2-1}. With this the initialization of the LFSR is complete.\\
 
 \begin{figure}[ht!]
 	\centering
@@ -220,20 +219,16 @@ The entire setup of the keystream generator is done in two phases. The first pha
 	\label{fig:hitag2-1}
 \end{figure}
 
-\textit{\textbf{2. LFSR Setup.}} During the setup of the LFSR, the 32 bits of IV are used with the remaining 32 bits of the key. The bits in the LFSR are shifted to the right in every clock cycle, and a new value is stored in the leftmost bit (refer section \ref{sec:lfsr}). In every clock cycle, an xor of three bits: one bit from the remaining part of the key (bits from index 16 through 47), one bit from the IV (from \emph{lsb} to \emph{msb}) and the output bit from the non-linear output function, is stored at the leftmost bit of the LFSR. After 32 clock cycles, the internal state is now prepared for keystream generation. This is shown in figure \ref{fig:hitag2-2}.\\
-
-% NEEDED - change this figure.
+\noindent \textit{\textbf{2. LFSR Setup.}} During the setup of the LFSR, the 32 bits of IV are used with the remaining 32 bits of the key. The bits in the LFSR are shifted to the right in every clock cycle, and a new value is stored in the leftmost bit. In every clock cycle, an xor of the following three bits is computed: one bit from the key (range: bits from index 16 through 47), one bit from the IV (range: bits from index 0 through 31) and the output bit from the non-linear output function. The computed bit is stored at the leftmost bit of the LFSR. After 32 clock cycles, the internal state is prepared for keystream generation. This is shown in figure \ref{fig:hitag2-2}.\\
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/hitag2-2.PNG}
+		\includegraphics[width=5.5in]{./figures/hitag2-2.PNG}
 	\caption{LFSR Setup Phase}	
 	\label{fig:hitag2-2}
 \end{figure}
 
-\textit{\textbf{Output function.}} The output function consists of two levels of sequentially arranged multiplexors. The multiplexors have pre-decided data bits, where as the address bits are chosen either from the LFSR or from other multiplexors. In the first level, 20 bits from the LFSR are used as address bits to five four-bit multiplexors, giving a total of five bits of output (one from each multiplexor). These five bits are then used as address bits to the single five-bit multiplexor at the second level. The output bit of this multiplexor gives the stream cipher's keystream bit. In all, six instances of multiplexors cover the two levels of the output function.
-
-Three different multiplexor functions are used to realize these six instances, and these are called $f_a^4$, $f_b^4$ and $f_c^5$. While $f_a^4$ and $f_b^4$ take in four bits for addressing the output, $f_c^5$ takes in five bits. The multiplexors $f_a^4$ and $f_b^4$ are used in the first level, where as $f_c^5$ is used in the second level. The six different instances of these functions used are described in the table \ref{tab:muxs}. In the table, the input bits for the first level of multiplexors are indicated by indices of LFSR bits.
+\noindent \textit{\textbf{Output function.}} The output function consists of two levels of multiplexors. The multiplexors have fixed data bits, whereas the address bits are chosen either from the LFSR or from other multiplexors. In the first level, 20 bits from the LFSR are used as address bits to five four-bit multiplexors, giving a total of five bits of output (one from each multiplexor). These five bits are then used as address bits to the single five-bit multiplexor in the second level. The output bit of this multiplexor gives the stream cipher's output bit, constituting the keystream. In all, six instances of multiplexors cover the two levels of the output function.
 
 \begin{table}[ht!]
 \begin{center}
@@ -255,19 +250,20 @@ MUX 6 			&	$f_c^5$			& 0x7907287B	& $o_1$, $o_2$, $o_3$, $o_4$, $o_5$		& $k_i$\\
 \label{tab:muxs}
 \end{table}
 
-Hence, as mentioned previously, the output bit from the function $f_c^5$ is \emph{xor}'ed with the key and IV bits for 32 clock cycles and written to the rightmost bit of the LFSR.
+Three different multiplexor functions are used to realize these six instances, and these are called $f_a^4$, $f_b^4$ and $f_c^5$. While $f_a^4$ and $f_b^4$ take in four bits for addressing the output, $f_c^5$ takes in five bits. The multiplexors $f_a^4$ and $f_b^4$ are used in the first level, where as $f_c^5$ is used in the second level. These six instances are described in the table \ref{tab:muxs}. In the table, the input bits for the first level of multiplexors are indicated by the index of their position in the LFSR.
 
-The source code for the initialization and setup of the LFSR is shown below in the listing. Here, the function \emph{hitag2\_output} stands for the output function, which we have just described.\\
+It is important to note that the update function of the LFSR is not used in both the initialization and setup phases of the cipher. This function is used during the keystream generation as discussed next.\\
+
+%The source code for the initialization and setup of the LFSR is shown below in the listing. Here, the function \emph{hitag2\_output} stands for the output function, which we have just described.\\
 
 % NEEDED - explain a little about the implementation before the code snippet. 
 
-\lstinputlisting[frame=tb, caption={HiTag2 initialization code snippet}]{./code-snippets/hitag2_init.c}
+%\lstinputlisting[frame=tb, caption={HiTag2 initialization code snippet}]{./code-snippets/hitag2_init.c}
 
-\textit{\textbf{3. Keystream Generation.}} The output from the function $f_c^5$ constitutes the keystream. In addition, the LFSR state is changed in every clock cycle through the update function. The internal state is updated linearly, in the following fashion: an xor of the taps of the LFSR (which are bits 0, 2, 3, 6, 7, 8, 16, 22, 23, 26, 30, 41, 42, 43, 46 and 47) is written to the leftmost bit of the LFSR. Once the internal state is changed, the output bit gets recomputed, generating the next bit of the keystream. This is shown in figure \ref{fig:hitag2-3}. Following is the code snippet for the function implementing one round of the HiTag2 (\emph{hitag2\_round}), by first updating the state and then calling the output function (\emph{hitag2\_output}).\\
+\noindent \textit{\textbf{3. Keystream Generation.}} The output from the function $f_c^5$ constitutes the keystream. In addition, the LFSR state is changed in every clock cycle through the update function. The internal state is updated linearly, in the following fashion: the leftmost bit of the LFSR is replaced with the \textit{xor} of taps of the LFSR (which are bits 0, 2, 3, 6, 7, 8, 16, 22, 23, 26, 30, 41, 42, 43, 46 and 47). The remaining bits are shifted rightwards to adjacent positions. Once the internal state is changed, the output bit gets recomputed, generating the next bit of the keystream. This is shown in figure \ref{fig:hitag2-3}. 
+%Following is the code snippet for the function implementing one round of the HiTag2 (\emph{hitag2\_round}), by first updating the state and then calling the output function (\emph{hitag2\_output}).\\
 
-\lstinputlisting[frame=tb, caption={HiTag2 keystream generation code snippet}]{./code-snippets/hitag2_round.c}
-
-% NEEDED - change this figure.
+%\lstinputlisting[frame=tb, caption={HiTag2 keystream generation code snippet}]{./code-snippets/hitag2_round.c}
 
 \begin{figure}[ht!]
 	\centering
@@ -276,6 +272,6 @@ The source code for the initialization and setup of the LFSR is shown below in t
 	\label{fig:hitag2-3}
 \end{figure}
 
-\subsection{Brief security analysis}
-\label{sec:hitag2-security-analysis}
+%\subsection{Brief security analysis}
+%\label{sec:hitag2-security-analysis}
 % a basic cryptanalysis of the cipher - maximal period? linearity? %
