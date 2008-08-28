@@ -57,11 +57,11 @@ int main()
 	time_t time1, time2;
 	u32 sec_diff = 0;
 			
-	m = pow(2, 14);
-	t = pow(2, 17);
-	r = pow(2, 1);
+	m = pow(2, 16);
+	t = pow(2, 16);
+	r = pow(2, 2);
 		
-	fp = fopen("./tables/hellman_table_14_17_1.dat", "w");
+	fp = fopen("./tables/hellman_table_16_16_2.dat", "w");
 	
 	fprintf(fp, "%d %d %d\n", m, r, t);
 
