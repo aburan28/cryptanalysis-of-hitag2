@@ -82,7 +82,7 @@ An overview of a stream cipher design is shown in figure \ref{fig:stream-cipher}
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=4in]{./figures/stream-cipher.PNG}
+		\includegraphics[width=3in]{./figures/stream-cipher.PNG}
 	\caption{Deployment of PRSG in a stream cipher}	
 	\label{fig:stream-cipher}
 \end{figure}
@@ -150,16 +150,13 @@ $p(x)$ =  1 + $x^{11}$ + $x^{13}$ + $x^{14}$ + $x^{16}$
 The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{in}$ bit, since $s_{in}$ can be interpreted to exist at the \textbf{0}'th position of the shift register (this existence is just theoretical). A given tap sequence is a maximal length tap sequence if the polynomial representing it is irreducible i.e. the polynomial cannot be factored into nontrivial polynomials.
 
 It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
-
 \begin{align*}
 p'(x) &= x^{17} + x^{6} + x^{4} + x^{3} + x
 \end{align*}
-
 \begin{align}
 \label{eq:poly-1} p'(x) &= x*(x^{16} + x^{5} + x^{3} + x^{2} + 1)\\
 \label{eq:poly-2} p'(x) &= x^{16} + x^{5} + x^{3} + x^{2} + 1
 \end{align}
-
 
 \begin{figure}[ht!]
 	\centering
@@ -218,7 +215,7 @@ The entire setup of the keystream generator is done in two phases. The first pha
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/hitag2-1.PNG}
+		\includegraphics[width=4.3in]{./figures/hitag2-1.PNG}
 	\caption{LFSR Initialization}	
 	\label{fig:hitag2-1}
 \end{figure}
@@ -271,7 +268,7 @@ It is important to note that the update function of the LFSR is not used in both
 
 \begin{figure}[ht!]
 	\centering
-		\includegraphics[width=5in]{./figures/hitag2-3.PNG}
+		\includegraphics[width=4.3in]{./figures/hitag2-3.PNG}
 	\caption{Keystream Generation}	
 	\label{fig:hitag2-3}
 \end{figure}
