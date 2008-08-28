@@ -66,17 +66,17 @@ A generalized definition of the birthday paradox for can be formulated as follow
 $P(m,n)$ $\approx$ $1 - e^{-{n^2}/{2m}}$
 \end{center}
 
-If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be checked that $P(365,23)$ $\approx$ $0.507$. In addition, $P(365,n)$ rapidly increases as $n$ increases, and the chances of two people having the same birthday becomes nearly $99 \%$ for $n$ = 57. If $m$ is considered to be very large, such that $m \rightarrow \infty$, then the above equation can be reduced, giving us the following condition for chances of nearly $100 \%$. 
+If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be checked that $P(365,23)$ $\approx$ $0.507$. In addition, $P(365,n)$ rapidly increases as $n$ increases, and the chances of two people having the same birthday becomes nearly $99 \%$ for $n$ = 57. If $m$ is considered to be very large, such that $m \rightarrow \infty$, then the above equation can be reduced for $P(m,n) \approx 1$, giving us the following condition. 
 
-\begin{center}
-$n$ = $\sqrt{\pi/2 \times m}$
-\end{center}
+\begin{align}
+\label{eq:birthday-paradox} n = \sqrt{\pi/2 \times m}
+\end{align}
 
-The general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
+Equation \ref{eq:birthday-paradox} represents the condition for a set of $n$ numbers with $m$ different possible values to have two occurences of a same number. This general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
 
-\indent \textit{\textbf{Variant of the birthday paradox.}} A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now instead of just one, then just 17 people are required to be present in each group, so that two people, one from each group, share the same birthday.  
+\noindent \textit{\textbf{Variant of the birthday paradox.}} A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now instead of one, then just 17 people are required to be present in each group, so that two people belonging to different groups share the same birthday.  
 
-We can generalize the above situation in the following way. We have two groups of random elements each having different number elements, say $n_1$ and $n_2$. The elements are non-negative integers, with both the groups having the same range $m$ for all the integers. According to \cite{menezes}, the probability of at least one coincidence in such a case is given by,
+We can generalize the above situation in the following way. We have two groups of random elements each having different number of elements, say $n_1$ and $n_2$. The elements are non-negative integers, with both the groups having the same range $m$ for the integers. According to \cite{menezes}, the probability of at least one coincidence in such a case is given by,
 \begin{center}
 $P(m, n_1, n_2) = 1 -(1 -\frac{n_2}{m})^{n_1}$
 \end{center}
@@ -86,16 +86,19 @@ For the condition that $m \rightarrow \infty$, the above relation is reduced to,
 $P(m, n_1, n_2)$ $\approx$ $1 - e^{-{n_{1} n_{2}}/{m}}$
 \end{center}
 
-For there to be at least one coincidence, the probability must be $1$. Replacing $P(m, n_1, n_2)$ by $1$ and taking the limit $m \rightarrow \infty$, we get the following condition.
-\begin{center}
-$n_1 \times n_2$ = $\pi/4 \times m$
-\end{center}
+In order to find the condition for 100\% chances of a coincidence, we have $P(m, n_1, n_2) \approx 1$ and we take the limit $m \rightarrow \infty$ for the above equation. The following condition is then derived.
+\begin{align}
+\label{eq:n1-n2-m-condition} n_1 \times n_2 = \pi/4 \times m
+\end{align}
 
+If we replace $m$ by 365 and impose $n$ = $n_1$ = $n_2$, then we get $n$ = 16.93 $\approx$ 17. Hence, atleast 17 people must be present in a room if the chances are 100\% that two people having the same birthday are present in both the groups. 
+
+We further ignore the factor of $\pi/4$ in equation \ref{eq:n1-n2-m-condition} to get a simpler condition.  
 \begin{align}
 \label{eq:bday-paradox2} n_1 \times n_2 \geq m
 \end{align}
 
-The last equation above is the birthday paradox we would be using the analysis of most of the TMTO attacks on HiTag2.
+Equation \ref{eq:bday-paradox2} is the birthday paradox we would use in the analysis of most of the TMTO attacks on HiTag2.
 
 % Add the case of handbook statement, with or without replacements?
 % also briefly how this paradox would be applied to the TMTO?
@@ -121,96 +124,103 @@ The last equation above is the birthday paradox we would be using the analysis o
 \label{sec:hash-tables}
 
 
-Hash tables are used during the precomputation phase as a data structure to store the (prefix, state) pairs in memory. The advantage that hash tables offer is in terms of the search time. The search time provided by hash tables in the best case and the average case is close to $O(1)$, while the worst case search time is $O(n)$ occurring with very less probability. A very important role is played by the hash function chosen for the table. 
+%Hash tables are used during the precomputation phase as a data structure to store the (prefix, state) pairs in memory. The advantage that hash tables %offer is in terms of the search time. The search time provided by hash tables in the best case and the average case is close to $O(1)$, while the %worst case search time is $O(n)$ occurring with very less probability. A very important role is played by the hash function chosen for the table. 
 
-The basic data structure for hash tables consists of a pair of data elements, one for holding the \emph{value} to be stored, and the other which acts as a unique identifier for that value, called the \emph{key}. The hast table is basically an array of such (key, value) pairs. Typically in a normal array, pairs would be stored starting from the initial index of the array, with the index increasing with every pair. In a hash table, the pairs are not stored consecutively, but in an order which would make searching them more efficient at a later stage. The index at which a particular pair is stored depends on the key and the hash function. A hash of the key is calculated, and if required, reduced to the domain of the indices. The pair is stored at that index. 
+Hash tables are data structures designed with the purpose of searching through data in constant time. Consider a data structure $d$ in memory containing a huge set of elements stored one after the other. Given this data structure, we want to search an element $e$ in $d$. The only way to perform this action is to go through each element in $d$ and check if $e$ matches with that element. The number of operations in the worst case is equal to the number of elements in $d$. Hence, as $d$ increases, the worst case search time increases. A hashtable $h$ reduces the dependency of search time on the size of the data structure, and using $h$ as the data structure, $e$ can be searched in constant time.
 
-While retrieving a value, the corresponding key is provided and hash of the key is calculated, giving the index of the pair. The index is used to retrieve the value from the array, which is a constant time operation. So, in the ideal scenario, a hash table can provide a constant time search algorithm. But due to the problem of collision, the search time increases by a certain factor. Collision occurs, if the same hash value (thus the same index) is computed for two different keys. In such a case, two different (key, value) pairs would contend to be stored at the same index, thus colliding.
+Every entry in hashtable is a pair of elements (instead of one element); one element is the \emph{value} to be stored, and the other element is a unique identifier for the value and called the \emph{key}. The hashtable is an array of such (key, value) pairs. In a normal array, pairs would be stored starting from the index 0 of the array, with one pair at each index. But in a hashtable pairs are stored in an order which makes searching more efficient at a later stage. 
 
-Several proposals have been suggested to avoid the problem of collision. The most popular among them are linear probing and separate chaining. We discuss separate chaining here, since we have implemented this scheme for the two attacks in this section. The basic idea behind separate chaining is that if there is a collision at a particular index, a separate chain holding all the pairs for that index be created. In addition, a reference to the chain must be stored at that index in the array. During retrieval, the index is computed and the reference to the chain is taken from that index. At the reference location, the required value is retrieved by searching through the entire chain. 
+The index at which a particular pair is stored depends on the key and additionally on a \textit{hash function}. A hash of the key is computed and reduced to the domain of the indices (if required). The pair is then stored at that index. While searching a value in the hashtable, the key of the value needs to be provided. Hash of the key is computed and thus the index of the pair is known using which the value is retrieved from the array. As a result for searching, each element of the table is not checked. If the value being searched exists in the hashtable, then a non-null pair is returned for the key, otherwise a null pair is returned. Ofcourse, this holds only if the key is not an identifier for any other value.
 
-The implementation of the hash table is done by Christopher Clark and has been taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
+But this is just the ideal case, and there is the problem of collision which needs to be considered. Collision occurs if the same hash value (thus the same index) is computed for two different keys. In such a case, two different (key, value) pairs would contend to be stored at the same index, thus colliding. 
 
-% Also, $M$ is used in defining the hash function for the hashtable. A very simple hash function is used, which uses maps the key to the space $M$ by taking the modulo $M$ of the key.
+Several proposals have been suggested to avoid the problem of collision. The most popular among them are linear probing and separate chaining. We discuss separate chaining here, since we have used this scheme for the results. The basic idea behind separate chaining is that if there is a collision at a particular index, a separate chain holding all the pairs for that index be created. A reference to the chain is stored at the colliding index, instead of a pair. While searching, index is computed as before and the reference to the chain is taken from that index. The value is then searched through the entire chain by matching the key. As can be seen, searching through the separate chains takes more time which leads an increase in the overall time. But for the analysis in various attacks, we assume that hashtables provide us with search time which is more or less constant. 
 
+The implementation of the hash table for our results is done by Christopher Clark and taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
 
 \section{Babbage-Golic attack}
 \label{sec:bg-attack}
-Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack which was conceptualized on the block cipher DES, was published by Hellman in 1980 \cite{hellman1980ctm}. In contrast, the first and the simplest TMTO attack on stream ciphers was published by Babbage \cite{babbage} and Golic \cite{golic}, independent of each other in 1995 and 1997 respectively. We would call this attack on stream ciphers as the BG attack. We explain the original BG attack and a variant of it in the sections \ref{sec:bg-r} and \ref{sec:bg-nr}.
+Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack was conceptualized in \cite{hellman1980ctm} by Hellman on DES in the year 1980. In contrast, the first and the simplest TMTO attack on stream ciphers was published by Babbage \cite{babbage} and Golic \cite{golic}, independent of each other in 1995 and 1997 respectively. We call this attack on stream ciphers as the BG attack. We explain the original BG attack and a variant of it in the sections \ref{sec:bg-r} and \ref{sec:bg-nr}.
 
 \subsection{Attack with random precomputation}
 \label{sec:bg-r}
 
-As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a short secret key, to which the bits of the plaintext are \emph{xor}'ed giving the ciphertext bits. In this way, a stream cipher is produced. A simple model of the PRSG taken from \cite{babbage} is shown in figure \ref{fig:psrg-model}. The initial state of the PRSG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function while the downward arrow represents the output function. We assume that the PRSG incorporates an LFSR having the maximal period of $2^{n} - 1$.
+As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a short secret key, to which the bits of the plaintext are \emph{xor}'ed giving the ciphertext bits. In this way, a stream cipher is produced. A simple external model of the PRSG taken from \cite{babbage} is shown in figure \ref{fig:psrg-model}. The initial state of the PRSG is $S_0$, which is derived using the secret key and other initialization parameters. The consequent states are indicated by $S_i$. The right arrow represents the update function while the downward arrow represents the output function. We assume that the PRSG incorporates an LFSR having the maximal period of $2^{n} - 1$.
 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=3in]{./figures/prsgmodel.png}
-	\caption{Model of pseudo-random sequence generator (PRSG)}	
+	\caption{External model of a PRSG}	
 	\label{fig:psrg-model}
 \end{figure}
 
 The keystream bits are represented by $k_0$, $k_1$ $\ldots$, $k_{m-1}$. The goal of the attacker is to find at least one internal state which occurs while the keystream is generated. The attacker could then move the PRSG forward to generate more keystream, in case the keystream is limited. The found internal state could also be used to run the PRSG backwards and find the initial state. From the initial state, finding the key is not a difficult task if the cipher algorithm and initialization parameters are known.\\
 
-\indent \textit{\textbf{Prefix of the output sequence of states.}} If the current state of the PRSG is $S_r$, then an infinite output sequence can be generated by clocking the PRSG from that state. The first $p$ bits of this output sequence is called the prefix of state $S_r$ and would be represented by the bits $k_r$, $k_{r+1}$ $\ldots$, $k_{r+p-1}$. Each of the $2^{n} - 1$ possible states of the PRSG would generate such an output sequence. The prefix of these sequences are usually unique to that particular state if $p$ is greater than or equal to $n$ \cite{biryukov2000rtc}. If the size of the prefix is less than $n$, then there would be many states which could possibly generate this prefix. For example, if the size of the state is 48 bits and we consider prefixes of size 32 bits, then the total number of states which generate this prefix is about $2^{48} \times 2^{-32}$ = $2^{16}$. If the size of the prefixes is increased to 48 bits which is also the size of the state, then there is usually just one state generating the prefix. By increasing the prefix length, the probability that the prefix is unique to the state increases. An advantage of this property is taken in the BG attack.\\
+\noindent \textit{\textbf{Prefix of the output sequence of states.}} If the current state of the PRSG is $S_r$, then an infinite output sequence can be generated by clocking the PRSG from that state. The first $p$ bits of this output sequence is called the \textit{prefix} of state $S_r$ and would be represented by the bits $k_r$, $k_{r+1}$ $\ldots$, $k_{r+p-1}$. A prefix is usually unique to the state if $p$ is greater than or equal to $n$ \cite{biryukov2000rtc}. If the size of the prefix is less than $n$, then there would be many states which generate the same prefix. 
 
-\indent \textit{\textbf{The attack.}} We have two phases in the attack just as in any TMTO attack: the precomputation phase and the attack phase. During precomputation, the attacker randomly selects $n_1$ states out of the $2^n - 1$ possible PRSG states. For each of these states, the prefix of size $p$ = $n$ is computed, and the (prefix, state) pair stored in memory. The data structure that is used for storing the pairs is a hash table, introduced in section \ref{sec:hash-tables}.
+For example, consider state size of 48 bits and prefix of length 32 bits. The size of the state space and the prefix space are $2^{48}$ and $2^{32}$ respectively. Considering an equal (hence ideal) allocation of states to prefixes, every $2^{16}$ states would generate the same prefix. By increasing the prefix length, the probability of the prefix being unique to the state increases. If the prefix length is increased to 48 bits which is also the state size, then ideally every state generates a different prefix. An advantage of this property is taken in the BG attack. Later, as we shall see from experimental results, 48 bits of prefix are not sufficient for this to happen, while 56 bits are good enough.\\
 
-During the attack phase, the attacker is assumed to know some part of the initial keystream. In practice, the attacker would know the ciphertext bits. And assuming that the attacker knows the plaintext bits by some means (a known plantext attack), the keystream is simply calculated in the following manner, $k_i$ = $p_i \oplus c_i$, as also mentioned in chapter \ref{chapter:intro}. The attacker then selects overlapping subsequences of size $p$ from the keystream. The first subsequence would be $k_0$, $k_1$ $\ldots$, $k_{p-1}$, the second subsequence would be $k_1$, $k_2$ $\ldots$, $k_{p}$ and so on. The attacker then matches each of these subsequences with the prefix's stored in the hash table. If there is a match, the current state is retrieved from the matched (prefix, state) pair.\\
+\noindent \textit{\textbf{The attack.}} We have two phases in the attack just as in any TMTO attack: the precomputation phase and the attack phase. During precomputation, the attacker randomly selects $n_1$ states out of the $2^n - 1$ possible PRSG states. For each of these states, the prefix of size $p$ = $n$ is computed, and the (prefix, state) pair stored in memory. The data structure that is used for storing the pairs is a hash table, as introduced in section \ref{sec:hash-tables}. Prefix is used as the key while the state is used as the value in a pair.
 
-\indent \textit{\textbf{Parameters in the attack.}} Before we proceed to an analysis of the above attack, we introduce the notation of important parameters used to describe the BG attack. These parameters would help us in understanding where an ideal line be drawn between memory and time consumption during the precomputation and attack phases, so that the attack is feasible say for example on a personal computer. These parameters are introduced below. 
+During the attack phase, the attacker is assumed to know some part of the initial keystream. In practice, the attacker knows the ciphertext. Assuming that the attacker has knowledge of the plaintext by some means, the keystream bits can be calculated as, $k_i$ = $p_i \oplus c_i$. 
+
+The attacker then selects overlapping subsequences of size $p$ from the keystream. The first subsequence would be $k_0$, $k_1$ $\ldots$, $k_{p-1}$, the second subsequence would be $k_1$, $k_2$ $\ldots$, $k_{p}$ and so on. Each of these subsequences is then matched with the prefixes stored in the hash table. If there is a match, the current state is retrieved from the matched (prefix, state) pair.\\
+
+\noindent \textit{\textbf{Parameters in the attack.}} We introduce certain important parameters here \cite{biryukov2000ctm} which are used to represent a general tradeoff attack like the BG attack. These parameters would help us in understanding where an ideal line be drawn between memory and time requirements during the precomputation and attack phases, so that the attack is feasible (say, with respect to a personal computer). These are general parameters and are used for describing further attacks in the thesis. 
 
 \begin{enumerate}
-\item \emph{M} represents the order of memory size required for precomputation.
-\item \emph{P} represents the order of time required for precomputation.
+\item \emph{M} represents the order of memory size required for hashtable.
+\item \emph{P} represents the order of time required for the precomputation phase.
 \item \emph{T} represents the order of time required for the attack phase.
-\item \emph{D} represents the order of data available during the attack phase (applies only to stream ciphers).
+\item \emph{D} represents the order of data available during the attack phase.
 \end{enumerate}
 
-\textit{\textbf{Tradeoff equation.}} Let us assume that we select $n_1$ states during the precomputation phase and during the attack phase the PRSG traverses through $n_2$ states before the first match is observed. $M$ is equal to $n_1$, since the size of the hashtable would depend on the number of states stored in it. Similarly, the time to prepare the hashtable is proportional to $n_1$, hence the order of this time, or $P$, is $n_1$. As a result, $M$ = $P$ = $n_1$.
+In the paper \cite{biryukov2000ctm}, these parameters are introduced without the term \mbox{`order'}. We stress here that the parameters do not represent the actual time and memory values in seconds and bytes, but they represent the order of the magnitude of these values.\\
+
+\noindent \textit{\textbf{Tradeoff equation.}} Let us assume that $n_1$ states are selected during the precomputation phase, while during the attack phase the PRSG traverses through $n_2$ states. $M$ is equal to $n_1$, since the size of the hashtable depends on the number of states stored. Similarly, the time to prepare the hashtable is proportional to $n_1$, hence the order of this time, or $P$, is $n_1$. As a result, $M$ = $P$ = $n_1$.
 
 The time taken for the attack or $T$ is the same as $n_2$. The amount of data available or the number of subsequences of length $n$ derived using the available keystream, must be the same as $T$. Hence, $D$ = $n_2$. The keystream should have a length of at least $(D + n - 1)$ bits in order to provide the required amount of data. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
 
-This is a clear setting for applying the birthday paradox. In a set of $2^n$ states, $n_1$ are selected in precomputation and $n_2$ are selected during the attack. According to the variant of the birthday paradox, explained in section \ref{sec:bday-paradox}, we then have the following condition:
+Now we have a clear setting for applying equation \ref{eq:bday-paradox2} of the birthday paradox. In a set of $2^n$ states (ignoring that something like the trivial state exists at all), $n_1$ states are selected in precomputation and $n_2$ are selected during the attack. According to the variant of the birthday paradox we then have the following condition,
 
-\begin{center}
-\large{$n_1 \times n_2$ $\geq$ $2^n$}\\
-\large{$M \times T$ $\geq$ $2^n$}\\
-\end{center}
+\begin{align*}
+& n_1 \times n_2 \geq 2^n\\
+& M \times T \geq 2^n
+\end{align*}
 
-This is the condition that we required for a successful attack. Though this is probabilistic, we know that if the parameters of $M$ and $T$ are wisely chosen, the probability of a match becomes very high.
+This is the condition for a successful attack. Though the condition is probabilistic, the probability of a match is very high if the parameters of $M$ and $T$ are wisely chosen.
 
 \subsection{Attack with non-random precomputation}
 \label{sec:bg-nr}
 
-The precomputation in BG attack is done by randomly generating states of $n$ bits, and then computing their prefix. The other way of performing the precomputation is by selecting states through a deterministic algorithm. Consider that the internal state in a stream cipher runs through all $2^n - 1$ possible states, represented by a huge cycle of states as shown in figure \ref{}. If we select states at a fixed distance $d$ from each other during precomputation, we can be sure that there would be a match if the attack phase has a time order of $d$ \cite{erik-discussions}. This is the main idea behind non-random precomputation and is explained in detail in the further paragraphs. The HiTag2 cipher is well suited for this attack, since it's internal state runs through the longest possible cycle of size $2^n - 1$. The attack phase for this attack remains the same as in case of randomly selected precomputation states.\\
+The precomputation in BG attack is done by randomly generating states of $n$ bits, and then computing their prefix. The other way of performing the precomputation is by selecting states through a deterministic algorithm. Let's say the internal state of a stream cipher runs through all $2^n - 1$ possible states, which is represented by a huge cycle of states. If we select states at a fixed distance $d$ from each other during precomputation, we can be sure that there would be a match if the attack phase has a time order also of $d$ \cite{erik-discussions}. This represents the core idea behind non-random precomputation and is explained in detail in the further paragraphs. The HiTag2 cipher is well suited for this attack, since it's internal state runs through the longest possible cycle of $2^{48} - 1$ states. The attack phase remains the same as in case of randomly selected precomputation states.\\
 
-\indent \textit{\textbf{Non-random precomputation phase.}} During the precomputation phase, the selection of states is not done at random. Only an initial state is selected at random for precomputation ($S_{initial}$), while the remaining states are derived using this state. The prefix for $S_{initial}$ is first computed and the (prefix, state) pair stored in the hash table. The next state is derived using a \emph{state transition function} (explained in detail later), which returns the state $d$ states ahead of the current state. The next state then is represented by $S_{initial+d}$. Similarly, the prefix for $S_{initial+d}$ is computed and the (prefix, state) pair stored in the hash table. The process is repeated, and consequently we have a set of states (and the corresponding prefix) in memory. These would be $S_{initial}$, $S_{initial+d}$, $S_{initial+2d}$ and so on. Until the complete circle of states is covered (after which the same states are repeated) we have unique (prefix, state) pairs. At the end of the precomputation phase, we would have a total of $2^n/d$ states in the hash table. The precomputation phase would take memory space of an order of $2^n/d$. It can be clearly seen that $M$ and $P$ would be the same in this case as well, and we have the relation $M$ = $P$ = $n_1$ = $2^n/d$.\\
+\noindent \textit{\textbf{Non-random precomputation phase.}} During the precomputation phase, the selection of states is not done at random. An initial state is selected at random ($S_{initial}$), while the remaining states are derived using this state. The prefix for $S_{initial}$ is first computed and the (prefix, state) pair stored in the hash table. The next state is derived using a \emph{state transition function} (explained in detail later), which returns the state $d$ states ahead of the current state, represented by $S_{initial+d}$. Similarly, the prefix for $S_{initial+d}$ is computed and the (prefix, state) pair stored in the hash table. The process is repeated giving us the sequence of states: $S_{initial}$, $S_{initial+d}$, $S_{initial+2d}$ and so on. 
 
-\indent \textit{\textbf{Attack phase.}} Let us assume that the initial state generating the available keystream is $S_{unknown}$ (as this state is unknown to the attacker). The attacker selects subsequences from the keystream and matches them with the prefixes stored in the memory. If the attacker gets $d$ subsequences from the keystream (which represent $d$ unknown states), a prefix in the memory is bound to get matched with a keystream subsequence. Hence, in the worst case, a traversal through $d$ states would be required during the attack phase, taking $d$ order of operations before a match in the memory. $T$ in this case would be $T$ = $n_2$ = $d$, while $D$ becomes $D$ = $(d + n - 1)$.\\
+The number of states required in the hashtable is $M$. Hence, the distance between each state should be $d$ = $2^n/M \Rightarrow M = 2^n/d$. $P$ would be the same as $M$ in this case as well, and we have the relation $M$ = $P$ = $2^n/d$.\\
 
-\indent \textit{\textbf{Tradeoff equation.}} It can be clearly seen that the following relation holds,
+\noindent \textit{\textbf{Attack phase.}} The initial state which generated the available keystream is unknown to the attacker. The attacker selects subsequences from the keystream and matches them with the prefixes stored in the memory. Now, in order to guarantee that atleast one prefix would match, it is sufficient to have $d$ states during the attack. This is ensured if keystream of length ($d + n - 1$) bits is available to the attacker. Since any two states in the hashtable are $d$ states apart, in the worst case if $d$ unknown states are traversed during the attack, atleast one state is bound to match. Consequently, we have the requirement that $D$ = $d$, which also means $T$ = $d$ as the time of the attack depends on the keystream available.\\
 
+\noindent \textit{\textbf{Tradeoff equation.}} From the above analysis, we have $M = 2^n/T$ which leads to the following tradeoff equation.
 \begin{align}
 \label{eq:tmto-non-random} M \times T = 2^n
 \end{align}
 
-Using this equation, the tradeoff in memory and time can be achieved. It is interesting to compare this equation with the equation for BG attack with random states during precomputation. The latter was based on the birthday paradox, and hence the probability of finding a match is always close to \textbf{1}, but not exactly \textbf{1}. The greater the value of $M \times T$ is as compared to $2^n$, more is this probability closer to \textbf{1}.
+Using this equation, the time and memory for the attack can be varied. It is interesting to compare this equation with the equation for the attack with random precomputation. The latter was based on the birthday paradox, and hence the chances of finding a match are always close to 100\%, but not exactly 100\%. The greater $M \times T$ is as compared to $2^n$, the more is the chance of success. In case of non-random precomputation, the chances of a match are exactly 100\%, provided the above tradeoff equation holds.\\
 
-In case non-random states are chosen during precomputation, the probability of a match is exactly \textbf{1}, provided the above tradeoff equation holds. This ofcourse assumes that $n$ bits of prefix uniquely identify the state generating it. But this is not the case always, as we shall see from our implementation results. In order to be sure that the prefix uniquely identifies a state, a greater length of prefix should be chosen.\\
+\noindent \textit{\textbf{State transition function.}} As mentioned above, the \emph{state transition function} is used in the precomputation phase for computing a non-adjacent state directly from the current state. If we use the update function in order compute the state $d$ distance ahead, the function would be called $d$ times and thus take a total computation time of an order $d$. If this has to be repeated in order to cover the entire cycle of states, the precomputation time would be of the order of $2^n$. There should not be any doubt that this is not feasible; or else why would we think of the tradeoff attack if a brute force attack with $2^n$ computations was feasible. 
 
-\indent \textit{\textbf{Matrix representation of state transition function.}} As mentioned above, the \emph{state transition function} is used in the precomputation phase for deriving a non-adjacent state from the current state. If we use the update function in order compute the state $d$ distance ahead, the function would be called $d$ times and thus take a total computation time of an order $d$. If this has to be repeated in order to cover the entire cycle of states, the computation time required would be of the order of $2^n$. Ofcourse, this is not feasible, otherwise we would very well launch a brute force attack on the internal state. A function is required which derives the $d$'th state in constant time, thus reducing the precomputation time order to $2^{n}/d$. We call such a function the state transition function, and its design is discussed here. 
+Hence, a function is required which computes the $d$'th state in constant time, thus keeping the precomputation time order the same as $2^{n}/d$. We refer to this function as the state transition function and its design is discussed next. 
 
-An update function is used in deriving the adjacent state, which can be represented by a binary matrix $U$ \cite{trappe2005icc}. This matrix on multiplication with the matrix representing the current state gives the adjacent state matrix. If the current state of the LFSR is $S_{current}$, then the next state $S_{next}$ can be computed by the matrix multiplication shown below.
+An update function can be represented by a binary matrix $U$ \cite{trappe2005icc}. This matrix on multiplication with the binary matrix representation of the current state gives the binary matrix of the adjacent state. If the current state of the LFSR is $S_{current}$, then the next state $S_{next}$ can be computed by the matrix multiplication shown below.
 
 \begin{center}
-\large{$U . S_{current}$ = $S_{next}$}\\
+$U . S_{current}$ = $S_{next}$\\
 \end{center}
 
 This is represented in the matrix notation as follows.
 
 \begin{center}
-\large{
 $U.$
 $\begin{bmatrix}
 s_{n} \\
@@ -225,10 +235,19 @@ s_{n} \\
 \vdots \\
 s_{2} \\
 s_{1}
-\end{bmatrix}$}
+\end{bmatrix}$
 \end{center}
 
-The topmost row of $U$ would represent the tap sequence by containing \textbf{1} at positions representing the tap bits, and \textbf{0} otherwise. It is so because this row is multiplied with the current state to give the new bit (the leftmost bit) of the LFSR. The remaining rows of $U$ are setup in such a way that the remaining bits of the LFSR are shifted one place rightwards. It must be noted that the indexing in the matrix is the same as that in the LFSR. Thus, the leftmost position in the any row of $U$ is for the \textbf{48}'th bit of the LFSR, and the rightmost position is for the \textbf{1}'st bit. In addition, in the state matrices $S_{current}$ and $S_{next}$, the topmost position is for the \textbf{48}'th bit of the LFSR, and the bottommost position is for the \textbf{1}'st bit. The matrix $U$ for HiTag2 is shown in figure \ref{fig:hitag2-transition-matrix} as an example.
+The topmost row of $U$ represents the tap sequence and contains a `1' at positions representing the tap bits, and a `0' otherwise. This row is multiplied with the current state to give the new bit (the leftmost bit) of the LFSR. The remaining rows of $U$ are setup in such a way that the remaining bits of the LFSR are shifted one place rightwards, as indicated by the update function in figure \ref{fig:hitag2-update-function}. 
+
+It must be noted that the indexing in the matrix is the same as that in the LFSR. Thus, the leftmost bit in all rows of $U$ represents the 48'th bit of the LFSR, and the rightmost bit represents the 1'st bit. In addition, in the state matrices $S_{current}$ and $S_{next}$, the topmost bit represents the 48'th bit of LFSR and the bottommost bit represents the 1'st bit. The matrix $U$ for HiTag2 is shown in figure \ref{fig:hitag2-transition-matrix} as an example. 
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=5in]{./figures/hitag2-update-function.png}
+	\caption{Update function $U$ in HiTag2}	
+	\label{fig:hitag2-update-function}
+\end{figure}
 
 \begin{figure}[h!]
 	\centering
@@ -237,38 +256,55 @@ The topmost row of $U$ would represent the tap sequence by containing \textbf{1}
 	\label{fig:hitag2-transition-matrix}
 \end{figure}
 
-Matrix multiplication for binary matrices is to perform a bitwise boolean \emph{and} operation (denoted by \&) and then \emph{xor} the resulting bits. In notation, if we have two rows $r_1$ and $r_2$ of size $n$ for multiplication, then we have the following,
+The connection between the tap sequence of the HiTag2 LFSR and the topmost row of $U$ is easy to see from these two figures. 
+
+Matrix multiplication of two binary matrix rows is done by first performing a bitwise boolean \emph{and} operation (denoted by \&) and then an \emph{xor} of the resulting bits. In notation, if we have two rows $r_1$ and $r_2$ of size $n$, then their multiplication is done as follows,
 
 \begin{center}
-\large{$r_1$ = $r_{11} r_{12} \ldots r_{1n}$}\\
-\large{$r_2$ = $r_{21} r_{22} \ldots r_{2n}$}\\
-\large{$r_1 \times r_2$ = $(r_{11} \& r_{21}) \oplus (r_{12} \& r_{22}) \oplus \ldots \oplus (r_{1n} \& r_{2n})$}
+$r_1$ = $r_{11} r_{12} \ldots r_{1n}$\\
+$r_2$ = $r_{21} r_{22} \ldots r_{2n}$\\
+$r_1 \times r_2$ = $(r_{11} \& r_{21}) \oplus (r_{12} \& r_{22}) \oplus \ldots \oplus (r_{1n} \& r_{2n})$
 \end{center}
 
-To compute the state occurring $d$ states after the current state, we perform the above matrix multiplication $d$ times, as follows,
+To compute the state occurring $d$ states after the current state, we perform the following matrix multiplication,
 
 \begin{center}
-\large{$S_{current + d}$ = $\underbrace{U . U . U \dots U}_{d} . S_{current}$}, or\\
-\large{$S_{current + d}$ = $U^d . S_{current}$}\\
+$S_{current + d}$ = $\underbrace{U . U . U \dots U}_{d} . S_{current}$\\
 \end{center}
+
+\begin{align}
+\label{eq:matrix-mult-dtimes} S_{current + d} = U^d . S_{current}
+\end{align}
 
 From \cite{erik-discussions}, there is an efficient solution for computing the states. Instead of performing matrix multiplication of $U$ $d$ times, a repeated square of the result can be performed. The square of $U$ is first computed giving $U^2$. This is squared to compute $U^4$, which is again squared to compute $U^8$, and so on. If $\log_2{d}$ is an integer, then the squaring is repeated for $\log_2{d}$ number of times, as shown below.
 
-\begin{center}
-\large{$S_{current + d}$ = $\underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{d}} . S_{current}$}\\
-\end{center}
-\label{eq:state-trans}
+\begin{align}
+\label{eq:matrix-mult-logdtimes} S_{current + d} = \underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{d}} . S_{current}
+\end{align}
+%\label{eq:state-trans}
 
-As can be seen, computing each state would take $\log_2{d}$ multiplications, and thus the entire precomputation phase would take $d \times \log_2{d}$ matrix multiplications. This is much efficient than the previous complexity of $2^n$. The above equation shall then be used in the precomputation phase of this attack to compute the (prefix, state) pairs.
+Both the equations \ref{eq:matrix-mult-dtimes} and \ref{eq:matrix-mult-logdtimes} are equivalent. Computing each state by using equation \ref{eq:matrix-mult-logdtimes} would take $\log_2{d}$ multiplications, and thus the entire precomputation phase would take $d \times \log_2{d}$ matrix multiplications. This is much efficient than the number of computations required in equation \ref{eq:matrix-mult-dtimes}. Hence equation \ref{eq:matrix-mult-logdtimes} is used in the precomputation phase of this attack.
 
-% It is important to note here that the number of times squaring operation is performed depends only on $M$. 
+We then represent the state transition matrix by $A$ such that,
+\begin{align}
+\label{eq:state-trans-matrix} A = \underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{d}}
+\end{align}
+
+The matrix $A$ is computed once during the precomputation phase, and then used in computing the required states as follows,
+\begin{align*}
+S_{current + d} &= A . S_{current}\\
+S_{current + 2d} &= A . S_{current + d}\\
+&\vdots
+\end{align*}
+
+and so on.
 
 \subsection{Implementation and results}
 
 Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
 \begin{enumerate}
-\item If the precomputation phase is non-random, a matrix of the state transition function is computed, otherwise it is not. To compute the state transition matrix, the update matrix is first initialized with the tap bits of the LFSR used in HiTag2 and then squared recursively, as discussed in the previous section.
-\item The keystream for the attack is made available. A secret key of size $48$ bits is chosen and used in initializing the LFSR along with the serial ID and an initialization vector. Starting with this initial state, the stream cipher is run and keystream of desired length produced and stored in memory. The length of the keystream is defined in terms of the parameter $D$ for the attack.
+\item If the precomputation phase is non-random, a matrix of the state transition function is computed, otherwise it is not. To compute the state transition matrix, the update matrix is first initialized with the tap bits of the LFSR used in HiTag2 and then squared recursively, as discussed above.
+\item The keystream for the attack is made available. A secret key of size $48$ bits is chosen and used in initializing the LFSR along with the serial ID and an IV. Starting with this initial state, the stream cipher is run and keystream of desired length produced and stored in memory. The length of the keystream is defined in terms of the parameter $D$ for the attack.
 \item A hashtable of size $M$ is created. If the precomputation phase is non-random, the state transition matrix is used in computing subsequent states which are stored in the hashtable. Else, states are randomly chosen and stored. $P$ defines the number of times a new state is computed (which is not the same as the number of times a new state is stored in hashtable). As we can see, in this case every time a new state is computed, it is stored in the hashtable, hence $P$ and $M$ are the same. We shall see in later attacks that $P$ and $M$ can be different also depending on the algorithm for the precomputation phase. 
 \item Lastly, the attack is started. Overlapping subsequences of the prepared keystream are selected and matched with the prefixes in the hashtable. The worst case duration of the attack is the number of subsequences that are available, which is $D$. And thus, in this case we have $T$ = $D$. In some later attacks we shall see that this does not hold. 
 \end{enumerate}
@@ -276,14 +312,14 @@ Both versions of the BG attack differ in the respective precomputation phase. Th
 % a note about the reversing of keys. little bit of implementation details. (or to mention this in the hitag2 section?)
 
 % a note on random function chosen? %
-A random function is required in order to select states for the hashtable in the random precomputation phase. The $rand()$ function provided by $C$ library is not a cryptographically strong function. We implemented a $C$ program to check the period of the output of the $rand()$ function. Following are the observations after running the program.
+A random function is required in order to select states for the hashtable in the random precomputation phase. The $rand()$ function provided by $C$ library is not a cryptographically strong function, but it is good enough for the purpose of preparing states. We implemented a $C$ program to check the period of the output of the $rand()$ function. Following are the observations after running the program.
 
 \begin{enumerate}
-\item The output of the $rand()$ function is \textbf{16} bits. This is greatly insufficient for our purpose, since we require random numbers of length \textbf{48} bits. 
-\item As expected, the output of the $rand()$ function repeats after around $2^{16}$ calls to the function. The period is unstable, and varies a lot, but remains in the range of $2^{14}$ to $2^{17}$ more or less.
+\item The output of the $rand()$ function is 16 bits. This is greatly insufficient for our purpose, since we require random numbers of length 48 bits. 
+\item The 16 bit output starts repeating after $2^{32}$ calls to the function. But in one period, the random numbers are reoccur. This is obvious since the the output has a period $2^{32}$ whereas the output space size is $2^{16}$. 
 \end{enumerate}
 
-Since, the inbuilt $rand()$ function does not help us in any way, we implemented a random function which uses the $rand()$ function internally. Also we do not require very high level of security from our random function as we generate random states using it, and not keys. Hence, the function solves our purpose. In addition, the period of the function is $2^{27}$ for random numbers of length \textbf{32} bits, which is pretty good for the attacks, as the order of the memory being considered is of the order of $2^{22}$ in the experiments shown below. The program for checking the period of both the $C$ $rand()$ function and our random function is given in appendix.
+Since, the $rand()$ function does not directly help us, we implemented a random function using the $rand()$ function internally. In addition, the period of the function is $2^{27}$ for random numbers of length \textbf{32} bits, which is pretty good for the attacks, as the order of the memory being considered is of the order of $2^{22}$ in the experiments shown below. The program for checking the period of both the $C$ $rand()$ function and our random function is given in appendix.
 
 Three different keys are randomly selected for the attacks. These keys are as follows.
 
@@ -293,7 +329,7 @@ Three different keys are randomly selected for the attacks. These keys are as fo
 \item Key $K_3$ = 0x49D2AC801F94
 \end{enumerate}
 
-We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to higher degree of false alarms, while high prefix length would not matter since \textbf{56} bits of prefix is sufficient in eliminating false alarms. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
+We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to greater number of false keys deduced, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -374,46 +410,45 @@ TIME for attack: 221
 
 \section{Babbage-Golic attack with limited keystream}
 
-In the previous attack, there is an assumption on the length of keystream available to the attacker. The minimum number of operations required to be performed during the attack phase (or $T$) in order to find a match determines the required length of keystream. Considering the use of HiTag2 in car keys, it is certain that long keystream would not be available. Rather several short length keystream (for each transaction between the car and car key) would be available over some span of time. As explained in section \ref{sec:hitag2}, 32 bits of data is exchanged between the car and the car key in the beginning of every run of the protocol. The complete protocol is not known to us, but it is just known that these 32 bits are sent across from the car controller to the key \cite{email-ruptor}. Along with the 32 bits, an IV is also sent. The car key then initializes the HiTag2 cipher using the shared secret key, the IV and its serial ID, and matches the computed output of the cipher to the received 32 bits. These 32 bits of data, known as the \emph{authenticator tag}, perform the function of authenticating the car to the car key. After authentication is successful, subsequent messages if any, are encrypted using the subsequent keystream.
+In the previous attack, there is an assumption on the length of keystream available to the attacker. We have assumed that a long keystream is available which is sufficient to cover the entire the attack phase. Considering the use of HiTag2 in car keys, it is certain that such long keystream would not be available. Rather several short length keystream (for each transaction between the car and car key) would be available over some span of time. As explained in section \ref{sec:hitag2}, 32 bits of data is exchanged between the car and the car key in the beginning of every run of the protocol. The complete protocol is not known to us, but it is just known that these 32 bits act as authenticators between the car controller and the car key \cite{email-ruptor} \cite{hitag2-code}. This 32 bit of data is known as the \emph{authenticator tag}. After authentication is successful, subsequent messages if any, are encrypted using the subsequent keystream from the cipher.
 
-Thus for this particular attack, we assume the availability of authenticator tags to the attacker. Also, we ignore any knowledge of further keystream. Hence the goal is to find the secret key just by using several authenticator tags. The difference between the tags lies in different initial state arising due to a different IV sent by the car. The secret key shared between the car and the car key is the same, and so would be the serial ID of the car key.
+For this particular attack (which we call TMTO tags attack), we assume the availability of authenticator tags to the attacker. Also, we ignore any existence of the subsequent keystream. Hence the goal is to find the secret key by only using several authenticator tags. The difference between each of the tag lies in their initial states, which arises due to a different IV sent by the car. The secret key shared between the car and the car key is the same, and so would be the serial ID of the car key.
 
 \subsection{TMTO tags attack}
 
-The TMTO tags attack consists of the two TMTO phases: precomputation and attack. The precomputation phase involves selecting $M$ different initial states, computing their tags and storing the (tag, initial state) pair in a hashtable. The time for preparing the precomputation phase is of the order of $M$, since the complexity lies in the number of tags chosen for the phase. Hence, we also have $P$ = $M$.
+The TMTO tags attack consists of the two TMTO phases: precomputation and attack. The precomputation phase involves selecting $M$ different initial states, computing their tags and storing the (tag, initial state) pair in a hashtable. The time for preparing the precomputation phase is of the order of $M$, since the complexity depends on the number of tags chosen for the phase. Hence, we also have $P$ = $M$.
 
 During the attack phase, tags are randomly generated along with their corresponding IV's (to simulate the tags collected by an attacker). These tags are then matched with the tags in the hashtable. For every tag match in the hashtable, the initial state is referred and the key used to initialize the cipher to that state is computed. Since each tag can be generated by approximately $2^n/2^{32}$ states, we cannot be sure that the initial state found is the one we are looking for. Hence, we continue with the matching of further tags until we find that the same key is recovered more than once. Then we can be more sure that it is the correct secret key.\\
 
-\noindent \textit{\textbf{Tradeoff equation.}} Determining the tradeoff equation in the tags attack is discussed here. Getting to the equation is not as straightforward as in the previous attack cases, but the results are strikingly similar.
+\noindent \textit{\textbf{Tradeoff equation.}} Determining the tradeoff equation in the tags attack is discussed here. Getting to the equation is not as straightforward as in the previous attack cases, but the results are strikingly similar. There is no discussion about this equation in any literature, and the analysis has been carried out through \cite{erik-discussions}.
 
-Let us first consider the probability of finding a match in the hashtable. If the order of the memory required during precomputation is $M$, then we have $M$ different states and corresponding tags. It cannot be guaranteed that all the tags would be different, since a tag would have more than one possible generating states. In the best case, we assume that all the $M$ states generate $M$ different tags. Then, in this case, the probability of getting a tag matched in the hashtable is given by $M/2^{32}$, considering 32 bit tags. We write this probability as $P_1$, such that
+Let us first consider the probability of finding a match in the hashtable. We have $M$ different states and corresponding tags in the hashtable. It cannot be guaranteed that all the tags would be different, since a tag would have more than one possible generating states (around $2^{16}$ as discussed previously). In the best case, we assume that all the $M$ states generate $M$ different tags. Then, in this case, the probability of getting a tag matched in the hashtable is given by $M/2^{32}$, considering 32 bit tags. We write this probability as $P_1$, such that
 
 \begin{center}
-\large{$P_1$ = $M/2^{32}$}
+$P_1$ = $M/2^{32}$
 \end{center}
 
 Again, this is the best case probability and the actual probability would be less, since tags would be repeated in the hashtable. Next, we need to determine the probability that a match yields the correct initial state and thus the correct key. This can be determined in the following way: the total number of states is $2^n$ and the total number of tags is $2^{32}$. Then, the probability that the matched tag be representing the correct internal state is $2^{32}/2^n$. This probability is represented by $P_2$ such that
 
 \begin{center}
-\large{$P_2$ = $2^{32}/2^n$}
+$P_2$ = $2^{32}/2^n$
 \end{center}
 
 The overall probability of finding the correct state is given by $P$, such that
 
 \begin{center}
-\large{$P$ = $P_1 \times P_2$}\\
-\large{$P$ = $M/2^{n}$}\\
+$P$ = $P_1 \times P_2$\\
+$P$ = $M/2^{n}$\\
 \end{center}
 
 This is the probability of the correct key being found when we have one tag. Hence, for the probability to be \textbf{1}, the runtime of the attack phase must be of an order of atleast $2^{n}/M$, so that we have $2^{n}/M$ tags. Hence, we can say that
 
 \begin{center}
-\large{$T \geq 2^{n}/M$}\\
-\large{$M \times T \geq 2^{n}$}
+$T \geq 2^{n}/M$\\
+$M \times T \geq 2^{n}$
 \end{center}
 
 In practice, the product of $M$ and $T$ must be larger than $2^n$, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
-
 
 \subsection{Implementation and results}
 
@@ -453,7 +488,7 @@ The following comments are made based on these results.
 
 \begin{enumerate}
 \item Consider the values in column 1 for key $K_1$. The estimated probability of getting a particular tag matched in the hashtable is $P_1$ = $M/2^{32}$ = $2^{23}/2^{32}$ = $1/2^{9}$. Then, if we have $T$ tags, the expected total number of matches is $T \times P_1$ = $2^{25} \times 1/2^{9}$ = $2^{16}$. As discussed, we expect $P_1$ to be less than this value, due to repetition of 32 bit prefixes. But from the experimental results, the number of tags matched is slightly more than $2^{16}$. This is not what was expected, but there is a reason for this.
-Since the RNG is based on the C $rand()$ function, which uses a linear congruence geenrator, an output can be repeated within the same period of the generator (without the sequence of outputs repeating). Hence, if in our implementation the same IV repeats resulting in the same tag, then the tag is matched at the same place in the hashtable. This adds to the total number of matches. For all the values of $M$ and $T$ for each key, the observed number of tags matched is slightly higher than the expected number due to this reason.
+Since the RNG is based on the C $rand()$ function, which uses a linear congruence geenrator, an output can be repeated within the same period of the generator (without the sequence of outputs repeating). Hence, if in our implementation the same IV re-occurs resulting in the same tag, then the tag is matched at the same place in the hashtable. This adds to the total number of matches. For all the values of $M$ and $T$ for each key, the observed number of tags matched is slightly higher than the expected number due to this reason.
 
 \item The key is not found even once for the parameters shown in column 2 for key $K_2$. The key is expected to be found atleast two times. Though, on doubling the time $T$ for the attack, the number of matches also double and the correct key is found four times, as expected. 
 

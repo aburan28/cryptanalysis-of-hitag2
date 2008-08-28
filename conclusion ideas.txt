@@ -25,6 +25,8 @@ But in tradeoff equations, we are more interested in finding a relation between 
 3. compare the tmto-keystream/tags attack with tmdto hellman/rainbow attack. explain the differences in general.
 
 
+4. think about why 32bit tags were not applied for hellman and rainbow table. would we have the same results if we have 32 bit prefixes instead of currently used 56 bit prefixes?
+
 
 Future Work.
 
