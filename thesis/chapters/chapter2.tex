@@ -1,23 +1,24 @@
 \chapter{Time-memory tradeoff}
 
-\paragraph{Summary}
+\footnotesize
+\indent \textbf{\textit{Summary.}} Time-memory tradeoff attacks were first conceived on block ciphers by Hellman in 1980. In this approach, Hellman proposed a method for carrying out the precomputation phase of the attack i.e. computing the precomputation tables. We refer to these tables as Hellman tables for block ciphers, in the remainder of the thesis. The proposed idea is based on the birthday paradox, and is thus probabilistic in nature, as we shall see in a moment. 
 
+Later, using this approach as the basis, Shamir and Biryukov proposed a table structure for stream ciphers. This takes into account the amount of keystream available for the attack. We call these tables as Hellman tables for stream ciphers. We start by explaining the original idea of Hellman based on block ciphers. This is done by first presenting a naive approach to building tables for time-memory tradeoff attacks on block ciphers. Then, we point out limitations to the approach and explain how they are improved, consequently leading to the original idea of Hellman. From there, we provide the idea of Shamir and Biryukov, which is used for implementing a time-memory-data tradeoff attack on HiTag2 cipher.
 
+\normalsize
 \section{Time-memory tradeoff attack}
 
-\indent \textit{\textbf{Brute force attack.}} A brute force attack on a block cipher would be to try out all the possible keys which could be used to encrypt certain known (or chosen) or unknown plaintext. The key which decrypts the ciphertext to give the known plaintext or most sensible plaintext (if it is unknown) is then the original key. Though very simple in theory, brute force attacks require a very long time to break ciphers in practice. There is no storage required during this attack, but the time required to break the cipher is very long. Though modern computers have advanced tremendously in their computational speed over the last some years, design of new ciphers have incorporated longer key sizes to protect against brute force attacks, making brute forcing even more impractical.
+\noindent \textit{\textbf{Brute force attack.}} A brute force attack on a block cipher would be to try out all the possible keys which could be used to encrypt certain known (or chosen) or unknown plaintext. The key which decrypts the ciphertext to give the known plaintext or most sensible plaintext (if it is unknown) is then the original key. Though very simple in theory, brute force attacks require a very long time to break ciphers in practice. There is no storage required during this attack, but the time required to break the cipher is very long. Though modern computers have advanced tremendously in their computational speed over the last some years, design of new ciphers have incorporated longer key sizes to protect against brute force attacks, making brute forcing even more impractical.
 
 For example, in order to break a 32 bit key, we would need to carry out $2^{32}$ decryptions on available ciphertext. Using a 2GHz processor (which is quite common for personal use), we can run $2^{31}$ clock cycles in one second (as 1 giga is $2^{30}$). Since one encryption would take a fixed number of clock cycles, say a modest $2^3$ cycles, by simple calculation, we can have a brute force attack on the cipher in $2^4$ seconds, or 16 seconds. As can be seen, this is a dismally weak key size. For a key size of 48 bits, the brute-force would take $2^{20}$ seconds which is 1048576 seconds, or just more than 12 days. In modern ciphers, the key sizes starting from 128 bits in length are considered safe. AES uses a minimum key size of 128 bits, which can be extended to use 256 bits. So, just to give a feeling of the security of a 128 bit cipher, it would take an order of $10^{30}$ years to brute force the key.\\
 
-\indent \textit{\textbf{Precomputed ciphertext attack.}} Brute-force attacks are just one side of the coin. The other way of breaking a cipher in a known (or chosen) plaintext attack is to precomputed ciphertexts corresponding to all the possible keys and to store the (key, ciphertext) pair in a table in memory. During the attack, the attacker just needs to do a table lookup for the available ciphertext to find the corresponding key. Again, the concept is quite straightforward theoretically, but it also faces the same problem as brute-force attacks, but from a different perspective. A table lookup takes constant time (if efficient hash tables are implemented), so practically the attack time is very less. But, the amount of precomputed data is tremendous and the attacker would need very large amount of memory to save this data for the attack phase. 
+\noindent \textit{\textbf{Precomputed ciphertext attack.}} Brute-force attacks are just one side of the coin. The other way of breaking a cipher in a known (or chosen) plaintext attack is to precompute ciphertexts corresponding to all the possible keys and to store the (key, ciphertext) pair in a table in memory. During the attack, the attacker just needs to do a table lookup for the available ciphertext to find the corresponding key. Again, the concept is quite straightforward theoretically, but it also faces the same problem as brute-force attacks, but with a different parameter. A table lookup takes constant time (if efficient hash tables are implemented), so practically the attack time is very less. But, the size of precomputed data is tremendous and the attacker would need huge amount of memory to store this data for the attack phase. 
 
-Let us take the weaker case of a 32 bit key, which is far from use in today's ciphers. For each of $2^{32}$ possible keys, we need to store 32 bits of key and 32 bits of ciphertext (assuming the plaintext is 32 bits, which could very well be more). This amounts to 64 bits or 8 bytes of data for every possible key. $2^{32}$ such entries would require $2^{32}$ * 8 bytes which is 32 gigabytes. For a random access memory, 32 GB is a high requirement. For higher key sizes, this requirement gets more towards impossible.\\
+Let us again take the weaker case of a 32 bit key, which is far from use in today's ciphers. For each of $2^{32}$ possible keys, we need to store 32 bits of key and 32 bits of ciphertext (assuming the plaintext is 32 bits, which could very well be more). This amounts to 64 bits or 8 bytes of data for every possible key. $2^{32}$ such entries would require $2^{32} \times$ 8 bytes which is 32 gigabytes. For a random access memory, 32 GB is a high requirement. For higher key sizes, this requirement gets much away from practicality.\\
 
-\indent \textit{\textbf{In between time and memory.}} The technique of time-memory tradeoff is a way between the above two extreme and practically difficult ideas. TMTO solves our problem by using memory in order to reduce the time taken for attack, bringing the requirements for time and memory within  practical domains. As a result, with considerable precomputation, the attack time can be reduced and so are the computational resources required.
+\noindent \textit{\textbf{In between time and memory.}} The technique of time-memory tradeoff or TMTO is a way between the above two extreme and practically difficult ideas. TMTO solves our problem by using memory in order to reduce the time for attack, bringing the requirements for time and memory within  practical domains. Before we go into more details of the working of time-memory tradeoff attacks on ciphers, we take a simple example of a general application of such tradeoffs. The example has been taken from \cite{stamp2003out}. \\
 
-Before we go into more details of the working of time-memory tradeoff attacks on ciphers, we would take a simple example of a general application of such tradeoffs. The example has been taken from \cite{stamp2003out}. \\
-
-\indent \textit{\textbf{Simple example.}} Consider the problem of finding the number of \textbf{1}'s in the binary expansion of a non-negative integer $x$ (which takes $4$ bytes). The simplest algorithm to solve this problem would for 32 operations, pick the value of the least significant bit, add it to a global \textit{sum} and shift the integer rightwards by one bit. The \textit{sum} would then be the desired result. The pseudo-code for such an algorithm is shown below.
+\noindent \textit{\textbf{Simple example.}} Consider the problem of finding the number of \textbf{1}'s in the binary representation of a non-negative integer $x$ (which takes $4$ bytes). The simplest algorithm to solve this problem would over 32 operations, pick the value of the least significant bit, add it to a variable \textit{sum} and shift $x$ rightwards by one bit. Variable \textit{sum} would then hold the desired result. The pseudo-code for such an algorithm is shown below.
 
 \begin{lstlisting}[frame=tb]
 /* ones_count(x) */
@@ -28,10 +29,9 @@ next i
 return sum
 \end{lstlisting}
 
-Here, $>>$ denotes the right shift operation and \& denotes bitwise binary \emph{and} operation. The algorithm performs 32 operations (based on the length of the integer) and has nearly no memory requirement. The other approach to solve this problem would be to store the required \emph{sum} for each of the possible $2^{32}$ integers in memory. This way, just one memory lookup is required to find the result for $x$. While in this case, we need to have a memory of the order of $2^{32}$. 
+Here, $>>$ denotes the right shift operation and \& denotes bitwise binary \emph{and} operation. The algorithm performs 32 operations (which is based on the length of the integer) and has nearly no memory requirement. The other approach to solve this problem would be to precompute and store the answer for each of the possible $2^{32}$ integers in memory. This way, just one memory lookup is required to find the result for $x$. But in this case, we need to have a memory of the order of $2^{32}$. 
 
-One middle way between both these approaches would be to store the \textit{sum} for all possible 8 bit numbers, rather than doing it for all 32 bit numbers. Then the memory required would be of the order of $2^{8}$. Then, we break the 32 bit integer into four bytes, and add the stored \textit{sum} for each of the four bytes, by looking up in the table. If $y_1$, $y_2$, $y_3$ and $y_4$ are the four bytes, such that
-
+One middle way between both these approaches would be to store the \textit{sum} for all possible 8 bit numbers, rather than doing it for all 32 bit numbers. Then the memory required would be of the order of $2^{8}$. To find the answer for $x$, we break the integer into blocks of 8 bits, and add the stored \textit{sum} for each of the blocks, by looking them up in the table. If $y_1$, $y_2$, $y_3$ and $y_4$ are the four blocks, such that
 
 \begin{center}
 $y_4$ = ($x$ $\&$ $0$xFF)\\
@@ -40,18 +40,20 @@ $y_2$ = ($(x >> 16)$ $\&$ $0$xFF)\\
 $y_1$ = ($(x >> 24)$ $\&$ $0$xFF)\\
 \end{center}
 
-and if p is the array which stores the \textit{sum} for all possible bytes, then the desired \textit{sum} for $x$ can simply be calculated by
+and if p is the array which stores the \textit{sum} for all the 8 bit numbers, then the desired \textit{sum} for $x$ is calculated by
 
 \begin{center}
-\large{$sum = p[y_1] + p[y_2] + p[y_3] + p[y_4]$}\\
+$sum = p[y_1] + p[y_2] + p[y_3] + p[y_4]$\\
 \end{center}
 
-The number of operations in this case is 4, as there are four lookups made to the precomputed array $p$. This is just one way of realizing a middle way between the parameters of time and memory. If the algorithm stores 4 bit values, with their corresponding \textit{sum}, then the number of operations would be 8. Hence a optimal combination of memory and time can be chosen based on the resources at hand and the application. 
+Four operations are performed in this case, as four lookups are made to the precomputed array $p$. This is just one way of realizing the time-memory tradeoff. If the algorithm stores 4 bit blocks, with their corresponding \textit{sum}, then the number of operations would be eight. Hence the optimal combination of memory and time can be chosen based on the resources at hand and the application. 
 
-% IMP: do you need to show the table here for different combinations of time and memory? %
-
+So, it is easy to see the advantage gained from tradeoff schemes as compared to schemes based on extreme requirements for time or memory. 
 
 \section{Background}
+
+In this section, we provide some building blocks which would be used throughout the thesis. We first introduce the idea of \textit{birthday paradox} and then introduce \textit{hashtables}.
+
 \subsection{Birthday paradox}
 \label{sec:bday-paradox}
 
@@ -61,16 +63,16 @@ The number of operations in this case is 4, as there are four lookups made to th
 A generalized definition of the birthday paradox for can be formulated as follows: given $n$ random integers where each could have $m$ different possible values, the probability that two of them would have the same value is given by the following equation \cite{menezes}.
 
 \begin{center}
-\large{$P(m,n)$ $\approx$ $1 - e^{-{n^2}/{2m}}$}
+$P(m,n)$ $\approx$ $1 - e^{-{n^2}/{2m}}$
 \end{center}
 
 If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be checked that $P(365,23)$ $\approx$ $0.507$. In addition, $P(365,n)$ rapidly increases as $n$ increases, and the chances of two people having the same birthday becomes nearly $99 \%$ for $n$ = 57. If $m$ is considered to be very large, such that $m \rightarrow \infty$, then the above equation can be reduced, giving us the following condition for chances of nearly $100 \%$. 
 
 \begin{center}
-\large{$n$ = $\sqrt{\frac{\pi}{2} \times m}$}
+$n$ = $\sqrt{\pi/2 \times m}$
 \end{center}
 
-The general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\frac{\pi}{2}$).\\
+The general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
 
 \indent \textit{\textbf{Variant of the birthday paradox.}} A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now instead of just one, then just 17 people are required to be present in each group, so that two people, one from each group, share the same birthday.  
 
@@ -81,12 +83,12 @@ $P(m, n_1, n_2) = 1 -(1 -\frac{n_2}{m})^{n_1}$
 
 For the condition that $m \rightarrow \infty$, the above relation is reduced to,
 \begin{center}
-\large{$P(m, n_1, n_2)$ $\approx$ $1 - e^{-{n_{1} n_{2}}/{m}}$}
+$P(m, n_1, n_2)$ $\approx$ $1 - e^{-{n_{1} n_{2}}/{m}}$
 \end{center}
 
 For there to be at least one coincidence, the probability must be $1$. Replacing $P(m, n_1, n_2)$ by $1$ and taking the limit $m \rightarrow \infty$, we get the following condition.
 \begin{center}
-$n_1 \times n_2$ = $\frac{\pi}{4} \times m$ (or)\\
+$n_1 \times n_2$ = $\pi/4 \times m$
 \end{center}
 
 \begin{align}
