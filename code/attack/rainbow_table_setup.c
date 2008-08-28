@@ -54,10 +54,10 @@ int main()
 	time_t time1, time2;
 	u32 sec_diff = 0;
 			
-	M = pow(2, 24);
+	M = pow(2, 25);
 	t = pow(2, 9);
 		
-	fp = fopen("./tables/rainbow_table_M24_t9.dat", "w");
+	fp = fopen("./tables/rainbow_table_M25_t9.dat", "w");
 	
 	fprintf(fp, "%d %d\n", M, t);
 
