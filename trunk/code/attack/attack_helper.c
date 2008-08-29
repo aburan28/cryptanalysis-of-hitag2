@@ -14,17 +14,32 @@ u64 get_random(u32 bits)
 	u64 random_number = 0;
 	u64 rand_out = 0;
 
-	/* output of rand() function is 16 bits, so loop runs for (bits - 16) times 
-	 * so random_number is finally of size 'bits' */
-	 
-	for(i = 0; i < bits - 16; i++)
+	for(i = 0; i < bits/16; i++)
 	{
 		rand_out = rand();
-		random_number = (random_number << 1) ^ rand_out;
+		random_number = (random_number << 16) ^ rand_out;
 	}
 
 	return random_number;
 }
+
+// u64 get_random(u32 bits)
+// {
+// 	u32 i = 0;
+// 	u64 random_number = 0;
+// 	u64 rand_out = 0;
+// 
+// 	/* output of rand() function is 16 bits, so loop runs for (bits - 16) times 
+// 	 * so random_number is finally of size 'bits' */
+// 	 
+// 	for(i = 0; i < bits - 16; i++)
+// 	{
+// 		rand_out = rand();
+// 		random_number = (random_number << 1) ^ rand_out;
+// 	}
+// 
+// 	return random_number;
+// }
 
 void prepare_tags(u64 * c_tags)
 {
