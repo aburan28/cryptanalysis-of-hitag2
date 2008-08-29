@@ -138,8 +138,11 @@ Several proposals have been suggested to avoid the problem of collision. The mos
 
 The implementation of the hash table for our results is done by Christopher Clark and taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
 
+In the further part of the thesis, we shall refer to key as hashkey and value as hashvalue. This is to avoid confusion of the secrey key with the key in the (key, value) pair. 
+
 \section{Babbage-Golic attack}
-\label{sec:bg-attack}
+\label{sec:bg-keystream-attack}
+
 Time-memory tradeoff attacks on stream ciphers are relatively new than those on block ciphers. The first TMTO attack was conceptualized in \cite{hellman1980ctm} by Hellman on DES in the year 1980. In contrast, the first and the simplest TMTO attack on stream ciphers was published by Babbage \cite{babbage} and Golic \cite{golic}, independent of each other in 1995 and 1997 respectively. We call this attack on stream ciphers as the BG attack. We explain the original BG attack and a variant of it in the sections \ref{sec:bg-r} and \ref{sec:bg-nr}.
 
 \subsection{Attack with random precomputation}
@@ -409,6 +412,7 @@ TIME for attack: 221
 \end{enumerate}
 
 \section{Babbage-Golic attack with limited keystream}
+\label{sec:bg-tags-attack}
 
 In the previous attack, there is an assumption on the length of keystream available to the attacker. We have assumed that a long keystream is available which is sufficient to cover the entire the attack phase. Considering the use of HiTag2 in car keys, it is certain that such long keystream would not be available. Rather several short length keystream (for each transaction between the car and car key) would be available over some span of time. As explained in section \ref{sec:hitag2}, 32 bits of data is exchanged between the car and the car key in the beginning of every run of the protocol. The complete protocol is not known to us, but it is just known that these 32 bits act as authenticators between the car controller and the car key \cite{email-ruptor} \cite{hitag2-code}. This 32 bit of data is known as the \emph{authenticator tag}. After authentication is successful, subsequent messages if any, are encrypted using the subsequent keystream from the cipher.
 
@@ -441,12 +445,11 @@ $P$ = $P_1 \times P_2$\\
 $P$ = $M/2^{n}$\\
 \end{center}
 
-This is the probability of the correct key being found when we have one tag. Hence, for the probability to be \textbf{1}, the runtime of the attack phase must be of an order of atleast $2^{n}/M$, so that we have $2^{n}/M$ tags. Hence, we can say that
-
-\begin{center}
-$T \geq 2^{n}/M$\\
-$M \times T \geq 2^{n}$
-\end{center}
+This is the probability of the correct key being found when we have one tag. Hence, for the probability to be 1, the runtime of the attack phase must be of an order of atleast $2^{n}/M$, so that we have $2^{n}/M$ tags. Hence, we can say that
+\begin{align*}
+T &\geq 2^{n}/M\\
+M \times T &\geq 2^{n}
+\end{align*}
 
 In practice, the product of $M$ and $T$ must be larger than $2^n$, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
 
