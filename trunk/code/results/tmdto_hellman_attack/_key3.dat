@@ -1,0 +1,37 @@
+-----------------------------------------
+Time of attack: Wed Aug 27 23:33:43 2008
+-----------------------------------------
+
+**** Secret key used: 0x49d2ac801f94 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 16
+t = 2 power 16
+D = 2 power 14
+M = 2 power 18
+T = 2 power 32
+P = 2 power 34
+r = 2 power 2
+prefix_bits = 48
+Current Time: Wed Aug 27 23:33:43 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 1 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 10284, Table number: 3, Column number: 51375
+Found prefix: 261318590207116
+Found Current State: 7931fa03f134
+Found Initial State: 2901943a1f94
+Found Key: 49d2ac801f94
+TIME since starting attack: 14080
+
+TIME for attack: 22411
+COUNT of false alarms: 22384
