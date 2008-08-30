@@ -32,4 +32,4 @@ Future Work.
 
 1. The implementation for rainbow and hellman are 48 bits. And we can also see wrong keys being found. So, 56 bits can be implemented.
 
-2. 
+2. Analysis of the number of collisions in the hellman and rainbow tables. comparison of the output with it. 
