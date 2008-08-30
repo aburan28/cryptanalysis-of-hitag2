@@ -1,11 +1,9 @@
 \chapter{Time-memory tradeoff}
 
-\footnotesize
-\indent \textbf{\textit{Summary.}} Time-memory tradeoff attacks were first conceived on block ciphers by Hellman in 1980. In this approach, Hellman proposed a method for carrying out the precomputation phase of the attack i.e. computing the precomputation tables. We refer to these tables as Hellman tables for block ciphers, in the remainder of the thesis. The proposed idea is based on the birthday paradox, and is thus probabilistic in nature, as we shall see in a moment. 
+\indent \textbf{\textit{Summary.}} In this chapter, we introduce the idea of time-memory tradeoff attacks, and describe the Babbage-Golic tradeoff attack on stream ciphers. Two broad scenarios are considered for the attacks: first, in which a long keystream is available to the attacker, and second, in which several short keystreams are available. Further, the first attack is divided into two categories depending on the precomputation phase in the attacks: one with random while the other with non-random precomputation. All these scenarios are implemented in the $C$ language and the results obtained on running these attacks are presented. 
 
-Later, using this approach as the basis, Shamir and Biryukov proposed a table structure for stream ciphers. This takes into account the amount of keystream available for the attack. We call these tables as Hellman tables for stream ciphers. We start by explaining the original idea of Hellman based on block ciphers. This is done by first presenting a naive approach to building tables for time-memory tradeoff attacks on block ciphers. Then, we point out limitations to the approach and explain how they are improved, consequently leading to the original idea of Hellman. From there, we provide the idea of Shamir and Biryukov, which is used for implementing a time-memory-data tradeoff attack on HiTag2 cipher.
+An important concept used in the analysis of most of these scenarios and also the attacks presented in later chapters, is called the birthday paradox. Briefly, we explain the idea and emphasize on the important relations derived using it. In addition, hash tables are introduced which is used as the data structure for all the attacks. 
 
-\normalsize
 \section{Time-memory tradeoff attack}
 
 \noindent \textit{\textbf{Brute force attack.}} A brute force attack on a block cipher would be to try out all the possible keys which could be used to encrypt certain known (or chosen) or unknown plaintext. The key which decrypts the ciphertext to give the known plaintext or most sensible plaintext (if it is unknown) is then the original key. Though very simple in theory, brute force attacks require a very long time to break ciphers in practice. There is no storage required during this attack, but the time required to break the cipher is very long. Though modern computers have advanced tremendously in their computational speed over the last some years, design of new ciphers have incorporated longer key sizes to protect against brute force attacks, making brute forcing even more impractical.
@@ -61,13 +59,10 @@ In this section, we provide some building blocks which would be used throughout 
 % IMP: need a reference here %
 
 A generalized definition of the birthday paradox for can be formulated as follows: given $n$ random integers where each could have $m$ different possible values, the probability that two of them would have the same value is given by the following equation \cite{menezes}.
-
 \begin{center}
 $P(m,n)$ $\approx$ $1 - e^{-{n^2}/{2m}}$
 \end{center}
-
 If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be checked that $P(365,23)$ $\approx$ $0.507$. In addition, $P(365,n)$ rapidly increases as $n$ increases, and the chances of two people having the same birthday becomes nearly $99 \%$ for $n$ = 57. If $m$ is considered to be very large, such that $m \rightarrow \infty$, then the above equation can be reduced for $P(m,n) \approx 1$, giving us the following condition. 
-
 \begin{align}
 \label{eq:birthday-paradox} n = \sqrt{\pi/2 \times m}
 \end{align}
@@ -78,26 +73,22 @@ Equation \ref{eq:birthday-paradox} represents the condition for a set of $n$ num
 
 We can generalize the above situation in the following way. We have two groups of random elements each having different number of elements, say $n_1$ and $n_2$. The elements are non-negative integers, with both the groups having the same range $m$ for the integers. According to \cite{menezes}, the probability of at least one coincidence in such a case is given by,
 \begin{center}
-$P(m, n_1, n_2) = 1 -(1 -\frac{n_2}{m})^{n_1}$
+$P(m, n_1, n_2) = 1 -(1 - n_2/m)^{n_1}$
 \end{center}
-
 For the condition that $m \rightarrow \infty$, the above relation is reduced to,
 \begin{center}
 $P(m, n_1, n_2)$ $\approx$ $1 - e^{-{n_{1} n_{2}}/{m}}$
 \end{center}
-
 In order to find the condition for 100\% chances of a coincidence, we have $P(m, n_1, n_2) \approx 1$ and we take the limit $m \rightarrow \infty$ for the above equation. The following condition is then derived.
 \begin{align}
 \label{eq:n1-n2-m-condition} n_1 \times n_2 = \pi/4 \times m
 \end{align}
-
 If we replace $m$ by 365 and impose $n$ = $n_1$ = $n_2$, then we get $n$ = 16.93 $\approx$ 17. Hence, atleast 17 people must be present in a room if the chances are 100\% that two people having the same birthday are present in both the groups. 
 
 We further ignore the factor of $\pi/4$ in equation \ref{eq:n1-n2-m-condition} to get a simpler condition.  
 \begin{align}
 \label{eq:bday-paradox2} n_1 \times n_2 \geq m
 \end{align}
-
 Equation \ref{eq:bday-paradox2} is the birthday paradox we would use in the analysis of most of the TMTO attacks on HiTag2.
 
 % Add the case of handbook statement, with or without replacements?
@@ -185,12 +176,10 @@ In the paper \cite{biryukov2000ctm}, these parameters are introduced without the
 The time taken for the attack or $T$ is the same as $n_2$. The amount of data available or the number of subsequences of length $n$ derived using the available keystream, must be the same as $T$. Hence, $D$ = $n_2$. The keystream should have a length of at least $(D + n - 1)$ bits in order to provide the required amount of data. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
 
 Now we have a clear setting for applying equation \ref{eq:bday-paradox2} of the birthday paradox. In a set of $2^n$ states (ignoring that something like the trivial state exists at all), $n_1$ states are selected in precomputation and $n_2$ are selected during the attack. According to the variant of the birthday paradox we then have the following condition,
-
 \begin{align*}
 & n_1 \times n_2 \geq 2^n\\
 & M \times T \geq 2^n
 \end{align*}
-
 This is the condition for a successful attack. Though the condition is probabilistic, the probability of a match is very high if the parameters of $M$ and $T$ are wisely chosen.
 
 \subsection{Attack with non-random precomputation}
@@ -208,7 +197,6 @@ The number of states required in the hashtable is $M$. Hence, the distance betwe
 \begin{align}
 \label{eq:tmto-non-random} M \times T = 2^n
 \end{align}
-
 Using this equation, the time and memory for the attack can be varied. It is interesting to compare this equation with the equation for the attack with random precomputation. The latter was based on the birthday paradox, and hence the chances of finding a match are always close to 100\%, but not exactly 100\%. The greater $M \times T$ is as compared to $2^n$, the more is the chance of success. In case of non-random precomputation, the chances of a match are exactly 100\%, provided the above tradeoff equation holds.\\
 
 \noindent \textit{\textbf{State transition function.}} As mentioned above, the \emph{state transition function} is used in the precomputation phase for computing a non-adjacent state directly from the current state. If we use the update function in order compute the state $d$ distance ahead, the function would be called $d$ times and thus take a total computation time of an order $d$. If this has to be repeated in order to cover the entire cycle of states, the precomputation time would be of the order of $2^n$. There should not be any doubt that this is not feasible; or else why would we think of the tradeoff attack if a brute force attack with $2^n$ computations was feasible. 
@@ -216,13 +204,10 @@ Using this equation, the time and memory for the attack can be varied. It is int
 Hence, a function is required which computes the $d$'th state in constant time, thus keeping the precomputation time order the same as $2^{n}/d$. We refer to this function as the state transition function and its design is discussed next. 
 
 An update function can be represented by a binary matrix $U$ \cite{trappe2005icc}. This matrix on multiplication with the binary matrix representation of the current state gives the binary matrix of the adjacent state. If the current state of the LFSR is $S_{current}$, then the next state $S_{next}$ can be computed by the matrix multiplication shown below.
-
 \begin{center}
 $U . S_{current}$ = $S_{next}$\\
 \end{center}
-
 This is represented in the matrix notation as follows.
-
 \begin{center}
 $U.$
 $\begin{bmatrix}
@@ -240,7 +225,6 @@ s_{2} \\
 s_{1}
 \end{bmatrix}$
 \end{center}
-
 The topmost row of $U$ represents the tap sequence and contains a `1' at positions representing the tap bits, and a `0' otherwise. This row is multiplied with the current state to give the new bit (the leftmost bit) of the LFSR. The remaining rows of $U$ are setup in such a way that the remaining bits of the LFSR are shifted one place rightwards, as indicated by the update function in figure \ref{fig:hitag2-update-function}. 
 
 It must be noted that the indexing in the matrix is the same as that in the LFSR. Thus, the leftmost bit in all rows of $U$ represents the 48'th bit of the LFSR, and the rightmost bit represents the 1'st bit. In addition, in the state matrices $S_{current}$ and $S_{next}$, the topmost bit represents the 48'th bit of LFSR and the bottommost bit represents the 1'st bit. The matrix $U$ for HiTag2 is shown in figure \ref{fig:hitag2-transition-matrix} as an example. 
@@ -262,44 +246,34 @@ It must be noted that the indexing in the matrix is the same as that in the LFSR
 The connection between the tap sequence of the HiTag2 LFSR and the topmost row of $U$ is easy to see from these two figures. 
 
 Matrix multiplication of two binary matrix rows is done by first performing a bitwise boolean \emph{and} operation (denoted by \&) and then an \emph{xor} of the resulting bits. In notation, if we have two rows $r_1$ and $r_2$ of size $n$, then their multiplication is done as follows,
-
 \begin{center}
 $r_1$ = $r_{11} r_{12} \ldots r_{1n}$\\
 $r_2$ = $r_{21} r_{22} \ldots r_{2n}$\\
 $r_1 \times r_2$ = $(r_{11} \& r_{21}) \oplus (r_{12} \& r_{22}) \oplus \ldots \oplus (r_{1n} \& r_{2n})$
 \end{center}
-
 To compute the state occurring $d$ states after the current state, we perform the following matrix multiplication,
-
 \begin{center}
 $S_{current + d}$ = $\underbrace{U . U . U \dots U}_{d} . S_{current}$\\
 \end{center}
-
 \begin{align}
 \label{eq:matrix-mult-dtimes} S_{current + d} = U^d . S_{current}
 \end{align}
-
 From \cite{erik-discussions}, there is an efficient solution for computing the states. Instead of performing matrix multiplication of $U$ $d$ times, a repeated square of the result can be performed. The square of $U$ is first computed giving $U^2$. This is squared to compute $U^4$, which is again squared to compute $U^8$, and so on. If $\log_2{d}$ is an integer, then the squaring is repeated for $\log_2{d}$ number of times, as shown below.
-
 \begin{align}
 \label{eq:matrix-mult-logdtimes} S_{current + d} = \underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{d}} . S_{current}
 \end{align}
-%\label{eq:state-trans}
-
 Both the equations \ref{eq:matrix-mult-dtimes} and \ref{eq:matrix-mult-logdtimes} are equivalent. Computing each state by using equation \ref{eq:matrix-mult-logdtimes} would take $\log_2{d}$ multiplications, and thus the entire precomputation phase would take $d \times \log_2{d}$ matrix multiplications. This is much efficient than the number of computations required in equation \ref{eq:matrix-mult-dtimes}. Hence equation \ref{eq:matrix-mult-logdtimes} is used in the precomputation phase of this attack.
 
 We then represent the state transition matrix by $A$ such that,
 \begin{align}
 \label{eq:state-trans-matrix} A = \underbrace{(((U^2)^2) \dotsc )^2}_{\log_2{d}}
 \end{align}
-
 The matrix $A$ is computed once during the precomputation phase, and then used in computing the required states as follows,
 \begin{align*}
 S_{current + d} &= A . S_{current}\\
 S_{current + 2d} &= A . S_{current + d}\\
 &\vdots
 \end{align*}
-
 and so on.
 
 \subsection{Implementation and results}
@@ -411,7 +385,7 @@ TIME for attack: 221
 
 \end{enumerate}
 
-\section{Babbage-Golic attack with limited keystream}
+\section{Babbage-Golic attack for short keystream}
 \label{sec:bg-tags-attack}
 
 In the previous attack, there is an assumption on the length of keystream available to the attacker. We have assumed that a long keystream is available which is sufficient to cover the entire the attack phase. Considering the use of HiTag2 in car keys, it is certain that such long keystream would not be available. Rather several short length keystream (for each transaction between the car and car key) would be available over some span of time. As explained in section \ref{sec:hitag2}, 32 bits of data is exchanged between the car and the car key in the beginning of every run of the protocol. The complete protocol is not known to us, but it is just known that these 32 bits act as authenticators between the car controller and the car key \cite{email-ruptor} \cite{hitag2-code}. This 32 bit of data is known as the \emph{authenticator tag}. After authentication is successful, subsequent messages if any, are encrypted using the subsequent keystream from the cipher.
@@ -433,24 +407,19 @@ $P_1$ = $M/2^{32}$
 \end{center}
 
 Again, this is the best case probability and the actual probability would be less, since tags would be repeated in the hashtable. Next, we need to determine the probability that a match yields the correct initial state and thus the correct key. This can be determined in the following way: the total number of states is $2^n$ and the total number of tags is $2^{32}$. Then, the probability that the matched tag be representing the correct internal state is $2^{32}/2^n$. This probability is represented by $P_2$ such that
-
 \begin{center}
 $P_2$ = $2^{32}/2^n$
 \end{center}
-
 The overall probability of finding the correct state is given by $P$, such that
-
 \begin{center}
 $P$ = $P_1 \times P_2$\\
 $P$ = $M/2^{n}$\\
 \end{center}
-
 This is the probability of the correct key being found when we have one tag. Hence, for the probability to be 1, the runtime of the attack phase must be of an order of atleast $2^{n}/M$, so that we have $2^{n}/M$ tags. Hence, we can say that
 \begin{align*}
 T &\geq 2^{n}/M\\
 M \times T &\geq 2^{n}
 \end{align*}
-
 In practice, the product of $M$ and $T$ must be larger than $2^n$, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
 
 \subsection{Implementation and results}
@@ -465,7 +434,7 @@ The implementation module for TMTO tags attack executes the complete attack by c
 \item The attack is started. Each prepared tag is searched in the hashtable. For each match, the initial state from hashtable is reversed using the IV corresponding to the matched tag and the constant serial ID, to give a key. All the keys computed using the matched tags are stored and the number of times each key repeats is noted. 
 \end{enumerate}
 
-With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e. the number of times correct key is found. The results of the attacks is shown in table \ref{tab:tags-attack-results}.
+With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e. the number of times correct key is found. The results are shown in table \ref{tab:tags-attack-results}.
 
 \begin{table}[h!]
 \begin{flushleft}

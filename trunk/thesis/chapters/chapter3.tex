@@ -16,7 +16,7 @@ A block cipher is an encryption algorithm, which takes in a plaintext block of $
 	\label{fig:block-cipher}
 \end{figure}
 
-We first present the idea of the attack in the ideal situation. Later we build upon this idea by considering the practical problems and how they are mitigated in a more practical attack.
+We first present the idea of the attack in the ideal situation. Later we build upon this idea by considering the practical problems and their mitigation in a more practical attack.
 
 \subsection{The ideal TMTO attack}
 In the general scenario of an attack on block ciphers, the attacker has knowledge of a particular plaintext block $P$ and the corresponding ciphertext block $C$. The goal is to find $K$, using which the attacker can decipher ciphertext corresponding to unknown plaintext. For simplicity we assume the size of $K$ to be equal to the block size of $n$ bits. Then consider the following precomputation phase.\\
@@ -210,7 +210,7 @@ Further, it is required that all the possible keys are covered in the Hellman ta
 \begin{align*}
 mtr = 2^k
 \end{align*}
-From the last two equations, we have $r$ = $t$. Hence, the number of tables is equal to the length of each chain. Eliminating $m$ and $t$ from the relations for $M$ and $T$, we get the following tradeoff equation
+From the last two equations, we have $r$ = $t$. Hence, the number of tables is equal to the length of each chain. Eliminating $m$ and $t$ from the relations for $M$ and $T$, we get the following tradeoff equation,
 \begin{align}
 \label{eq:hellman-block} M^{2}T = 2^k
 \end{align}
@@ -224,7 +224,7 @@ Precomputed ciphertext		&		$2^k$	& $2^k$	& $c$		 	\\ \hline
 TMTO using Hellman tables	&		$2^k$	& $M$ & $T$ 			\\
 \end{tabular}
 \end{center}
-\caption{Performance of TMTO with Hellman tables}
+\caption{Performance of TMTO attack with Hellman tables}
 \label{tab:hellman-tmto-comparison}
 \end{table}
 
