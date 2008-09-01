@@ -89,7 +89,7 @@ We further ignore the factor of $\pi/4$ in equation \ref{eq:n1-n2-m-condition} t
 \begin{align}
 \label{eq:bday-paradox2} n_1 \times n_2 \geq m
 \end{align}
-Equation \ref{eq:bday-paradox2} is the birthday paradox we would use in the analysis of most of the TMTO attacks on HiTag2.
+Equation \ref{eq:bday-paradox2} is the birthday paradox we would use in the analysis of most of the tradeoff attacks on HiTag2.
 
 % Add the case of handbook statement, with or without replacements?
 % also briefly how this paradox would be applied to the TMTO?
@@ -125,7 +125,7 @@ The index at which a particular pair is stored depends on the key and additional
 
 But this is just the ideal case, and there is the problem of collision which needs to be considered. Collision occurs if the same hash value (thus the same index) is computed for two different keys. In such a case, two different (key, value) pairs would contend to be stored at the same index, thus colliding. 
 
-Several proposals have been suggested to avoid the problem of collision. The most popular among them are linear probing and separate chaining. We discuss separate chaining here, since we have used this scheme for the results. The basic idea behind separate chaining is that if there is a collision at a particular index, a separate chain holding all the pairs for that index be created. A reference to the chain is stored at the colliding index, instead of a pair. While searching, index is computed as before and the reference to the chain is taken from that index. The value is then searched through the entire chain by matching the key. As can be seen, searching through the separate chains takes more time which leads an increase in the overall time. But for the analysis in various attacks, we assume that hashtables provide us with search time which is more or less constant. 
+Several proposals have been made to avoid the problem of collision. The most popular among them are linear probing and separate chaining. We discuss separate chaining here, since we have used this scheme for the results. The basic idea behind separate chaining is that if there is a collision at a particular index, a separate chain holding all the pairs for that index be created. A reference to the chain is stored at the colliding index, instead of a pair. While searching, index is computed as before and the reference to the chain is taken from that index. The value is then searched through the entire chain by matching the key. As can be seen, searching through the separate chains takes more time which leads an increase in the overall time. But for the analysis in various attacks, we assume that hashtables provide us with search time which is more or less constant. 
 
 The implementation of the hash table for our results is done by Christopher Clark and taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
 
@@ -289,16 +289,34 @@ Both versions of the BG attack differ in the respective precomputation phase. Th
 % a note about the reversing of keys. little bit of implementation details. (or to mention this in the hitag2 section?)
 
 % a note on random function chosen? %
-A random function is required in order to select states for the hashtable in the random precomputation phase. The $rand()$ function provided by $C$ library is not a cryptographically strong function, but it is good enough for the purpose of preparing states. We implemented a $C$ program to check the period of the output of the $rand()$ function. Following are the observations after running the program.
+A random function is required to select states for the hashtable in the random precomputation phase. The $rand()$ function provided by C language library is not a cryptographically strong function, but it is good enough for the purpose of preparing states. We implemented a C program to check the period of the output of the $rand()$ function. Following are the observations made from running the program on Solaris machine.
 
 \begin{enumerate}
-\item The output of the $rand()$ function is 16 bits. This is greatly insufficient for our purpose, since we require random numbers of length 48 bits. 
-\item The 16 bit output starts repeating after $2^{32}$ calls to the function. But in one period, the random numbers are reoccur. This is obvious since the the output has a period $2^{32}$ whereas the output space size is $2^{16}$. 
+\item The output of the $rand()$ function is 16 bits. This is greatly insufficient for our purpose, since we require random numbers of length 48 bits.
+\item If a modular 2 of the random number is taken, then the random bit sequence starts repeating after approximately $2^{17}$ bits. This was in fact our first idea for generating states i.e. using the the modular 2 of next random number as a bit for the state, thus generating the state over 48 operations. But with this, we could clearly see that only approximately $2^{17}$ different states can be generated.
+\item The 16 bit output of $rand()$ function starts repeating after $2^{31}$ random numbers. But in one period, the random numbers reoccur. This is obvious since the output has a period $2^{31}$ whereas the output space size is just $2^{16}$. So, we implemented a wrapper using $rand()$, such that the 16 bits of the output are left shifted by one bit and xor'ed with the next output, this repeating 32 times to generate 48 bits. The code snippet for this is shown below. Here, u64 represents a 64 bit unsigned interger and u32 represents a 32 bit unsigned interger.
+\begin{lstlisting}[frame=tb]
+u64 get_random_2(u32 bits)
+{
+	u32 i = 0;
+	u64 random_number = 0;
+	u64 rand_out = 0;
+
+	for(i = 0; i < bits - 16; i++)
+	{
+		rand_out = rand();
+		random_number = 
+			(random_number << 1) ^ rand_out;
+	}
+
+	return random_number;
+}
+\end{lstlisting}
+
+\item If we generate a 32 bit random number using this function, the period observed is $2^{27}$. Also, the period for 48 bit random numbers is $2^{26}$. We do not generate more than $2^{26}$ random states in the implementation (as seen in table \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key1} below ), hence the wrapper function is sufficient for our purpose.
 \end{enumerate}
 
-Since, the $rand()$ function does not directly help us, we implemented a random function using the $rand()$ function internally. In addition, the period of the function is $2^{27}$ for random numbers of length \textbf{32} bits, which is pretty good for the attacks, as the order of the memory being considered is of the order of $2^{22}$ in the experiments shown below. The program for checking the period of both the $C$ $rand()$ function and our random function is given in appendix.
-
-Three different keys are randomly selected for the attacks. These keys are as follows.
+Three different keys are randomly selected for the attacks. One or more keys from these three are used in all the attack implementations. These keys are as follows.
 
 \begin{enumerate}
 \item Key $K_1$ = 0x52B49EA34972
@@ -306,7 +324,7 @@ Three different keys are randomly selected for the attacks. These keys are as fo
 \item Key $K_3$ = 0x49D2AC801F94
 \end{enumerate}
 
-We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix \ref{appendix:tmto-keystream-results}. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Low prefix length would lead to greater number of false keys deduced, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys. Hence these two values are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
+We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Prefix length lower than 48 bits would lead to greater number of false keys, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys (which is also confirmed by the results). Hence these two prefix lengths are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -324,7 +342,7 @@ Number of times key is found		&	0 				&	0 				&	0 				&	2 				&	2 				& 1 				&	
 Number of false alarms					&	0 				&	3 				&	4 				&	7 				&	0 				& 1  				&	2					& 2 				& 0 				& 0					\\ \hline
 \end{tabular}
 \end{center}
-\caption{Results of TMTO keystream attack for key 0x52B49EA34972}
+\caption{Results of TMTO keystream attack for $K_1$}
 \label{tab:keystream-attack-results-key1}
 \end{table}
 
@@ -345,7 +363,7 @@ Number of times key is found		&	0 				&	2 				&	4 				&	4 				&	1 				&	0					& 
 Number of false alarms					&	0 				&	0 				&	1 				&	0 				&	1 				&	0					& 2 				& 0 				& 0					\\ \hline
 \end{tabular}
 \end{center}
-\caption{Results of TMTO keystream attack for key 0xD4E98D3DA2F2}
+\caption{Results of TMTO keystream attack for $K_2$}
 \label{tab:keystream-attack-results-key2}
 \end{table}
 
@@ -459,12 +477,14 @@ Number of times key is found		&	0 				&	2 				&	2 				&	1 				&	0 				&	4			& 3	
 The following comments are made based on these results. 
 
 \begin{enumerate}
+\item We are sure that the random function discussed in previous section has a period greater than $2^{27}$ (or just equal to, as expected). The maximum number of tags used in the attack phase is $2^{27}$, and from the results of matched tags, no tag is repeated in the entire attack duration. 
+
 \item Consider the values in column 1 for key $K_1$. The estimated probability of getting a particular tag matched in the hashtable is $P_1$ = $M/2^{32}$ = $2^{23}/2^{32}$ = $1/2^{9}$. Then, if we have $T$ tags, the expected total number of matches is $T \times P_1$ = $2^{25} \times 1/2^{9}$ = $2^{16}$. As discussed, we expect $P_1$ to be less than this value, due to repetition of 32 bit prefixes. But from the experimental results, the number of tags matched is slightly more than $2^{16}$. This is not what was expected, but there is a reason for this.
-Since the RNG is based on the C $rand()$ function, which uses a linear congruence geenrator, an output can be repeated within the same period of the generator (without the sequence of outputs repeating). Hence, if in our implementation the same IV re-occurs resulting in the same tag, then the tag is matched at the same place in the hashtable. This adds to the total number of matches. For all the values of $M$ and $T$ for each key, the observed number of tags matched is slightly higher than the expected number due to this reason.
+Since the RNG is based on the C $rand()$ function, which uses a linear congruence generator, an output can be repeated within the same period of the generator (without the sequence of outputs repeating). Hence, if in our implementation the same IV re-occurs resulting in the same tag, then the tag is matched at the same place in the hashtable. This adds to the total number of matches. For all the values of $M$ and $T$ for each key, the observed number of tags matched is slightly higher than the expected number due to this reason.
 
 \item The key is not found even once for the parameters shown in column 2 for key $K_2$. The key is expected to be found atleast two times. Though, on doubling the time $T$ for the attack, the number of matches also double and the correct key is found four times, as expected. 
 
 \item If the time for preparing the hashtable for this case is compared with the same in the case of non-random precomputation with unlimited keystream, then it is seen that the former is less than the latter. This is due to the fact that here we are dealing with 32 bit prefixes, while for unlimited keystream we computed prefixes of length 48 bits. The result is that the hashtable is prepared quickly in this case. 
 
-\item the random number is not repeating. 
+\item The matching tags which give the right key are all different for all the cases shown. The case of a tag repeating and giveing the correct key more than once does not happen. If such a case occured, then the key is assumed to be found just once and not twice. For example, for column 6 in the table, correct key is found four times resulting out of match of four different tags.
 \end{enumerate}
