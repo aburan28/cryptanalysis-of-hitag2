@@ -3,3 +3,13 @@
 \addcontentsline{toc}{chapter}{Abstract}
 
 \chapter*{Abstract}
+
+There are always two naive ways of breaking a block cipher, if no known weakness exists in it. One, the brute force attack which requires availability of tremendous computational speed in order to try all possible keys. Second is the precomputed ciphertext attack, which imposes huge requirements on memory for storing ciphertext corresponding to all possible keys. Considering these extreme requirements, a middle way was proposed by Hellman called time-memory tradeoff (TMTO) attack. This attack reduces the requirement of time and memory to feasible domains, thus making it possible to break ciphers under normal computational speed and memory, like in personal computers. The tradeoff is materialized by storing a limited number of ciphertexts in memory selected in an intelligent way. 
+
+TMTO attacks were first proposed on stream ciphers by Babbage and Golic. The TMTO principle for stream cipher differs from that for block cipher due to the much different functional working between them. The goal in the Babbage-Golic attack is to find atleast one occuring value of the internal state while the keystream is generated. This is done by matching fixed length subsequences of the keystream with precomputed output of same length from states stored in memory. This forms the basic principle for tradeoff attacks on stream ciphers. 
+
+In this thesis, we have implemented the Babbage-Golic attacks on the HiTag2 stream cipher. HiTag2 cipher was a proprietary algorithm designed by Philips and kept secret until recently when the algorithm was reverse-engineered from its silicon implementation. Two different attacks are mounted on this cipher based on different assumptions on the availability of keystream. 
+
+The Hellman time-memory tradeoff was modified by Biryukov and Shamir for stream ciphers. They termed this attack as time-memory-data tradeoff (TMDTO) attack. Further, an improvement of Hellman tables was proposed by Oeschelin which supposedly reduces the attack time by a factor of two and solves some other serious problems in the Hellman attack. The idea by Oeschelin is called rainbow tables. Rainbow tables were proposed for stream ciphers by Erguler and Anarim later.
+
+Further in the thesis, we implement Hellman and rainbow attack for HiTag2. We provide the results from the implementation which clearly shows the advantage of rainbow attack of Hellman attack in some ways. 
