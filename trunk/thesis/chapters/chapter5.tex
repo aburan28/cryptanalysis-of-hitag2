@@ -1,7 +1,29 @@
 \chapter{Conclusion}
 
 
-\section{General comments}
+In this thesis, we have implemented various tradeoff attacks on the HiTag2 stream cipher and presented the results of the same. Babbage and Golic first proposed how a time-memory tradeoff attack can be implemented on stream ciphers. In block ciphers, encryption is performed on a block of plaintext yielding a block of ciphertext. The goal in attacks on block cipher is always to successfully invert the transformation from the input to output block. In stream ciphers, this transformation was not understood until Babbage and Golic proposed that the transformation from state to the prefix must be inverted to break the stream cipher, as this determines an internal state. 
+
+This idea by Babbage and Golic has been used in all the attacks that we implemented. The first attack assumed the availability of very long keystream from the cipher, thus huge number of internal states and corresponding prefix. The second attack assumed several shorter keystreams. In the third attack Hellman tables were used to precompute states, while in the fourth attack rainbow table was used for the same purpose. 
+
+In the first two attacks, the tradeoff equation contains the parameters $M$ and $T$. In these attacks, the hashtable stores each of the (state, prefix) pairs computed during the precomputation. Hence, the order of memory requirement and precomputation time are equal. Similarly, the attack time depends only on the keystream available, as the time taken to search one prefix in the hashtable is constant. Though we do not see $D$ in the equation, it is clear how $D$ affects the tradeoff through $T$.
+
+In the last two attacks, three parameters $M$, $T$ and $D$ appear in the tradeoff equation. In these attacks, the hashtable does not store all the precomputed elements, which leads to $P$ being less than $M$. As a result, $P$ does not only depend on $M$ but also on the factor $t$. In addition, the time for the attack is no more equal to $D$ and depends on an additional factor $t$. 
+
+In all attacks though, the main idea has been about two different sets of states and finding a collision between them; one set computed during the precomputation phase and the other occuring during the attack phase, represented by $P$ and $D$ respectively. The birthday paradox helps in deriving the relation $P \times D \geq N$, which is used as the basis for all the attacks. 
+
+% performance of tmto and tmdto attacks? identify change in parameters?
+
+
 
 
 \section{Future work}
+
+The four attacks have been carried out in limited time, hence there is a lot of scope for improving the efficiency of the attacks. The last two attacks especially were time consuming, which resulted in a less number of results for them. Also there are many open research possibilities on the ideas concerned with these attacks. All of this is summarized in the following points. 
+
+\begin{enumerate}
+\item We have seen the results of the first two attacks with prefix length of 56 bits. These results indicate that 56 bits is the desirable length of prefix. The two TMDTO attacks have been implemented with just 48 bits of prefix, and it is expected that with 56 bits of prefix, the results would be more sound. Hence, more experiments need to be carried out with the longer prefix length.
+
+\item Once we consider 56 bits of prefix for the TMDTO attacks, a reduction function needs to be in place. In our implementation, the reduction function is a simple xor of the 48 bit prefix with the table number (in Hellman tables) or the function number (in rainbow table), as the prefix length and state size are same. According to \cite{email-karsten}, the reduction function must be such that all the 56 bits of prefix must be accounted for computing the 48 bits of next state. 
+
+\item We still need to analyze how the number of collisions in the Hellman and rainbow table can be reduced. Nohl provides us some insight into o
+\end{enumerate}

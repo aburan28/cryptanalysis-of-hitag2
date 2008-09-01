@@ -16,7 +16,7 @@ A block cipher is an encryption algorithm, which takes in a plaintext block of $
 	\label{fig:block-cipher}
 \end{figure}
 
-We first present the idea of the attack in the ideal situation. Later we build upon this idea by considering the practical problems and their mitigation in a more practical attack.
+We first present the idea of the attack under certain ideal assumptions. Later we build upon this idea by considering the practical problems and their mitigation in a more practical attack.
 
 \subsection{The ideal TMTO attack}
 In the general scenario of an attack on block ciphers, the attacker has knowledge of a particular plaintext block $P$ and the corresponding ciphertext block $C$. The goal is to find $K$, using which the attacker can decipher ciphertext corresponding to unknown plaintext. For simplicity we assume the size of $K$ to be equal to the block size of $n$ bits. Then consider the following precomputation phase.\\
@@ -165,7 +165,7 @@ We describe in detail the precomputation and attack phase for the TMTO attack us
 
 \noindent \textit{\textbf{Precomputation phase.}} First, $r$ different random reduction functions are chosen, say \mbox{$R_1$, $R_2$, \ldots ,$R_r$}. Using each of these functions, $r$ tables are created in the same way as described for the ideal case. Each of the $r$ tables consist of $m$ chains with $t$ keys and use mapping function $f_i$. Also, for each table, a different hashtable is created such that the starting and end points of the chains from that table are stored in the corresponding hashtable. Such a table structure is shown in figure \ref{fig:hellman-tables}, which is taken from \cite{oechslin:mfc}.
 
-An important observation can be made from the figure: the number of computations in a chain is $(t-1)$, and not $t$ as we have been discussing. The same scene is observed in \cite{stamp2007acb} as well. With $(t-1)$ computations, $(t-1)$ keys exist in each chain. If the value of $t$ is large as compard to 1, then $(t-1) \approx t$. Hence in these references, the number of keys in every chain is assumed to be $t$ for all analysis. But we, on the other hand have assumed exactly $(t)$ keys per chain for all the analysis, and have implemented the same.
+An important observation can be made from the figure: the number of computations in a chain is $(t-1)$, and not $t$ as we have been discussing. The same scene is observed in \cite{stamp2007acb} as well. With $(t-1)$ computations, $(t-1)$ keys exist in each chain. If $t$ is large as compared to 1, then $(t-1) \approx t$. Hence in these references, the number of keys in every chain is assumed to be $t$ for all analysis. On the other hand, we have assumed exactly $t$ keys per chain for the analysis and have also implemented the same.
 
 \begin{figure}[ht!]
 	\centering
@@ -248,7 +248,7 @@ Attacks taking into consideration the availability of data, in addition to time 
 
 \noindent \textit{\textbf{Precomputation phase.}} While attacking stream ciphers, the unknown part always is the current internal state and the known part is the prefix of the state. Before we discuss how the tables are organized, it is important to consider the number of states that are required to be covered by the tables, in order to have a high probability of a match. We have two set of states here; one, the states covered in the tables (number of such states is $P$) and two, the states covered while generating the keystream (the number of such states is $D$). According to equation \ref{eq:bday-paradox2}, in order to have a high probablity of a common state existing between these two sets, the product of the size of these sets must be greater than or equal to the size of the state space. 
 
-Using the relation, we have $PD$ $\geq$ $N$. If we ignore the greater than sign, we get the lower bound on $P$ and $D$, and we have $P$ = $N/D$. As compared to the tables for block ciphers, $P$ is reduced by a factor of $D$ for stream ciphers. According to \cite{biryukov2000ctm}, reduction in the number of precomputed states can be achieved by either reducing the number of states in each table, or by reducing the number of tables itself. From the relation $P$ = $mt$.$t$/$D$, either $mt$ must become $mt$/$D$ (thus reducing number of states in each table) or $t$ must become $t$/$D$ (thus reducing the number of tables). The authors argue that the former option is not a good idea. In that case, the tables would accomodate less states than the maximum states allowed in a table to prevent collisions. As a result, the latter option is chosen, and the number of tables is reduced by the factor $D$. This in turn creates a dependency between $t$ and $D$ such that $t \geq D$, as there should atleast be one table. In the section \ref{} we argue that this is not a good idea, and show how the dependency can be eliminated. But for the moment, we continue with this idea. 
+Then we have the relation $PD$ $\geq$ $N$, where $N = 2^n$. If we ignore the greater than sign, we get the lower bound on $P$ and $D$, and we have $P$ = $N/D$. As compared to the tables for block ciphers, $P$ is reduced by a factor of $D$ for stream ciphers. According to \cite{biryukov2000ctm}, reduction in the number of precomputed states can be achieved by either reducing the number of states in each table, or by reducing the number of tables itself. From the relation $P$ = $mt$.$t$/$D$, either $mt$ must become $mt$/$D$ (thus reducing number of states in each table) or $t$ must become $t$/$D$ (thus reducing the number of tables). The authors argue that the former option is not a good idea. In that case, the tables would accomodate less states than the maximum states allowed in a table to prevent collisions. As a result, the latter option is chosen, and the number of tables is reduced by the factor $D$. This in turn creates a dependency between $t$ and $D$ such that $t \geq D$, as there should atleast be one table. Later in the section, we show how the dependency can be eliminated.
 
 Thus for the precomputation phase, we have $t$/$D$ tables, each having $m$ chains with $t$ states each. The chains start with a random state $S_{j,0}$ (denoted by $SP_j$) indicating the first element in the j'th chain. The prefix for the starting state is computed, and a reduction function applied on the prefix to give the next state $S_{j,1}$. The prefix function is represented by $Prefix$ and the reduction function by $R$. Then, we have the following relation,
 \begin{align*}
@@ -313,28 +313,57 @@ The following steps are performed in sequence as part of the complete attack.
 \item The attack is started. Each subsequence from the keystream is searched in the hashtable. The time for the attack is as given by equation \ref{eq:tmdto-hellman-general-time}. 
 \end{enumerate}
 
-The results of the attack for keys $K_1$ and $K_2$ are shown below. 
+The results of the attack for keys $K_2$ are shown below. 
+
+%\begin{table}[ht!]
+%\begin{center}
+%\begin{tabular}{|c||c|c|c||c|c|c|c|c|}
+%\hline
+%Key & \multicolumn{4}{c||}{\textbf{$K_2$}} & \multicolumn{4}{c|}{\textbf{$K_3$}} \\ \hline \hline
+%m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	 	\\ 
+%t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	 	\\ 
+%r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		 	\\ 
+%D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	\\ \hline \hline
+%M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	 	\\ 
+%P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	 	\\ 
+%T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	\\ \hline \hline
+%Precomputation time for file (hours)		&	13 	 			&	6.5 			&						&	 					&	13 	 			&	6.5 			&						&	 					\\ \hline
+%Time for attack	(hours)									&	6.7 			&	25.2			&	2.6 		 	&	5.1 			&	6					&	12				&						&						\\ \hline
+%Number of times correct key is found 		&	2 				&	1					&	3 				&	1 				&	6					&	12				&						&						\\ \hline
+%Time of first correct key (hours)				&	1.2 			&	24.0			&			 		 	&			 			&						&						&						&						\\ \hline
+%Number of times false key is found			&	0 				&	1 				&	3 				&	3 				&	6					&	12				&						&						\\ \hline
+%Number of false alarms									&	33009			&	66684			&	120				&	256				&	6					&	12				&						&						\\ \hline
+%\end{tabular}
+%\end{center}
+%\caption{Results of TMDTO Hellman attack for $K_2$ and $K_3$}
+%\label{tab:hellman-attack-results}
+%\end{table}
 
 \begin{table}[ht!]
 \begin{center}
-\begin{tabular}{|c||c|c|c||c|c|c|}
+\begin{tabular}{|c||c|c|c|c|}
 \hline
-Key & \multicolumn{3}{c||}{\textbf{$K_1$}} & \multicolumn{3}{c|}{\textbf{$K_2$}} \\ \hline \hline
-M																				&	$2^{24}$ 	&	$2^{24}$ 	&	$2^{24}$ 	&	$2^{24}$ 	&	$2^{24}$ 	&	$2^{24}$ 	\\ 
-t	  																		&	$2^{8}$ 	&	$2^{9}$ 	&	$2^{8}$ 	&	$2^{9}$		&	$2^{24}$ 	&	$2^{24}$ 	\\ 
-r	  																		&	$2^{8}$ 	&	$2^{9}$ 	&	$2^{8}$ 	&	$2^{9}$		&	$2^{24}$ 	&	$2^{24}$ 	\\ 
-D	  																		&	$2^{16}$ 	&	$2^{26}$ 	&	$2^{27}$ 	&	$2^{27}$	&	$2^{24}$ 	&	$2^{24}$ 	\\ \hline \hline
-P	  																		&	$2^{32}$ 	&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{33}$	&	$2^{24}$ 	&	$2^{24}$ 	\\ \hline
-T	  																		&	$2^{31}$ 	&	$2^{32}$ 	&	$2^{31}$ 	&	$2^{32}$	&	$2^{24}$ 	&	$2^{24}$ 	\\ \hline
-Precomputation time for file (hours)		&	6 	 			&	12 				&	6					&	12 				&	6					&	12				\\ \hline
-Time for preparing hashtable (seconds)	&	158				&	 					& 116				&	116				&	6					&	12				\\ \hline
-Number of times false key is found			&	2 				&	0 				&	3 				&	3 				&	6					&	12				\\ \hline
-Number of times correct key is found 		&	2 				&	 					&	3 				&	1 				&	6					&	12				\\ \hline
-Number of false alarms									&	139				&	0 				&	120				&	256				&	6					&	12				\\ \hline
-Time for attack	(hours)									&	2.25 			&	0 				&	2.56 		 	&	5.12 			&	6					&	12				\\ \hline
+m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	\\ 
+t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	\\ 
+r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		\\ 
+D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	\\ \hline \hline
+M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	\\ 
+P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	\\ 
+T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	\\ \hline \hline
+Precomputation time for file (hours)		&	13 	 			&	6.5 			&	XX				&	XX				\\ \hline
+Time for attack	(hours)									&	6.7 			&	25.2			&	XX 			 	&	XX	 			\\ \hline
+Number of times correct key is found 		&	2 				&	1					&	XX 				&	XX 				\\ \hline
+Time of first correct key (hours)				&	1.2 			&	24.0			&	XX	 		 	&	XX	 			\\ \hline
+Number of times false key is found			&	0 				&	1 				&	XX				&	XX				\\ \hline
+Number of false alarms									&	33009			&	66684			&	XX				&	XX				\\ \hline
 \end{tabular}
 \end{center}
-\caption{Results of TMDTO Hellman attack for keys $K_1$ and $K_2$}
+\caption{Results of TMDTO Hellman attack for $K_2$}
 \label{tab:hellman-attack-results}
 \end{table}
 
+The following comments are made for these results.
+\begin{enumerate}
+\item 
+\item 
+\end{enumerate}

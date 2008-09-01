@@ -23,10 +23,10 @@ in hellman, rainbow tables, time is dependent on other parameters also. in simpl
 But in tradeoff equations, we are more interested in finding a relation between T, M and D. In BG attacks, M = P and T = D, so they are simple to understand. 
 
 3. compare the tmto-keystream/tags attack with tmdto hellman/rainbow attack. explain the differences in general.
+	- do we really see any advantage of hellman and rainbow tables over keystream/tags attack?
 
 
 4. think about why 32bit tags were not applied for hellman and rainbow table. would we have the same results if we have 32 bit prefixes instead of currently used 56 bit prefixes?
-
 
 Future Work.
 
