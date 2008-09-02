@@ -52,10 +52,56 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 %% Now actually use the newly defined style.
 \urlstyle{leostyle}
 
-%----------------------------------------------------%
+\begin{document}
+
+\begin{titlepage}
+
+\thispagestyle{empty}
+\rule{0pt}{50pt}
+
+\begin{center}
+ 	\huge{Time-memory-data \\cryptanalysis of \\the HiTag2 stream cipher}\\
+ 		\vspace{2.5cm}
+ 	\Large{Master thesis project}\\
+ 	\Large{\today}\\
+\end{center}
+
+\vspace{5cm}
+
+\begin{center}
+	\Large{Rajesh Bachani \\(s061332)}\\
+\end{center}
+\end{titlepage}
+
+\newpage
+\thispagestyle{empty}
+\vspace*{11cm}
+{\noindent Department of Mathematics}\\
+{Technical University of Denmark}\\
+{Matematiktorvet, Building 303}\\
+{DK-2800 Kgs.~Lyngby, Denmark}\\
+{Phone +45 45253031, Fax +45 45881399}\\
+{instadm@mat.dtu.dk}\\
+{www.mat.dtu.dk}
+
+\newpage
+\pagenumbering{roman}
+\setcounter{page}{1}
 \pagestyle{fancy}
+\include{./startups/preface}
+\include{./startups/acknowledgement}
+\include{./startups/abstract}
+
+\tableofcontents
+\listoftables
+\listoffigures
+\pagebreak
+
+%----------------------------------------------------%
 % with this we ensure that the chapter and section
 % headings are in lowercase.
+
+
 \renewcommand{\chaptermark}[1]{%
 \markboth{#1}{}}
 \renewcommand{\sectionmark}[1]{%
@@ -71,26 +117,6 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \fancyhead{} % get rid of headers on plain pages
 \renewcommand{\headrulewidth}{0pt} % and the line
 }
-
-%----------------------------------------------------%
-\begin{document}
-
-\pagenumbering{roman}
-\setcounter{page}{1}
-\pagestyle{fancy}
-%% make the title page %%
-
-\include{./startups/acknowledgement}
-%\include{./startups/preface}
-\include{./startups/abstract}
-
-
-\tableofcontents
-
-\listoftables
-
-\listoffigures
-
 \pagebreak
 \pagenumbering{arabic}
 \setcounter{page}{1}
@@ -105,9 +131,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \addcontentsline{toc}{chapter}{\bibname}
 
 \appendix
-%\include{./appendices/AppendixA}
-%\include{./appendices/appendix-tmto-keystream-results}
-%\include{./appendices/appendix-tmto-tags-results}
-%\include{./appendices/cv}
+\include{./appendices/AppendixA}
+\include{./appendices/AppendixB}
 
 \end{document}

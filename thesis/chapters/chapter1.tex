@@ -142,7 +142,7 @@ The tap sequence for the LFSR in figure \ref{fig:lfsr-example1} is a maximal len
 $p(x)$ =  1 + $x^{11}$ + $x^{13}$ + $x^{14}$ + $x^{16}$
 \end{center}
 
-The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{in}$ bit, since $s_{in}$ can be interpreted to exist at the \textbf{0}'th position of the shift register (this existence is just theoretical). A given tap sequence is a maximal length tap sequence if the polynomial representing it is irreducible i.e. the polynomial cannot be factored into nontrivial polynomials.
+The powers of $x$ represent the tap bits. The \textbf{1} in the starting is a result of $x^0$ and represents the $s_{in}$ bit, since $s_{in}$ can be interpreted to exist at the \textbf{0}'th position of the shift register (this existence is just theoretical). A given tap sequence is a maximal length tap sequence if the polynomial representing it is irreducible i.e.~the polynomial cannot be factored into nontrivial polynomials.
 
 It is important to note that the polynomial representation should not depend on the numbering of the bit positions. If the same LFSR is numbered in the fashion as shown in figure \ref{fig:lfsr-example2}, then we have the following polynomial representation.
 \begin{align*}
@@ -186,11 +186,11 @@ But, this is just one use of the cipher, and other applications could use the ci
 
 HiTag2 was kept secret by Philips until it was reverse-engineered using the cipher's software implementation. The microcode (or assembly code) of HiTag2 was decompiled from the implementation available in the car remote controls and the RKE receivers. The C code for the cipher is availabe on the website \cite{hitag2-code}. A full system level specification of the RKE system by Philips (titled Active Tag and IC) implementing the HiTag2 cipher is also available \cite{active-tag-datasheet}. HiTag2 now is the intellectual property of NXP, but the specification document holds the name of Philips since NXP did not come into existence at that time in 2005. Also, since the cryptography (HiTag2) on the RKE system was kept secret at that time, HiTag2 modes are just mentioned without any further information on the functional working of the cipher.
 
-The design of HiTag2 is very similar to a recently reverse-engineered \cite{NohlESP-2008-usenix} stream cipher called Crypto-1, which is used in Mifare Classic smartcards by NXP. The Mifare family comprises of contactless smart cards and card readers, with a variety of different features including memory availability on the cards to store data and read/write permissions on the cards. As a result of these features, Mifare system is widely used in applications requiring more than just authentication. Some such applications are ticketing system for public transportation (OV-Chipkaart in Netherlands, Oyster cards in UK etc.) and access control in buildings. Crypto-1 cipher used in Mifare Classic cards and readers was proprietary until recently when Nohl et. al. \cite{NohlESP-2008-usenix} reverse-engineered the algorithm from its silicon implementation.
+The design of HiTag2 is very similar to a recently reverse-engineered \cite{NohlESP-2008-usenix} stream cipher called Crypto-1, which is used in Mifare Classic smartcards by NXP. The Mifare family comprises of contactless smart cards and card readers, with a variety of different features including memory availability on the cards to store data and read/write permissions on the cards. As a result of these features, Mifare system is widely used in applications requiring more than just authentication. Some such applications are ticketing system for public transportation (OV-Chipkaart in Netherlands, Oyster cards in UK etc.) and access control in buildings. Crypto-1 cipher used in Mifare Classic cards and readers was proprietary until recently when Nohl et al.~\cite{NohlESP-2008-usenix} reverse-engineered the algorithm from its silicon implementation.
 
-In addition, the same Mifare Classic cards and readers are shown to be easily clonable \cite{dekoninggans2008pam} by researchers at Radboud University. They have analyzed the communication protocol between the card and the reader, and have been been able to show that the there are several weaknesses in the Crypto-1 cipher. They have been able to recover the necessary keystream by analyzing the protocol messages. The details of this protocol analysis complements the work by Nohl et. al., and using both the ideas, mounting brute-force attack on the cipher has been made possible. 
+In addition, the same Mifare Classic cards and readers are shown to be easily clonable \cite{dekoninggans2008pam} by researchers at Radboud University. They have analyzed the communication protocol between the card and the reader, and have been been able to show that the there are several weaknesses in the Crypto-1 cipher. They have been able to recover the necessary keystream by analyzing the protocol messages. The details of this protocol analysis complements the work by Nohl et al., and using both the ideas, mounting brute-force attack on the cipher has been made possible. 
 
-Apart from reverse-engineering from software or hardware implementations, a black-box reverse-engineering has also been applied to break secret algorithms. The DST RFID tag (using the DST stream cipher) was broken in 2005 using black-box reverse-engineering \cite{bono2005sac}, i.e. by selecting certain input formats and using both the input and output combinations to deduce the structure and working of the cipher. The most common application of Texas Instrument's DST tag is in vehical immobilizer systems and electronic payment systems \cite{dst-rfid-analysis}. 
+Apart from reverse-engineering from software or hardware implementations, a black-box reverse-engineering has also been applied to break secret algorithms. The DST RFID tag (using the DST stream cipher) was broken in 2005 using black-box reverse-engineering \cite{bono2005sac}, i.e.~by selecting certain input formats and using both the input and output combinations to deduce the structure and working of the cipher. The most common application of Texas Instrument's DST tag is in vehical immobilizer systems and electronic payment systems \cite{dst-rfid-analysis}. 
 
 In the next section, the working of HiTag2 is described.
 
@@ -211,7 +211,7 @@ The entire setup of the keystream generator is done in two phases. The first pha
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=4.3in]{./figures/hitag2-1.PNG}
-	\caption{LFSR Initialization}	
+	\caption{LFSR Initialization \cite{hitag2-figure}}	
 	\label{fig:hitag2-1}
 \end{figure}
 
@@ -220,7 +220,7 @@ The entire setup of the keystream generator is done in two phases. The first pha
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=5.5in]{./figures/hitag2-2.PNG}
-	\caption{LFSR Setup Phase}	
+	\caption{LFSR Setup Phase \cite{hitag2-figure}}	
 	\label{fig:hitag2-2}
 \end{figure}
 
@@ -264,10 +264,14 @@ It is important to note that the update function of the LFSR is not used in both
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=4.3in]{./figures/hitag2-3.PNG}
-	\caption{Keystream Generation}	
+	\caption{Keystream Generation \cite{hitag2-figure}}	
 	\label{fig:hitag2-3}
 \end{figure}
 
-%\subsection{Brief security analysis}
-%\label{sec:hitag2-security-analysis}
-% a basic cryptanalysis of the cipher - maximal period? linearity? %
+This completes a basic description of the cipher. 
+
+A security critical aspect to consider here is the period of the HiTag2 LFSR. It is very important to note that the period of the LFSR is different from the period of the keystream (or period of the cipher). If the states of the LFSR repeat, then the keystream also repeats. But, the period of the keystream could be less than the period of the LFSR, as the output function is non-linear \cite{erik-discussions}. 
+
+It is possible to check the period of the LFSR and ascertain if HiTag2 LFSR gives the maximal period of $(2^{48} - 1)$ or not. From previous discussion, the polynomial representation of the LFSR should represent an irreducible polynomial, if maximal period is to be achieved. We made an attempt to investigate this for HiTag2, but realized that huge computational time is required. In order to check if the HiTag2 polynomial is irreducible, all the factors of the polynomial need to be checked. This takes time of the order of $2^{48}$, which would take days to complete on a dedicated personal computer.
+
+We encoded the polynomial in Matlab, as shown in appendix \ref{app:appendixA}. The program was run for a day without any decisive output. If the polynomial could be factorized by a small polynomial, the program would have shown the result and terminated; but this did not happen. Hence, we conclude that there are no small factors in the HiTag2 LFSR polynomial. On a more positive note, we believe that the polynomial is maximal, and we continue the rest of the thesis under this particular assumption.
