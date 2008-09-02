@@ -67,7 +67,7 @@ If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be ch
 \label{eq:birthday-paradox} n = \sqrt{\pi/2 \times m}
 \end{align}
 
-Equation \ref{eq:birthday-paradox} represents the condition for a set of $n$ numbers with $m$ different possible values to have two occurences of a same number. This general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e. $H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
+Equation \ref{eq:birthday-paradox} represents the condition for a set of $n$ numbers with $m$ different possible values to have two occurences of a same number. This general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e.~$H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
 
 \noindent \textit{\textbf{Variant of the birthday paradox.}} A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now instead of one, then just 17 people are required to be present in each group, so that two people belonging to different groups share the same birthday.  
 
@@ -144,7 +144,7 @@ As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a 
 \begin{figure}[h]
 	\centering
 	\includegraphics[width=3in]{./figures/prsgmodel.png}
-	\caption{External model of a PRSG}	
+	\caption{External model of a PRSG \cite{babbage}}	
 	\label{fig:psrg-model}
 \end{figure}
 
@@ -293,7 +293,7 @@ A random function is required to select states for the hashtable in the random p
 
 \begin{enumerate}
 \item The output of the $rand()$ function is 16 bits. This is greatly insufficient for our purpose, since we require random numbers of length 48 bits.
-\item If a modular 2 of the random number is taken, then the random bit sequence starts repeating after approximately $2^{17}$ bits. This was in fact our first idea for generating states i.e. using the the modular 2 of next random number as a bit for the state, thus generating the state over 48 operations. But with this, we could clearly see that only approximately $2^{17}$ different states can be generated.
+\item If a modular 2 of the random number is taken, then the random bit sequence starts repeating after approximately $2^{17}$ bits. This was in fact our first idea for generating states i.e.~using the the modular 2 of next random number as a bit for the state, thus generating the state over 48 operations. But with this, we could clearly see that only approximately $2^{17}$ different states can be generated.
 \item The 16 bit output of $rand()$ function starts repeating after $2^{31}$ random numbers. But in one period, the random numbers reoccur. This is obvious since the output has a period $2^{31}$ whereas the output space size is just $2^{16}$. So, we implemented a wrapper using $rand()$, such that the 16 bits of the output are left shifted by one bit and xor'ed with the next output, this repeating 32 times to generate 48 bits. The code snippet for this is shown below. Here, u64 represents a 64 bit unsigned interger and u32 represents a 32 bit unsigned interger.
 \begin{lstlisting}[frame=tb]
 u64 get_random_2(u32 bits)
@@ -312,7 +312,7 @@ u64 get_random_2(u32 bits)
 	return random_number;
 }
 \end{lstlisting}
-
+The program for checking the period of the random number generator is given in appendix \ref{app:appendixB}.
 \item If we generate a 32 bit random number using this function, the period observed is $2^{27}$. Also, the period for 48 bit random numbers is $2^{26}$. We do not generate more than $2^{26}$ random states in the implementation (as seen in table \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key1} below ), hence the wrapper function is sufficient for our purpose.
 \end{enumerate}
 
@@ -324,7 +324,7 @@ Three different keys are randomly selected for the attacks. One or more keys fro
 \item Key $K_3$ = 0x49D2AC801F94
 \end{enumerate}
 
-We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The detailed output from the attack program corresponding to these results is given in appendix. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Prefix length lower than 48 bits would lead to greater number of false keys, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys (which is also confirmed by the results). Hence these two prefix lengths are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
+We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Prefix length lower than 48 bits would lead to greater number of false keys, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys (which is also confirmed by the results). Hence these two prefix lengths are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -374,7 +374,7 @@ The following observations can be made from the above results.
 
 \item In column 5 of table \ref{tab:keystream-attack-results-key2}, $K_2$ is found even though the product of $M$ and $T$ is less than $2^{48}$. It is thus clear that equation \ref{eq:tmto-non-random} just indicates the worst case relation between $M$ and $T$. Thus, if the product $M \times T$ $\geq$ $2^{48}$, we can be certain that the key would be found. If $M \times T$ $<$ $2^{48}$, then we cannot be certain. In this particular case, $K_2$ is found. But, another combination of $M$ and $T$ shown in column 6 exemplifies this fact.
 
-\item If the product $M \times T$ = $2^{48}$ for the non-random precomputation, then the correct key is found exactly once. However, if the product $M \times T$ = $2.2^{48}$ (by doubling either of $M$ or $T$), then the correct key is found exactly two times. Also, as can be seen from the appendix, the time between the second match and the first match of the key is precisely $T/2$. For the key $K_1$, the attack output of column 10 is shown below. The point to note here is the percentage of the worst case time for the two matches; they differ by 50\%. 
+\item If the product $M \times T$ = $2^{48}$ for the non-random precomputation, then the correct key is found exactly once. However, if the product $M \times T$ = $2.2^{48}$ (by doubling either of $M$ or $T$), then the correct key is found exactly two times. Also, the time between the second match and the first match of the key is precisely $T/2$. For the key $K_1$, the attack output of column 10 is shown below. The point to note here is the percentage of the worst case time for the two matches; they differ by 50\%. 
 
 % NEEDED - see if a figure is needed here.
 
@@ -452,7 +452,7 @@ The implementation module for TMTO tags attack executes the complete attack by c
 \item The attack is started. Each prepared tag is searched in the hashtable. For each match, the initial state from hashtable is reversed using the IV corresponding to the matched tag and the constant serial ID, to give a key. All the keys computed using the matched tags are stored and the number of times each key repeats is noted. 
 \end{enumerate}
 
-With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e. the number of times correct key is found. The results are shown in table \ref{tab:tags-attack-results}.
+With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e.~the number of times correct key is found. The results are shown in table \ref{tab:tags-attack-results}.
 
 \begin{table}[h!]
 \begin{flushleft}

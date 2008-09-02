@@ -1,5 +1,86 @@
 \chapter{Conclusion}
 
+\section{Comparison of Hellman and rainbow table}
+\label{sec:compare-hellman-rainbow}
+
+To use Hellman tables with stream ciphers, Biryukov and Shamir proposed changes in the table structure by taking $D$ into consideration. The original idea of rainbow table has been proposed for block ciphers and thus similar changes in the table structure are needed to use them with stream ciphers. The paper \cite{erguler2005nct} by Erguler and Anarim is the only work in this direction, to be best of our knowledge. The tradeoff described in the paper was designed independently by us. Only later it came to our knowledge that the idea has already been published by Erguler and Anarim.
+
+With the availability of $D$, the number of states in the rainbow table can be reduced by the factor $D$. The number of states existing in the rainbow table is $Mt$ \footnote{The parameters $M$ and $t$ here represent the original rainbow table, and are not related with the parameters described in the general tradeoff equation in previous section}. Then either $M$ or $t$ or both should be reduced. These three possibilities are identified in the following table. 
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c||c||c c c|}
+\hline
+			& Biryukov-Shamir approach 	& \multicolumn{3}{c|}{Approach for rainbow tables}					\\ \hline \hline
+M			&	M/D		&	M/D				&	M						& $M/\sqrt{D}$	\\
+t			&	t			&	t					&	t/D					& $t/\sqrt{D}$	\\ \hline \hline
+P			&	Mt/D	&	Mt/D			&	Mt/D				& Mt/D					\\ 
+T			&	$t^2$	&	$t^2D/2$	&	$t^2/2D$		& $t^2/2$				\\ \hline
+\end{tabular}
+\end{center} 
+\caption{Options for modifying parameters $M$ and $t$ for rainbow tables}
+\label{tab:parameters-rainbow-table}
+\end{table}
+
+The first case for rainbow tables is reducing $M$ to $M/D$. Though memory required for the attack reduces, the time for the attack increases considerably to $t^2D/2$. It is interesting to note that for Hellman tables, the attack time depends on both $t$ and the number of tables. So, if $M$ is decreased, the number of tables decreases, thus reducing the attack time to $t^2$. On the other hand, for rainbow tables, the attack time depends just on the length of each chain. Hence, reducing the memory does not reduce the time for the attack.
+
+In the next case, we reduce $t$ to $t/D$. The problem with this option is the increased memory requirement which is $M$. 
+
+The third option is a middle way between the first two options. We reduce both $M$ and $t$ by a factor of $\sqrt{D}$. The attack time now becomes ${(t/\sqrt{D})}^2/2 \times D$ = $t^2/2$. As we see, this makes it comparable to the attack time for Hellman tables. Rainbow tables provide the same advantage for stream ciphers with this option, as they do for block ciphers i.e.~they reduce the attack time by a factor of 2. 
+
+But, the memory requirement is $\sqrt{D}$ times greater than that for Hellman tables. This is a disadvantage of using rainbow table with these parameters.
+
+Let us denote the memory requirement and the number of states in each chain by $M'$ and $t'$ for the modified rainbow table. Then we have $M' = M/\sqrt{D}$ and $t' = t/\sqrt{D}$. Replacing these values in the general tradeoff equation \ref{eq:general-rainbow-stream}, we get the following tradeoff equation.
+\begin{align}
+\label{eq:tmdto-rainbow-stream} 2TM^2D^2 &= N^2
+\end{align}
+For comparing the performance of Hellman and rainbow tables using their tradeoff equations, we select the following values of the required parameters based on the third option discussed above. 
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c c||c c|}
+\hline
+			& \multicolumn{2}{c||}{$M = 2^{32}$, $t = 2^{16}$, $D = 2^{14}$} 	& \multicolumn{2}{c|}{$M = 2^{31}$, $t = 2^{17}$, $D = 2^{16}$}	\\ \hline \hline
+			&	Hellman				&	Rainbow					&	Hellman					& Rainbow				\\ \hline \hline
+m			&	$2^{16}$			&		-							&	$2^{14}$				& 	-						\\ \hline 
+t			&	$2^{16}$			&	$2^{9}$					&	$2^{17}$				& $2^{9}$				\\ \hline 
+r			&	$2^{2}$				&		-							&	$2^{1}$					& 	-						\\ \hline 
+M			&	$2^{18}$			&	$2^{25}$				&	$2^{15}$				& $2^{23}$			\\ \hline 
+P			&	$2^{34}$			&	$2^{34}$				&	$2^{32}$				& $2^{32}$			\\ \hline 
+T			&	$2^{32}$			&	$2^{31}$				&	$2^{34}$				& $2^{33}$			\\ \hline 
+\end{tabular}
+\end{center} 
+\caption{Parameters for comparison of Hellman and rainbow table}
+\label{tab:parameters-comparison}
+\end{table}
+
+The comparison of the results obtained using these parameters for Hellman and rainbow tables is shown in table \ref{tab:comparison-results-hellman-rainbow}.
+
+\begin{table}[ht!]
+\begin{center}
+\begin{tabular}{|c|c c||c c|}
+\hline
+																				&	H							&	R								&	H								& R							\\ \hline \hline
+M																				&	$2^{18}$			&	$2^{25}$				&	$2^{15}$				& $2^{23}$			\\ \hline 
+m																				&	$2^{16}$			&		-							&	$2^{14}$				& 	-						\\ \hline 
+t																				&	$2^{16}$			&	$2^{9}$					&	$2^{17}$				& $2^{9}$				\\ \hline 
+r																				&	$2^{2}$				&		-							&	$2^{1}$					& 	-						\\ \hline 
+P																				&	$2^{34}$			&	$2^{34}$				&	$2^{32}$				& $2^{32}$			\\ \hline 
+D																				&	$2^{14}$			&	$2^{14}$				&	$2^{16}$				& $2^{16}$			\\ \hline \hline
+T																				&	$2^{32}$			&	$2^{31}$				&	$2^{34}$				& $2^{33}$			\\ \hline \hline
+Precomputation time for file (hours)		&	XX 	 					&	29.5						&	6.5							&	7.4						\\ \hline
+Time for attack	(hours)									&	XX 	 					&	2.3							&	25.2						&	10.1					\\ \hline
+Number of times correct key is found 		&	XX 	 					&	2 							&	1 							&	1 						\\ \hline
+Time of first correct key (hours)				&	XX 	 					&	0.01						&	24							&	0.8						\\ \hline
+Number of times false key is found			&	XX 	 					&	2 							&	1 							&	1 						\\ \hline
+Number of false alarms									&	XX 	 					&	286							&	66684						&	247						\\ \hline
+\end{tabular}
+\end{center} 
+\caption{Comparison of results of TMDTO attacks}
+\label{tab:comparison-results-hellman-rainbow}
+\end{table}
+
+\section{Concluding remarks}
 
 In this thesis, we have implemented various tradeoff attacks on the HiTag2 stream cipher and presented the results of the same. Babbage and Golic first proposed how a time-memory tradeoff attack can be implemented on stream ciphers. In block ciphers, encryption is performed on a block of plaintext yielding a block of ciphertext. The goal in attacks on block cipher is always to successfully invert the transformation from the input to output block. In stream ciphers, this transformation was not understood until Babbage and Golic proposed that the transformation from state to the prefix must be inverted to break the stream cipher, as this determines an internal state. 
 
@@ -12,8 +93,6 @@ In the last two attacks, three parameters $M$, $T$ and $D$ appear in the tradeof
 In all attacks though, the main idea has been about two different sets of states and finding a collision between them; one set computed during the precomputation phase and the other occuring during the attack phase, represented by $P$ and $D$ respectively. The birthday paradox helps in deriving the relation $P \times D \geq N$, which is used as the basis for all the attacks. 
 
 % performance of tmto and tmdto attacks? identify change in parameters?
-
-
 
 
 \section{Future work}
