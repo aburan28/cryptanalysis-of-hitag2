@@ -1,5 +1,5 @@
-attack_dispatcher: hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o 
-	gcc -g -Wall -O -lm -o attack_dispatcher hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o
+attack_dispatcher_1: hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o 
+	gcc -g -Wall -O -lm -o attack_dispatcher_1 hashtable.o hitag2.o tmto_keystream_attack.o tmto_tags_attack.o tmdto_hellman_attack.o tmdto_rainbow_attack.o attack_helper.o attack_dispatcher.o
 
 attack_dispatcher.o: attack_dispatcher.c common.h attack_dispatcher.h
 	gcc -g -Wall -O -c attack_dispatcher.c -o attack_dispatcher.o

@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 	time(&time1);
 
 	N = 48;
-	secret_key = KEY3;
+	secret_key = KEY2;
 	serial_id = SERIAL_ID; 
 	init_vector = INITIALIZATION_VECTOR;
 	
@@ -72,11 +72,11 @@ int main(int argc, char *argv[])
 	else if(attack_type == TMDTO_HELLMAN_ATTACK)
 	{
 		/* independent parameters */
-		m = pow(2,16);
-		t = pow(2,16);
-		r = pow(2,1);
+		m = pow(2,14);
+		t = pow(2,10);
+		r = pow(2,8);
 		
-		D = pow(2,15);
+		D = pow(2,16);
 		
 		/* dependent parameters */
 		M = m*r;
@@ -103,10 +103,10 @@ int main(int argc, char *argv[])
 	else if(attack_type == TMDTO_RAINBOW_ATTACK)
 	{
 		/* independent parameters */
-		M = pow(2,24);
+		M = pow(2,23);
 		t = pow(2,9);
 		
-		D = pow(2,15);
+		D = pow(2,16);
 
 		/* dependent parameters */
 		P = M*t;

@@ -84,10 +84,40 @@ int main(void)
 
 	runtime = pow(2,32);
 	
-	first_random = get_random_3(first_random);
-	first_random = get_random_3(first_random);
-	second_random = get_random_3(first_random);
-	third_random = get_random_3(second_random);
+// 	first_random = get_random_3(first_random);
+// 	first_random = get_random_3(first_random);
+// 	second_random = get_random_3(first_random);
+// 	third_random = get_random_3(second_random);
+// 	
+// 	printf("\nFirst random number: %llx", first_random);
+// 	printf("\nSecond random number: %llx", second_random);
+// 	printf("\nThird random number: %llx", third_random);
+// 	
+// 	for(i = 0; i < runtime; i++)
+// 	{
+// 		random = get_random_3(random);	
+// 		
+// 		if(random == first_random)
+// 		{
+// 			printf("\n\n Reoccurence: %llu\n", i);
+// 			random = get_random_3(random);
+// 
+// 			if(random == second_random)
+// 			{
+// 				random = get_random_3(random);
+// 				
+// 				if(random == third_random)
+// 				{
+// 					printf("\n\n Repetition of random number! Period: %llu\n", i);
+// 					break;
+// 				}
+// 			}
+// 		}
+// 	}
+
+	first_random = get_random_2(48);
+	second_random = get_random_2(48);
+	third_random = get_random_2(48);
 	
 	printf("\nFirst random number: %llx", first_random);
 	printf("\nSecond random number: %llx", second_random);
@@ -95,16 +125,16 @@ int main(void)
 	
 	for(i = 0; i < runtime; i++)
 	{
-		random = get_random_3(random);	
+		random = get_random_2(48);	
 		
 		if(random == first_random)
 		{
 			printf("\n\n Reoccurence: %llu\n", i);
-			random = get_random_3(random);
+			random = get_random_2(48);
 
 			if(random == second_random)
 			{
-				random = get_random_3(random);
+				random = get_random_2(48);
 				
 				if(random == third_random)
 				{
@@ -114,4 +144,5 @@ int main(void)
 			}
 		}
 	}
+
 }			

@@ -61,7 +61,7 @@ int tmdto_rainbow_attack()
 	struct hashtable *h = NULL;
 
 	/* open the file pointer */
-	fp = fopen("./tables/rainbow_table_M24_t9.dat", "r");
+	fp = fopen("./tables/rainbow_table_M23_t9.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");

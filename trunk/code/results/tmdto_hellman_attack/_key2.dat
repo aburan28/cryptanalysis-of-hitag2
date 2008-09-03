@@ -1,5 +1,3 @@
-
-
 -----------------------------------------
 Time of attack: Sun Aug 24 22:00:14 2008
 -----------------------------------------
@@ -46,6 +44,12 @@ TIME since starting attack: 15496
 TIME for attack: 23177
 COUNT of false alarms: 33009
 
+
+
+
+
+
+
 -----------------------------------------
 Time of attack: Mon Aug 25 03:33:49 2008
 -----------------------------------------
@@ -91,3 +95,123 @@ TIME since starting attack: 16091
 
 TIME for attack: 24097
 COUNT of false alarms: 33009
+
+
+-----------------------------------------
+Time of attack: Fri Aug 29 14:48:11 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 14
+t = 2 power 17
+D = 2 power 16
+M = 2 power 15
+T = 2 power 34
+P = 2 power 32
+r = 2 power 1
+prefix_bits = 48
+Current Time: Fri Aug 29 14:48:11 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 0 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 62258, Table number: 2, Column number: 126603
+Found prefix: 268492019401784
+Found Current State: 258ea6e3fe0d
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 86136
+
+Match!
+Status:- D: 63580, Table number: 1, Column number: 36328
+Found prefix: 51283503751078
+Found Current State: 7665abcb7475
+Found Initial State: 574973f41ff9
+Found Key: 157410c11ff9
+TIME since starting attack: 87959
+
+TIME for attack: 90656
+COUNT of false alarms: 66684
+
+
+
+
+-----------------------------------------
+Time of attack: Sun Aug 31 15:52:10 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 14
+t = 2 power 12
+D = 2 power 16
+M = 2 power 20
+T = 2 power 34
+P = 2 power 32
+r = 2 power 6
+prefix_bits = 48
+Current Time: Sun Aug 31 15:52:10 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 4 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 24522, Table number: 30, Column number: 1438
+Found prefix: 132603740904843
+Found Current State: 61954d5a292c
+Found Initial State: 728a83510144
+Found Key: 5e668b690144
+TIME since starting attack: 33513
+
+Match!
+Status:- D: 35241, Table number: 64, Column number: 751
+Found prefix: 87585013637436
+Found Current State: 3790eb64f765
+Found Initial State: 4f1fa7606850
+Found Key: 87f040796850
+TIME since starting attack: 48197
+
+Match!
+Status:- D: 53222, Table number: 61, Column number: 2131
+Found prefix: 227401203933890
+Found Current State: 8e82c821e24a
+Found Initial State: b1202052a2d1
+Found Key: d2785615a2d1
+TIME since starting attack: 72888
+
+Match!
+Status:- D: 61341, Table number: 6, Column number: 4085
+Found prefix: 208920628710540
+Found Current State: 66be018140af
+Found Initial State: efaf9e69f714
+Found Key: 36ef29d2f714
+TIME since starting attack: 84128
+
+Match!
+Status:- D: 63434, Table number: 19, Column number: 2076
+Found prefix: 121669575729748
+Found Current State: e6566c1de0ae
+Found Initial State: 80bde2a7a08f
+Found Key: a782b9d7a08f
+TIME since starting attack: 87029
+
+TIME for attack: 89929
+COUNT of false alarms: 2076
