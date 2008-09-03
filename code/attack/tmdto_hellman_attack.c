@@ -70,7 +70,7 @@ int tmdto_hellman_attack()
 	struct hashtable * hashtable_array[r];
 
 	/* open the file pointer */
-	fp = fopen("./tables/hellman_table_16_16_1.dat", "r");
+	fp = fopen("./tables/hellman_table_14_10_8.dat", "r");
 	if(fp == NULL)
 	{
 		printf("\nError: Could not open file for reading ...");
