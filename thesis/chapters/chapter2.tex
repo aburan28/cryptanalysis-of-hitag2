@@ -277,6 +277,7 @@ S_{current + 2d} &= A . S_{current + d}\\
 and so on.
 
 \subsection{Implementation and results}
+\label{sec:keystream-attack-impl}
 
 Both versions of the BG attack differ in the respective precomputation phase. The attack phase proceeds in the same way for random or non-random precomputation. Ofcourse, the probability of finding the key varies in both the attacks. The module implemented to carry out the complete attack performs the following tasks in sequence,
 \begin{enumerate}
@@ -312,9 +313,11 @@ u64 get_random_2(u32 bits)
 	return random_number;
 }
 \end{lstlisting}
-The program for checking the period of the random number generator is given in appendix \ref{app:appendixB}.
+The program for checking the period of the random number generator is given in appendix \ref{app:random-function}.
 \item If we generate a 32 bit random number using this function, the period observed is $2^{27}$. Also, the period for 48 bit random numbers is $2^{26}$. We do not generate more than $2^{26}$ random states in the implementation (as seen in table \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key1} below ), hence the wrapper function is sufficient for our purpose.
 \end{enumerate}
+
+The attack is run on a terminal on the Sun Solaris server which is shared among various users. Because of this, the computational speed used for the attacks cannot be determined precisely. Also, this causes divergence in some results from their expected values. Most of the attacks are carried in this environment. Where this is not the case, comments are explicitly made in the thesis. 
 
 Three different keys are randomly selected for the attacks. One or more keys from these three are used in all the attack implementations. These keys are as follows.
 
@@ -324,7 +327,7 @@ Three different keys are randomly selected for the attacks. One or more keys fro
 \item Key $K_3$ = 0x49D2AC801F94
 \end{enumerate}
 
-We display the results here for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Prefix length lower than 48 bits would lead to greater number of false keys, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys (which is also confirmed by the results). Hence these two prefix lengths are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
+We display the results for the first two keys $K_1$ and $K_2$ in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2} respectively. The values of $M$ and $T$ are varied for each key, for both random and non-random precomputation phase. A very important parameter in the attack is the length of the prefix. We have chosen prefix length of $48$ and $56$ bits for the keys. Prefix length lower than 48 bits would lead to greater number of false keys, while prefix length higher than 56 bits would not be any better since 56 bits prefix length is sufficient in eliminating false keys (which is also confirmed by the results). Hence these two prefix lengths are considered for the experiments. The time taken for the preparation of the hashtable and keystream, and for the attack are all given in seconds. 
 
 \begin{table}[ht!]
 \begin{center}

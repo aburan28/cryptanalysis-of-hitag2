@@ -180,7 +180,9 @@ Hence, the choice of an appropriate polynomial for the LFSR is important in orde
 
 \subsection{Background}
 \label{sec:hitag2-background}
-HiTag2 is a stream cipher originally designed by Philips Semiconductors (now NXP Semiconductors) and used for mutual authentication between a car remote control and controller in the car. Such systems (called remote keyless entry or RKE systems) have been widely implemented in modern electronic cars, and facilitate unlocking of car doors upon just a button press from within a certain maximum distance from the car. The HiTag2 stream cipher provides two-way authentication, authenticating the two entities to each other one by one. In such a protocol, a nonce is sent across from the initiator to the responder. The responder initializes the stream cipher using the nonce as IV, additionally using the secret key and its fixed ID. Some fixed length of the keystream is then sent back to the initiator as authenticator. The similar protocol is executed to authenticate the initiator to the responder. 
+HiTag2 is a stream cipher originally designed by Philips Semiconductors (now NXP Semiconductors) and used for mutual authentication between a car remote control and controller in the car. Such systems (called remote keyless entry or RKE systems) have been widely implemented in modern electronic cars, and facilitate locking and unlocking of car doors upon just a button press from within a certain maximum distance from the car \cite{rke-wiki}. The system designed by NXP in addition to RKE, also incorporates vehicle immobilizer which prevents ignition of the engine if someone breaks into the car. Only the correct car key which uses the secret digital key can authenticate itself to the car controller, thus allowing the ignition \cite{rke-nxp}.
+
+The HiTag2 stream cipher provides two-way authentication, authenticating the two entities to each other one by one. In such a protocol, a nonce is sent across from the initiator to the responder. The responder initializes the stream cipher using the nonce as IV, additionally using the secret key and its fixed ID. Some fixed length of the keystream is then sent back to the initiator as authenticator. The similar protocol is executed to authenticate the initiator to the responder. 
 
 But, this is just one use of the cipher, and other applications could use the cipher for authentication as well as encryption. If hiding the plaintext is desired, the message bits are \emph{xor}'ed with the keystream bits before sending them over the public channel. 
 
@@ -274,4 +276,22 @@ A security critical aspect to consider here is the period of the HiTag2 LFSR. It
 
 It is possible to check the period of the LFSR and ascertain if HiTag2 LFSR gives the maximal period of $(2^{48} - 1)$ or not. From previous discussion, the polynomial representation of the LFSR should represent an irreducible polynomial, if maximal period is to be achieved. We made an attempt to investigate this for HiTag2, but realized that huge computational time is required. In order to check if the HiTag2 polynomial is irreducible, all the factors of the polynomial need to be checked. This takes time of the order of $2^{48}$, which would take days to complete on a dedicated personal computer.
 
-We encoded the polynomial in Matlab, as shown in appendix \ref{app:appendixA}. The program was run for a day without any decisive output. If the polynomial could be factorized by a small polynomial, the program would have shown the result and terminated; but this did not happen. Hence, we conclude that there are no small factors in the HiTag2 LFSR polynomial. On a more positive note, we believe that the polynomial is maximal, and we continue the rest of the thesis under this particular assumption.
+We encoded the polynomial in Matlab, as shown in appendix \ref{app:irreducible-polynomial}. The program was run for a day without any decisive output. If the polynomial could be factorized by a small polynomial, the program would have shown the result and terminated; but this did not happen. Hence, we conclude that there are no small factors in the HiTag2 LFSR polynomial. On a more positive note, we believe that the polynomial is maximal, and we continue the rest of the thesis under this particular assumption.
+
+The HiTag2 library is provided in appendix \ref{app:hitag2-lib}. The functions that have been taken from the original code \cite{hitag2-code} are given below.
+\begin{itemize}
+\item \textit{hitag2\_init}, performs setup and initialization of the internal state
+\item \textit{f20}, gives the output bit from the internal state \footnote{This function has been renamed to \textit{hitag2\_output} in our implementation}
+\item \textit{hitag2\_round}, gives the next output bit by updating the internal state and then calling the \textit{hitag2\_output} function
+\item \textit{hitag2\_byte}, gives one byte of output with the most-significant bit representing the latest output bit
+\end{itemize}
+
+We have added following helper functions in our implementation.
+\begin{itemize}
+\item \textit{hitag2\_prefix}, returns the prefix of the internal state; length of prefix is passed as parameter
+\item \textit{hitag2\_prev\_state}, gives the state occuring previous to the current state
+\item \textit{hitag2\_next\_state}, gives the state occuring next to the current state
+\item \textit{hitag2\_find\_key}, gives the key corresponding to the initial state
+\end{itemize}
+
+The implementation of HiTag2 assumes a little-endian byte order and a big-endian order of bits inside the byte. Hence say when the IV is transmitted from the car controller to the car key, it is trasmitted in the little-endian byte order. 
