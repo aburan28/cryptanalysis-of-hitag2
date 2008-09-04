@@ -341,24 +341,32 @@ The results of the attack for keys $K_2$ are shown below.
 
 \begin{table}[ht!]
 \begin{center}
-\begin{tabular}{|c||c|c|c|c|}
-\hline
-m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	\\ 
-t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	\\ 
-r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		\\ 
-D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	\\ \hline \hline
-M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	\\ 
-P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	\\ 
-T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	\\ \hline \hline
-Precomputation time for file (hours)		&	13 	 			&	6.5 			&	XX				&	7.3				\\ \hline
-Time for attack	(hours)									&	6.7 			&	25.2			&	XX 			 	&	25	 			\\ \hline
-Number of times correct key is found 		&	2 				&	1					&	XX 				&	0 				\\ \hline
-Time of first correct key (hours)				&	1.2 			&	24.0			&	XX	 		 	&	-		 			\\ \hline
-Number of times false key is found			&	0 				&	1 				&	XX				&	5					\\ \hline
-Number of false alarms									&	33009			&	66684			&	XX				&	2076			\\ \hline
-\end{tabular}
-\end{center}
 \caption{Results of TMDTO Hellman attack for $K_2$}
+\smallskip
+\smallskip
+\begin{threeparttable}
+\begin{tabular}{|p{3.5cm}||c|c|c|c|c|c|c|}
+\hline
+m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ &	$2^{14}$ 	&	$2^{14}$ 	&	$2^{14}$	\\ 
+t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$ &	$2^{17}$ 	&	$2^{10}$ 	&	$2^{12}$	\\ 
+r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$	 &	$2^{2}$ 	&	$2^{8}$ 	&	$2^{6}$		\\ 
+D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ &	$2^{15}$ 	&	$2^{16}$ 	&	$2^{17}$	\\ \hline \hline
+M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ &	$2^{16}$ 	&	$2^{22}$ 	&	$2^{20}$	\\ 
+P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ &	$2^{33}$ 	&	$2^{32}$ 	&	$2^{32}$	\\ 
+T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$ &	$2^{34}$ 	&	$2^{34}$ 	&	$2^{35}$	\\ \hline \hline
+Precomputation time for file (hours)		&	13 	 			&	6.5 			&	36.7 \tnote{a}	&	7.3&	13 	 			&	9.2 \tnote{a} &	7.3		\\ \hline
+Time for attack	(hours)									&	6.7 			&	25.2			&	1.8			 	&	25	 		 &	6.43 			&	7.3 			&	36.7			\\ \hline
+Number of times correct key is found 		&	2 				&	1					&	2 				&	0 			 &	0 	 			&	1   			&	36.7			\\ \hline
+Time of first correct key (hours)				&	1.2 			&	24.0			&	0.6	 		 	&	-		 		 &	- 	 			&	4.1 			&	36.7			\\ \hline
+Number of times false key is found			&	0 				&	1 				&	1					&	5				 &	0 	 			&	2 				&	36.7			\\ \hline
+Number of false alarms									&	33009			&	66684			&	33304			&	2076		 &	6697 			&	531				&	36.7			\\ \hline
+\end{tabular}
+\smallskip
+\begin{tablenotes}
+	\item[a] The precomputation for these parameters was done on a Dell personal computer with a 2GHz Intel Centrino processor and running Ubuntu OS through LiveCD.
+\end{tablenotes}
+\end{threeparttable}
+\end{center}
 \label{tab:hellman-attack-results}
 \end{table}
 
