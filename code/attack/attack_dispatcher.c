@@ -73,8 +73,8 @@ int main(int argc, char *argv[])
 	{
 		/* independent parameters */
 		m = pow(2,14);
-		t = pow(2,10);
-		r = pow(2,8);
+		t = pow(2,17);
+		r = pow(2,2);
 		
 		D = pow(2,16);
 		
