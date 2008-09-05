@@ -359,4 +359,146 @@ Attacking ...
 No Internal State found ...
 
 TIME for attack: 23148
-COUNT of false alarms: 6697
+COUNT of false alarms: 66970
+
+
+-----------------------------------------
+Time of attack: Thu Sep  4 14:08:41 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 14
+t = 2 power 12
+D = 2 power 17
+M = 2 power 20
+T = 2 power 35
+P = 2 power 32
+r = 2 power 6
+prefix_bits = 48
+Current Time: Thu Sep  4 14:08:41 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 1 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 24522, Table number: 30, Column number: 1438
+Found prefix: 132603740904843
+Found Current State: 61954d5a292c
+Found Initial State: 728a83510144
+Found Key: 5e668b690144
+TIME since starting attack: 9118
+
+Match!
+Status:- D: 35241, Table number: 64, Column number: 751
+Found prefix: 87585013637436
+Found Current State: 3790eb64f765
+Found Initial State: 4f1fa7606850
+Found Key: 87f040796850
+TIME since starting attack: 13125
+
+Match!
+Status:- D: 53222, Table number: 61, Column number: 2131
+Found prefix: 227401203933890
+Found Current State: 8e82c821e24a
+Found Initial State: b1202052a2d1
+Found Key: d2785615a2d1
+TIME since starting attack: 19823
+
+Match!
+Status:- D: 61341, Table number: 6, Column number: 4085
+Found prefix: 208920628710540
+Found Current State: 66be018140af
+Found Initial State: efaf9e69f714
+Found Key: 36ef29d2f714
+TIME since starting attack: 22849
+
+Match!
+Status:- D: 63434, Table number: 19, Column number: 2076
+Found prefix: 121669575729748
+Found Current State: e6566c1de0ae
+Found Initial State: 80bde2a7a08f
+Found Key: a782b9d7a08f
+TIME since starting attack: 23629
+
+Match!
+Status:- D: 115430, Table number: 26, Column number: 3119
+Found prefix: 42791202983501
+Found Current State: e27c88b92c94
+Found Initial State: 6f730a2ac954
+Found Key: f3b9bf55c954
+TIME since starting attack: 43011
+
+TIME for attack: 48842
+COUNT of false alarms: 4121
+
+
+-----------------------------------------
+Time of attack: Thu Sep  4 14:11:32 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 14
+t = 2 power 17
+D = 2 power 16
+M = 2 power 16
+T = 2 power 35
+P = 2 power 33
+r = 2 power 2
+prefix_bits = 48
+Current Time: Thu Sep  4 14:11:32 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 0 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 46810, Table number: 4, Column number: 99067
+Found prefix: 26727307520914
+Found Current State: 130b71c178a4
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 33028
+
+Match!
+Status:- D: 47057, Table number: 4, Column number: 78872
+Found prefix: 222064626190898
+Found Current State: efb8167fe19a
+Found Initial State: b8c76c755bc7
+Found Key: efbcbf735bc7
+TIME since starting attack: 33202
+
+Match!
+Status:- D: 62258, Table number: 2, Column number: 126603
+Found prefix: 268492019401784
+Found Current State: 258ea6e3fe0d
+Found Initial State: f60860c7a2f2
+Found Key: d4e98d3da2f2
+TIME since starting attack: 43911
+
+Match!
+Status:- D: 63580, Table number: 1, Column number: 36328
+Found prefix: 51283503751078
+Found Current State: 7665abcb7475
+Found Initial State: 574973f41ff9
+Found Key: 157410c11ff9
+TIME since starting attack: 44847
+
+TIME for attack: 46229
+COUNT of false alarms: 133694
