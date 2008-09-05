@@ -72,9 +72,9 @@ int main(int argc, char *argv[])
 	else if(attack_type == TMDTO_HELLMAN_ATTACK)
 	{
 		/* independent parameters */
-		m = pow(2,14);
-		t = pow(2,17);
-		r = pow(2,2);
+		m = pow(2,12);
+		t = pow(2,12);
+		r = pow(2,8);
 		
 		D = pow(2,16);
 		
