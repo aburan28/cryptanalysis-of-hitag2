@@ -313,31 +313,7 @@ The following steps are performed in sequence as part of the complete attack.
 \item The attack is started. Each subsequence from the keystream is searched in the hashtable. The time for the attack is as given by equation \ref{eq:tmdto-hellman-general-time}. 
 \end{enumerate}
 
-The results of the attack for keys $K_2$ are shown below. 
-
-%\begin{table}[ht!]
-%\begin{center}
-%\begin{tabular}{|c||c|c|c||c|c|c|c|c|}
-%\hline
-%Key & \multicolumn{4}{c||}{\textbf{$K_2$}} & \multicolumn{4}{c|}{\textbf{$K_3$}} \\ \hline \hline
-%m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ 	 	\\ 
-%t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$	 	\\ 
-%r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$		 	\\ 
-%D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$	\\ \hline \hline
-%M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ 	 	\\ 
-%P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$	 	\\ 
-%T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$	\\ \hline \hline
-%Precomputation time for file (hours)		&	13 	 			&	6.5 			&						&	 					&	13 	 			&	6.5 			&						&	 					\\ \hline
-%Time for attack	(hours)									&	6.7 			&	25.2			&	2.6 		 	&	5.1 			&	6					&	12				&						&						\\ \hline
-%Number of times correct key is found 		&	2 				&	1					&	3 				&	1 				&	6					&	12				&						&						\\ \hline
-%Time of first correct key (hours)				&	1.2 			&	24.0			&			 		 	&			 			&						&						&						&						\\ \hline
-%Number of times false key is found			&	0 				&	1 				&	3 				&	3 				&	6					&	12				&						&						\\ \hline
-%Number of false alarms									&	33009			&	66684			&	120				&	256				&	6					&	12				&						&						\\ \hline
-%\end{tabular}
-%\end{center}
-%\caption{Results of TMDTO Hellman attack for $K_2$ and $K_3$}
-%\label{tab:hellman-attack-results}
-%\end{table}
+The results of the attack for keys $K_2$ are shown in table \ref{tab:hellman-attack-results}. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -348,30 +324,38 @@ The results of the attack for keys $K_2$ are shown below.
 \begin{tabular}{|p{3.5cm}||c|c|c|c|c|c|c|}
 \hline
 m																				&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{14}$ &	$2^{14}$ 	&	$2^{14}$ 	&	$2^{14}$	\\ 
-t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$ &	$2^{17}$ 	&	$2^{10}$ 	&	$2^{12}$	\\ 
-r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$	 &	$2^{2}$ 	&	$2^{8}$ 	&	$2^{6}$		\\ 
-D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ &	$2^{15}$ 	&	$2^{16}$ 	&	$2^{17}$	\\ \hline \hline
-M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ &	$2^{16}$ 	&	$2^{22}$ 	&	$2^{20}$	\\ 
-P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ &	$2^{33}$ 	&	$2^{32}$ 	&	$2^{32}$	\\ 
+t	  																		&	$2^{16}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{12}$ &	$2^{17}$ 	&	$2^{10}$ 	&	$2^{17}$	\\ 
+r	  																		&	$2^{1}$ 	&	$2^{1}$ 	&	$2^{2}$ 	&	$2^{6}$	 &	$2^{2}$ 	&	$2^{8}$ 	&	$2^{2}$		\\ 
+D	  																		&	$2^{15}$ 	&	$2^{16}$ 	&	$2^{14}$ 	&	$2^{16}$ &	$2^{15}$ 	&	$2^{16}$ 	&	$2^{16}$	\\ \hline \hline
+M																				&	$2^{17}$ 	&	$2^{15}$ 	&	$2^{18}$ 	&	$2^{20}$ &	$2^{16}$ 	&	$2^{22}$ 	&	$2^{16}$	\\ 
+P	  																		&	$2^{33}$ 	&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ &	$2^{33}$ 	&	$2^{32}$ 	&	$2^{33}$	\\ 
 T	  																		&	$2^{32}$ 	&	$2^{34}$ 	&	$2^{32}$ 	&	$2^{34}$ &	$2^{34}$ 	&	$2^{34}$ 	&	$2^{35}$	\\ \hline \hline
-Precomputation time for file (hours)		&	13 	 			&	6.5 			&	36.7 \tnote{a}	&	7.3&	13 	 			&	9.2 \tnote{a} &	7.3		\\ \hline
-Time for attack	(hours)									&	6.7 			&	25.2			&	1.8			 	&	25	 		 &	6.43 			&	7.3 			&	36.7			\\ \hline
-Number of times correct key is found 		&	2 				&	1					&	2 				&	0 			 &	0 	 			&	1   			&	36.7			\\ \hline
-Time of first correct key (hours)				&	1.2 			&	24.0			&	0.6	 		 	&	-		 		 &	- 	 			&	4.1 			&	36.7			\\ \hline
-Number of times false key is found			&	0 				&	1 				&	1					&	5				 &	0 	 			&	2 				&	36.7			\\ \hline
-Number of false alarms									&	33009			&	66684			&	33304			&	2076		 &	6697 			&	531				&	36.7			\\ \hline
+Precomputation time for file (hours)		&	13 	 			&	6.5 			&	36.7 \tnote{a}	&	7.3&	13 	 			&	9.2 \tnote{a} &	13		\\ \hline
+Time for attack	(hours)									&	6.7 			&	25.2			&	1.8	 \tnote{b}	&	25 &	6.43 \tnote{b}&	7.3 \tnote{b}	&	12.8 \tnote{b}	\\ \hline
+Number of times correct key is found 		&	2 				&	1					&	2 				&	0 			 &	0 	 			&	1   			&	2				\\ \hline
+Time of first correct key (hours)				&	1.2 			&	24.0			&	0.6	 		 	&	-		 		 &	- 	 			&	4.1 			&	9.2			\\ \hline
+Number of times false key is found			&	0 				&	1 				&	1					&	5				 &	0 	 			&	2 				&	2				\\ \hline
+Number of false alarms									&	33K 			&	66.6K			&	33.3K			&	2K			 &	67K 			&	0.5K			&	134K		\\ \hline
 \end{tabular}
 \smallskip
 \begin{tablenotes}
 	\item[a] The precomputation for these parameters was done on a Dell personal computer with a 2GHz Intel Centrino processor and running Ubuntu OS through LiveCD.
+	\item[b] The attack is run on the \textit{glint} servers at DTU which are less busy as compared to the \textit{gray} servers used for the other attacks. Hence, the time taken for these attacks is less as compared to other attacks.
 \end{tablenotes}
 \end{threeparttable}
 \end{center}
 \label{tab:hellman-attack-results}
 \end{table}
 
-The following comments are made for these results.
+The following comments can be made based on these results.
 \begin{enumerate}
-\item 
-\item 
+\item The time for the attack and the time for precomputation are as expected for the same machines. On the Dell machine, precomputation of $2^{32}$ takes around 9.2 hours while precomputation of $2^{34}$ takes around 4 times more than that i.e.~36.7 hours. Similarly, the attack time on the two machines \textit{glintXX} and \textit{grayX} are seen to be proportional, as expected.
+
+\item It is clearly seen that as the number of tables is increased by keeping $P$ constant, the number of false alarms observed is drastically reduced. For $2^{2}$ tables, the number of false alarms is around 33000, while they reduce to around 2000 for $2^{6}$ tables. Hence, false alarms reduce by the factor by which the number of tables is increased. Further, for $r$ = $2^{8}$ only 531 false alarms are observed. Hence, it is concluded that the number of tables should be kept high.
+
+\item Having more number of tables does not guarantee the key to be found. We still see two cases in which the correct key is not found inspite of choosing the parameters according to the general tradeoff equation.
+
+\item The parameter combination $2^{14}$-$2^{10}$-$2^{8}$-$2^{16}$ provides the best result, in terms of the number of false alarms and the time for the attack \footnote{Attack time is less as a faster machine is used; but even with the slower machine (\textit{grayX}) the time would be around 25 hours, which is okay}. Ofcourse, the downside of this parameter combination is the memory requirement which is $2^{22}$ and is the most among the other parameter combinations. $2^{22}$ is not a very high requirement for memory though. If we intend to reduce $M$ and still keep $r$ the same, in order to have same $P$ we would need to increase $t$. And increasing $t$ implies increasing the attack time, which might not be a good tradeoff. 
+
+\item On a closing note, the advantage of selecting the general tradeoff equation over the tradeoff by Biryukov and Shamir to vary the parameters can be seen. In the latter case we would have to fix $r$ according to $D$ and thus we would not have been able to observe the results by varying $r$ independently. The former tradeoff gives us this flexibility and we can make some important observations based on them. 
 \end{enumerate}

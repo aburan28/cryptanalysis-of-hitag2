@@ -11,6 +11,7 @@ int main()
 	state = 0x5d8f8b67723cULL;
 	printf("Current State: %llx\n", state);
 
+	printf("Current State: %llx\n", rev64(state));
 	for(;i < 48; i++) hitag2_prev_state(&state);
 
 	printf("Current State: %llx\n", state);

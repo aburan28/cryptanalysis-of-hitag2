@@ -1,3 +1,34 @@
+\chapter{Check for irreducible polynomial in Matlab}
+\label{app:irreducible-polynomial}
+Following is the input to Matlab.
+ 
+\begin{lstlisting}[frame=tb]
+p = [1,0,1,1,0,0,1,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,1,1,0,
+		0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,1,1,1]
+
+p =  Columns 1 through 12
+
+     1  0  1  1  0  0  1  1  1  0  0  0
+
+  	 Columns 13 through 24
+
+     0  0  0  0  1  0  0  0  0  0  1  1
+
+     Columns 25 through 36
+
+     0  0  1  0  0  0  1  0  0  0  0  0
+
+     Columns 37 through 48
+
+     0  0  0  0  0  1  1  1  0  0  1  1
+
+     Column 49
+
+     1
+\end{lstlisting}
+
+No decisive output is observed from Matlab for approximately 24 hours. Hence, program is terminated.
+
 \chapter{HiTag2 library}
 \label{app:hitag2-lib}
 Following is the implementation of the HiTag2 stream cipher in C language.
@@ -122,3 +153,71 @@ u64 hitag2_find_key(u64 initial_state, const u32 serial,
 	return key;
 }
 \end{lstlisting}
+
+\chapter{C Program to check period of random number generator}
+\label{app:random-function}
+
+The following listing contains the C program for checking the period of a random generator function. The function \textit{get\_random\_2} introduced in section \ref{sec:keystream-attack-impl} is used in the listed program. However, this can be changed to check the desired function. 
+
+The implementation checks for repetition of three consecutive random numbers. We believe checking three numbers is sufficient to identify a the repeating sequence.\\
+
+\begin{lstlisting}[frame=tb]
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <math.h>
+
+#define u8			unsigned char
+#define u32			unsigned int
+#define u64			unsigned long long
+
+int main(void)
+{
+	time_t seconds;
+	u64 runtime = 0;
+	u64 i = 0;
+	u64 first_random = 0;
+	u64 second_random = 0;
+	u64 third_random = 0;
+
+	u64 random = 0;
+
+	time(&seconds);
+	srand(seconds);
+
+	runtime = pow(2,32);
+	
+	first_random = get_random_2(48);
+	second_random = get_random_2(48);
+	third_random = get_random_2(48);
+	
+	printf("\nFirst random number: %llx", first_random);
+	printf("\nSecond random number: %llx", second_random);
+	printf("\nThird random number: %llx", third_random);
+	
+	for(i = 0; i < runtime; i++)
+	{
+		random = get_random_2(48);	
+		
+		if(random == first_random)
+		{
+			printf("\n\n Reoccurence: %llu\n", i);
+			random = get_random_2(48);
+
+			if(random == second_random)
+			{
+				random = get_random_2(48);
+				
+				if(random == third_random)
+				{
+				 printf("\n\n Repetition of 
+				     random number! 
+				     Period: %llu\n", i);
+				 break;
+				}
+			}
+		}
+	}
+}			
+\end{lstlisting}
+

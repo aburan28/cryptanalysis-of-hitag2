@@ -278,7 +278,7 @@ It is possible to check the period of the LFSR and ascertain if HiTag2 LFSR give
 
 We encoded the polynomial in Matlab, as shown in appendix \ref{app:irreducible-polynomial}. The program was run for a day without any decisive output. If the polynomial could be factorized by a small polynomial, the program would have shown the result and terminated; but this did not happen. Hence, we conclude that there are no small factors in the HiTag2 LFSR polynomial. On a more positive note, we believe that the polynomial is maximal, and we continue the rest of the thesis under this particular assumption.
 
-The HiTag2 library is provided in appendix \ref{app:hitag2-lib}. The functions that have been taken from the original code \cite{hitag2-code} are given below.
+The HiTag2 library is provided in appendix \ref{app:hitag2-lib}. We have taken the original implementation at \cite{hitag2-code} and added certain functions to that. The functions that exist in the original code are given below.
 \begin{itemize}
 \item \textit{hitag2\_init}, performs setup and initialization of the internal state
 \item \textit{f20}, gives the output bit from the internal state \footnote{This function has been renamed to \textit{hitag2\_output} in our implementation}
@@ -286,12 +286,10 @@ The HiTag2 library is provided in appendix \ref{app:hitag2-lib}. The functions t
 \item \textit{hitag2\_byte}, gives one byte of output with the most-significant bit representing the latest output bit
 \end{itemize}
 
-We have added following helper functions in our implementation.
+The following helper functions have been added to the original set of functions.
 \begin{itemize}
 \item \textit{hitag2\_prefix}, returns the prefix of the internal state; length of prefix is passed as parameter
 \item \textit{hitag2\_prev\_state}, gives the state occuring previous to the current state
 \item \textit{hitag2\_next\_state}, gives the state occuring next to the current state
 \item \textit{hitag2\_find\_key}, gives the key corresponding to the initial state
 \end{itemize}
-
-The implementation of HiTag2 assumes a little-endian byte order and a big-endian order of bits inside the byte. Hence say when the IV is transmitted from the car controller to the car key, it is trasmitted in the little-endian byte order. 
