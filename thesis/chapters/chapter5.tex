@@ -1,6 +1,7 @@
 \chapter{Conclusion}
+\label{chap:conclusion}
 
-\section{Comparison of Hellman and rainbow table}
+\section{Comparison of Hellman and rainbow tables}
 \label{sec:compare-hellman-rainbow}
 
 To use Hellman tables with stream ciphers, Biryukov and Shamir proposed changes in the table structure by taking $D$ into consideration. The original idea of rainbow table has been proposed for block ciphers and thus similar changes in the table structure are needed to use them with stream ciphers. The paper \cite{erguler2005nct} by Erguler and Anarim is the only work in this direction, to be best of our knowledge. The tradeoff described in the paper was designed independently by us. Only later it came to our knowledge that the idea has already been published by Erguler and Anarim.
@@ -18,7 +19,7 @@ P			&	Mt/D	&	Mt/D			&	Mt/D				& Mt/D					\\
 T			&	$t^2$	&	$t^2D/2$	&	$t^2/2D$		& $t^2/2$				\\ \hline
 \end{tabular}
 \end{center} 
-\caption{Options for modifying parameters $M$ and $t$ for rainbow tables}
+\caption{Modifiying $M$ and $t$ to derive efficient rainbow table for stream ciphers}
 \label{tab:parameters-rainbow-table}
 \end{table}
 
@@ -38,7 +39,7 @@ For comparing the performance of Hellman and rainbow tables using their tradeoff
 
 \begin{table}[ht!]
 \begin{center}
-\caption{Parameters for comparison of Hellman and rainbow table}
+\caption{Parameters for comparison of Hellman and rainbow tables}
 \begin{tabular}{|c|c c||c c|}
 \hline
 			& \multicolumn{2}{c||}{$M = 2^{32}$, $t = 2^{16}$, $D = 2^{14}$} 	& \multicolumn{2}{c|}{$M = 2^{31}$, $t = 2^{17}$, $D = 2^{16}$}	\\ \hline \hline
