@@ -1,135 +1,8 @@
-\chapter{Time-memory tradeoff}
-
+\chapter{Babbage-Golic time-memory tradeoff}
+\label{chap:bgtmto}
 \indent \textbf{\textit{Summary.}} In this chapter, we introduce the idea of time-memory tradeoff attacks, and describe the Babbage-Golic tradeoff attack on stream ciphers. Two broad scenarios are considered for the attacks: first, in which a long keystream is available to the attacker, and second, in which several short keystreams are available. Further, the first attack is divided into two categories depending on the precomputation phase in the attacks: one with random while the other with non-random precomputation. All these scenarios are implemented in the C language and the results obtained on running these attacks are presented. 
 
 An important concept used in the analysis of most of these scenarios and also the attacks presented in later chapters, is called the birthday paradox. Briefly, we explain the idea and emphasize on the important relations derived using it. In addition, hash tables are introduced which is used as the data structure for all the attacks. 
-
-\section{Time-memory tradeoff attack}
-
-\noindent \textit{\textbf{Brute force attack.}} A brute force attack on a block cipher would be to try out all the possible keys which could be used to encrypt certain known (or chosen) or unknown plaintext. The key which decrypts the ciphertext to give the known plaintext or most sensible plaintext (if it is unknown) is then the original key. Though very simple in theory, brute force attacks require a very long time to break ciphers in practice. There is no storage required during this attack, but the time required to break the cipher is very long. Though modern computers have advanced tremendously in their computational speed over the last some years, design of new ciphers have incorporated longer key sizes to protect against brute force attacks, making brute forcing even more impractical.
-
-For example, in order to break a 32 bit key, we would need to carry out $2^{32}$ decryptions on available ciphertext. Using a 2GHz processor (which is quite common for personal use), we can run $2^{31}$ clock cycles in one second (as 1 giga is $2^{30}$). Since one encryption would take a fixed number of clock cycles, say a modest $2^3$ cycles, by simple calculation, we can have a brute force attack on the cipher in $2^4$ seconds, or 16 seconds. As can be seen, this is a dismally weak key size. For a key size of 48 bits, the brute-force would take $2^{20}$ seconds which is 1048576 seconds, or just more than 12 days. In modern ciphers, the key sizes starting from 128 bits in length are considered safe. AES uses a minimum key size of 128 bits, which can be extended to use 256 bits. So, just to give a feeling of the security of a 128 bit cipher, it would take an order of $10^{30}$ years to brute force the key.\\
-
-\noindent \textit{\textbf{Precomputed ciphertext attack.}} Brute-force attacks are just one side of the coin. The other way of breaking a cipher in a known (or chosen) plaintext attack is to precompute ciphertexts corresponding to all the possible keys and to store the (key, ciphertext) pair in a table in memory. During the attack, the attacker just needs to do a table lookup for the available ciphertext to find the corresponding key. Again, the concept is quite straightforward theoretically, but it also faces the same problem as brute-force attacks, but with a different parameter. A table lookup takes constant time (if efficient hash tables are implemented), so practically the attack time is very less. But, the size of precomputed data is tremendous and the attacker would need huge amount of memory to store this data for the attack phase. 
-
-Let us again take the weaker case of a 32 bit key, which is far from use in today's ciphers. For each of $2^{32}$ possible keys, we need to store 32 bits of key and 32 bits of ciphertext (assuming the plaintext is 32 bits, which could very well be more). This amounts to 64 bits or 8 bytes of data for every possible key. $2^{32}$ such entries would require $2^{32} \times$ 8 bytes which is 32 gigabytes. For a random access memory, 32 GB is a high requirement. For higher key sizes, this requirement gets much away from practicality.\\
-
-\noindent \textit{\textbf{In between time and memory.}} The technique of time-memory tradeoff or TMTO is a way between the above two extreme and practically difficult ideas. TMTO solves our problem by using memory in order to reduce the time for attack, bringing the requirements for time and memory within  practical domains. Before we go into more details of the working of time-memory tradeoff attacks on ciphers, we take a simple example of a general application of such tradeoffs. The example has been taken from \cite{stamp2003out}. \\
-
-\noindent \textit{\textbf{Simple example.}} Consider the problem of finding the number of \textbf{1}'s in the binary representation of a non-negative integer $x$ (which takes $4$ bytes). The simplest algorithm to solve this problem would over 32 operations, pick the value of the least significant bit, add it to a variable \textit{sum} and shift $x$ rightwards by one bit. Variable \textit{sum} would then hold the desired result. The pseudo-code for such an algorithm is shown below.
-
-\begin{lstlisting}[frame=tb]
-/* ones_count(x) */
-sum = 0
-for i = 0 to len(x) - 1
-    sum = sum + (x >> i) & 1
-next i
-return sum
-\end{lstlisting}
-
-Here, $>>$ denotes the right shift operation and \& denotes bitwise binary \emph{and} operation. The algorithm performs 32 operations (which is based on the length of the integer) and has nearly no memory requirement. The other approach to solve this problem would be to precompute and store the answer for each of the possible $2^{32}$ integers in memory. This way, just one memory lookup is required to find the result for $x$. But in this case, we need to have a memory of the order of $2^{32}$. 
-
-One middle way between both these approaches would be to store the \textit{sum} for all possible 8 bit numbers, rather than doing it for all 32 bit numbers. Then the memory required would be of the order of $2^{8}$. To find the answer for $x$, we break the integer into blocks of 8 bits, and add the stored \textit{sum} for each of the blocks, by looking them up in the table. If $y_1$, $y_2$, $y_3$ and $y_4$ are the four blocks, such that
-
-\begin{center}
-$y_4$ = ($x$ $\&$ $0$xFF)\\
-$y_3$ = ($(x >> 8)$ $\&$ $0$xFF)\\ 
-$y_2$ = ($(x >> 16)$ $\&$ $0$xFF)\\ 
-$y_1$ = ($(x >> 24)$ $\&$ $0$xFF)\\
-\end{center}
-
-and if p is the array which stores the \textit{sum} for all the 8 bit numbers, then the desired \textit{sum} for $x$ is calculated by
-
-\begin{center}
-$sum = p[y_1] + p[y_2] + p[y_3] + p[y_4]$\\
-\end{center}
-
-Four operations are performed in this case, as four lookups are made to the precomputed array $p$. This is just one way of realizing the time-memory tradeoff. If the algorithm stores 4 bit blocks, with their corresponding \textit{sum}, then the number of operations would be eight. Hence the optimal combination of memory and time can be chosen based on the resources at hand and the application. 
-
-So, it is easy to see the advantage gained from tradeoff schemes as compared to schemes based on extreme requirements for time or memory. 
-
-\section{Background}
-
-In this section, we provide some building blocks which would be used throughout the thesis. We first introduce the idea of \textit{birthday paradox} and then introduce \textit{hashtables}.
-
-\subsection{Birthday paradox}
-\label{sec:bday-paradox}
-
-\indent \textit{\textbf{General birthday paradox.}} Birthday paradox (or birthday problem or surprise, as it is also called), refers to the fact that in a room of 23 people, two people have the same date of birth with a probability greater than one-half. While there are 365 different possible birthdays in a year (excluding the leap year), the birthday paradox looks surprising and non-intuitive at the first glance. But, the figure has been derived from probability theory and is proved. 
-% IMP: need a reference here %
-
-A generalized definition of the birthday paradox for can be formulated as follows: given $n$ random integers where each could have $m$ different possible values, the probability that two of them would have the same value is given by the following equation \cite{menezes}.
-\begin{center}
-$P(m,n)$ $\approx$ $1 - e^{-{n^2}/{2m}}$
-\end{center}
-If we replace $m$ by 365, and $n$ by 23 in the above equation, then it can be checked that $P(365,23)$ $\approx$ $0.507$. In addition, $P(365,n)$ rapidly increases as $n$ increases, and the chances of two people having the same birthday becomes nearly $99 \%$ for $n$ = 57. If $m$ is considered to be very large, such that $m \rightarrow \infty$, then the above equation can be reduced for $P(m,n) \approx 1$, giving us the following condition. 
-\begin{align}
-\label{eq:birthday-paradox} n = \sqrt{\pi/2 \times m}
-\end{align}
-
-Equation \ref{eq:birthday-paradox} represents the condition for a set of $n$ numbers with $m$ different possible values to have two occurences of a same number. This general birthday paradox is used in cryptography in determining collisions in hash functions. Consider a hash function $H$ with $h$ bits of output. The total number of different outputs the function could produce is $2^{h}$. A collision is said to occur when the hash function produces the same output for two different inputs, i.e.~$H(x_1)$ = $H(x_2)$ when $x_1$ $\neq$ $x_2$. Then, according to the birthday paradox, the chances that a collision would occur are close to $100 \%$ after the hash function has produced outputs for $2^{h/2}$ random inputs (if we have $m = 2^h$ and we ignore the factor of $\pi/2$).\\
-
-\noindent \textit{\textbf{Variant of the birthday paradox.}} A variant of the birthday paradox (\cite{GeneralizedAttack}) is especially more interesting to us, since it is directly used in TMTO attacks. If we consider two groups of people now instead of one, then just 17 people are required to be present in each group, so that two people belonging to different groups share the same birthday.  
-
-We can generalize the above situation in the following way. We have two groups of random elements each having different number of elements, say $n_1$ and $n_2$. The elements are non-negative integers, with both the groups having the same range $m$ for the integers. According to \cite{menezes}, the probability of at least one coincidence in such a case is given by,
-\begin{center}
-$P(m, n_1, n_2) = 1 -(1 - n_2/m)^{n_1}$
-\end{center}
-For the condition that $m \rightarrow \infty$, the above relation is reduced to,
-\begin{center}
-$P(m, n_1, n_2)$ $\approx$ $1 - e^{-{n_{1} n_{2}}/{m}}$
-\end{center}
-In order to find the condition for 100\% chances of a coincidence, we have $P(m, n_1, n_2) \approx 1$ and we take the limit $m \rightarrow \infty$ for the above equation. The following condition is then derived.
-\begin{align}
-\label{eq:n1-n2-m-condition} n_1 \times n_2 = \pi/4 \times m
-\end{align}
-If we replace $m$ by 365 and impose $n$ = $n_1$ = $n_2$, then we get $n$ = 16.93 $\approx$ 17. Hence, atleast 17 people must be present in a room if the chances are 100\% that two people having the same birthday are present in both the groups. 
-
-We further ignore the factor of $\pi/4$ in equation \ref{eq:n1-n2-m-condition} to get a simpler condition.  
-\begin{align}
-\label{eq:bday-paradox2} n_1 \times n_2 \geq m
-\end{align}
-Equation \ref{eq:bday-paradox2} is the birthday paradox we would use in the analysis of most of the tradeoff attacks on HiTag2.
-
-% Add the case of handbook statement, with or without replacements?
-% also briefly how this paradox would be applied to the TMTO?
-
-% -------------
-% what the simple birthday paradox is %
-
-% generalize it in terms of n %
-
-% introduce birthday attack, define scenario (then take hash as example) %
-
-% what is the variant of birthday paradox %
-
-% meet in the middle attack on DES by diffie hellman %
-% a TMTO attack would always use variant of birthday attack %
-
-% Question - How can the variant of the birthday problem be derived from the birthday problem?
-% Question - Probability of one-half on 23, or is it one? root(pi * m / 2)
-% Question - Is meet in the middle attack a TMTO attack? (I think NO!)
-% --------------
-
-\subsection{Hash tables}
-\label{sec:hash-tables}
-
-
-%Hash tables are used during the precomputation phase as a data structure to store the (prefix, state) pairs in memory. The advantage that hash tables %offer is in terms of the search time. The search time provided by hash tables in the best case and the average case is close to $O(1)$, while the %worst case search time is $O(n)$ occurring with very less probability. A very important role is played by the hash function chosen for the table. 
-
-Hash tables are data structures designed with the purpose of searching through data in constant time. Consider a data structure $d$ in memory containing a huge set of elements stored one after the other. Given this data structure, we want to search an element $e$ in $d$. The only way to perform this action is to go through each element in $d$ and check if $e$ matches with that element. The number of operations in the worst case is equal to the number of elements in $d$. Hence, as $d$ increases, the worst case search time increases. A hashtable $h$ reduces the dependency of search time on the size of the data structure, and using $h$ as the data structure, $e$ can be searched in constant time.
-
-Every entry in hashtable is a pair of elements (instead of one element); one element is the \emph{value} to be stored, and the other element is a unique identifier for the value and called the \emph{key}. The hashtable is an array of such (key, value) pairs. In a normal array, pairs would be stored starting from the index 0 of the array, with one pair at each index. But in a hashtable pairs are stored in an order which makes searching more efficient at a later stage. 
-
-The index at which a particular pair is stored depends on the key and additionally on a \textit{hash function}. A hash of the key is computed and reduced to the domain of the indices (if required). The pair is then stored at that index. While searching a value in the hashtable, the key of the value needs to be provided. Hash of the key is computed and thus the index of the pair is known using which the value is retrieved from the array. As a result for searching, each element of the table is not checked. If the value being searched exists in the hashtable, then a non-null pair is returned for the key, otherwise a null pair is returned. Ofcourse, this holds only if the key is not an identifier for any other value.
-
-But this is just the ideal case, and there is the problem of collision which needs to be considered. Collision occurs if the same hash value (thus the same index) is computed for two different keys. In such a case, two different (key, value) pairs would contend to be stored at the same index, thus colliding. 
-
-Several proposals have been made to avoid the problem of collision. The most popular among them are linear probing and separate chaining. We discuss separate chaining here, since we have used this scheme for the results. The basic idea behind separate chaining is that if there is a collision at a particular index, a separate chain holding all the pairs for that index be created. A reference to the chain is stored at the colliding index, instead of a pair. While searching, index is computed as before and the reference to the chain is taken from that index. The value is then searched through the entire chain by matching the key. As can be seen, searching through the separate chains takes more time which leads an increase in the overall time. But for the analysis in various attacks, we assume that hashtables provide us with search time which is more or less constant. 
-
-The implementation of the hash table for our results is done by Christopher Clark and taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
-
-In the further part of the thesis, we shall refer to key as hashkey and value as hashvalue. This is to avoid confusion of the secrey key with the key in the (key, value) pair. 
 
 \section{Babbage-Golic attack}
 \label{sec:bg-keystream-attack}
@@ -150,7 +23,7 @@ As discussed in section \ref{sec:psrg}, PRSG generates a long keystream using a 
 
 The keystream bits are represented by $k_0$, $k_1$ $\ldots$, $k_{m-1}$. The goal of the attacker is to find at least one internal state which occurs while the keystream is generated. The attacker could then move the PRSG forward to generate more keystream, in case the keystream is limited. The found internal state could also be used to run the PRSG backwards and find the initial state. From the initial state, finding the key is not a difficult task if the cipher algorithm and initialization parameters are known.\\
 
-\noindent \textit{\textbf{Prefix of the output sequence of states.}} If the current state of the PRSG is $S_r$, then an infinite output sequence can be generated by clocking the PRSG from that state. The first $p$ bits of this output sequence is called the \textit{prefix} of state $S_r$ and would be represented by the bits $k_r$, $k_{r+1}$ $\ldots$, $k_{r+p-1}$. A prefix is usually unique to the state if $p$ is greater than or equal to $n$ \cite{biryukov2000rtc}. If the size of the prefix is less than $n$, then there would be many states which generate the same prefix. 
+\noindent \textit{\textbf{Prefix of the output sequence of states.}} If the current state of the PRSG is $S_r$, then an infinite output sequence can be generated by clocking the PRSG from that state. The sequence of first $p$ bits of this output sequence is called \textit{prefix} of state $S_r$ and represented by the bits $k_r$, $k_{r+1}$ $\ldots$, $k_{r+p-1}$. A prefix is usually unique to the state if $p$ is greater than or equal to $n$ \cite{biryukov2000rtc}. If the size of the prefix is less than $n$, then there would be many states which generate the same prefix. 
 
 For example, consider state size of 48 bits and prefix of length 32 bits. The size of the state space and the prefix space are $2^{48}$ and $2^{32}$ respectively. Considering an equal (hence ideal) allocation of states to prefixes, every $2^{16}$ states would generate the same prefix. By increasing the prefix length, the probability of the prefix being unique to the state increases. If the prefix length is increased to 48 bits which is also the state size, then ideally every state generates a different prefix. An advantage of this property is taken in the BG attack. Later, as we shall see from experimental results, 48 bits of prefix are not sufficient for this to happen, while 56 bits are good enough.\\
 
@@ -173,7 +46,7 @@ In the paper \cite{biryukov2000ctm}, these parameters are introduced without the
 
 \noindent \textit{\textbf{Tradeoff equation.}} Let us assume that $n_1$ states are selected during the precomputation phase, while during the attack phase the PRSG traverses through $n_2$ states. $M$ is equal to $n_1$, since the size of the hashtable depends on the number of states stored. Similarly, the time to prepare the hashtable is proportional to $n_1$, hence the order of this time, or $P$, is $n_1$. As a result, $M$ = $P$ = $n_1$.
 
-The time taken for the attack or $T$ is the same as $n_2$. The amount of data available or the number of subsequences of length $n$ derived using the available keystream, must be the same as $T$. Hence, $D$ = $n_2$. The keystream should have a length of at least $(D + n - 1)$ bits in order to provide the required amount of data. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
+The time taken for the attack or $T$ is the same as $n_2$. The amount of data available or the number of subsequences of length $n$ derived using the available keystream, must be the same as $T$, hence $D$ = $n_2$. The keystream should have a length of at least $(D + n - 1)$ bits in order to provide the required amount of data. In such a case, the attacker would have exactly $n_2$ subsequences of length $n$ each to cover the attack time of an order $n_2$.
 
 Now we have a clear setting for applying equation \ref{eq:bday-paradox2} of the birthday paradox. In a set of $2^n$ states (ignoring that something like the trivial state exists at all), $n_1$ states are selected in precomputation and $n_2$ are selected during the attack. According to the variant of the birthday paradox we then have the following condition,
 \begin{align*}
@@ -432,10 +305,10 @@ Again, this is the best case probability and the actual probability would be les
 $P_2$ = $2^{32}/2^n$
 \end{center}
 The overall probability of finding the correct state is given by $P$, such that
-\begin{center}
-$P$ = $P_1 \times P_2$\\
-$P$ = $M/2^{n}$\\
-\end{center}
+\begin{align*}
+P &= P_1 \times P_2\\
+P &= M/2^{n}
+\end{align*}
 This is the probability of the correct key being found when we have one tag. Hence, for the probability to be 1, the runtime of the attack phase must be of an order of atleast $2^{n}/M$, so that we have $2^{n}/M$ tags. Hence, we can say that
 \begin{align*}
 T &\geq 2^{n}/M\\
