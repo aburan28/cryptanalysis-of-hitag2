@@ -42,7 +42,7 @@ Reversing the internal state can be performed since the update function of HiTag
 
 In the HiTag2 library, the functions which implement these two actions are \textit{hitag2\_prev\_state} and \textit{hitag2\_find\_key}. The function \textit{hitag2\_prev\_state} basically performs the reverse action of the update function and is called $i$ times to revert to the initial state. The \textit{hitag2\_find\_key} function returns the key if provided with this initial state and the known serial ID and IV.
 
-It is important to note that these last two actions are common to all attacks on stream ciphers discussed in this thesis. So for further attacks, we shall only concentrate on how the current state is found from the known keystream. This is primarily the goal in attacks on stream ciphers: to find an internal state.\\
+It is important to note that these last two actions are common to all attacks on stream ciphers discussed in this thesis (except for the attack discussed in section \ref{sec:bg-tags-attack}). So for these attacks, we shall only concentrate on how the current state is found from the known keystream. This is primarily the goal in attacks on stream ciphers: to find an internal state.\\
 
 \noindent \textit{\textbf{Parameters in the attack.}} We introduce certain important parameters here \cite{biryukov2000ctm} which are used to represent a general tradeoff attack like the BG attack. These parameters would help us in understanding where an ideal line be drawn between memory and time requirements during the precomputation and attack phases, so that the attack is feasible (say, with respect to a personal computer). These are general parameters and are used for describing all attacks in the thesis. 
 
@@ -109,15 +109,17 @@ s_{2} \\
 s_{1}
 \end{bmatrix}$
 \end{center}
-The topmost row of $U$ represents the tap sequence and contains a `1' at positions representing the tap bits, and a `0' otherwise. This row is multiplied with the current state to give the new bit (the leftmost bit) of the LFSR. The remaining rows of $U$ are setup in such a way that the remaining bits of the LFSR are shifted one place rightwards, as indicated by the update function of HiTag2 in figure \ref{fig:hitag2-update-function}. 
 
-It must be noted that the indexing in the matrix is the same as that in the LFSR. Thus, the leftmost bit in the topmost row of $U$ represents the $48^{th}$ bit of the LFSR, and the rightmost bit represents the $1^{st}$ bit. In addition, in the state matrices $S_{current}$ and $S_{next}$, the topmost bit represents the $48^{th}$ bit of LFSR and the bottommost bit represents the $1^{st}$ bit. The matrix $U$ for HiTag2 is shown in figure \ref{fig:hitag2-transition-matrix} as an example.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=5in]{./figures/hitag2-update-function.png}
 	\caption{Update function $U$ in HiTag2}	
 	\label{fig:hitag2-update-function}
 \end{figure}
+
+The topmost row of $U$ represents the tap sequence and contains a `1' at positions representing the tap bits, and a `0' otherwise. This row is multiplied with the current state to give the new bit (the leftmost bit) of the LFSR. The remaining rows of $U$ are setup in such a way that the remaining bits of the LFSR are shifted one place rightwards, as indicated by the update function of HiTag2 in figure \ref{fig:hitag2-update-function}. 
+
+It must be noted that the indexing in the matrix is the same as that in the LFSR. Thus, the leftmost bit in the topmost row of $U$ represents the $48^{th}$ bit of the LFSR, and the rightmost bit represents the $1^{st}$ bit. In addition, in the state matrices $S_{current}$ and $S_{next}$, the topmost bit represents the $48^{th}$ bit of LFSR and the bottommost bit represents the $1^{st}$ bit. The matrix $U$ for HiTag2 is shown in figure \ref{fig:hitag2-transition-matrix} as an example.
 
 \begin{figure}[h!]
 	\centering
@@ -181,7 +183,7 @@ A random function is required to select states for the hashtable in the random p
 \begin{enumerate}
 \item The output of the $rand()$ function is 16 bits on the machine we used\footnote{On a different machine, we found the output to be 32 bits of length}. This is greatly insufficient for our purpose, since we require random numbers of length 48 bits.
 \item If a modular 2 of the random number is taken, then the random bit sequence starts repeating after approximately $2^{17}$ bits. This was in fact our first idea for generating states i.e.~using the the modular 2 of next random number as a bit for the state, thus generating the state over 48 operations. But with this, we could clearly see that only approximately $2^{17}$ different states can be generated.
-\item The 16 bit output of $rand()$ function starts repeating after $2^{31}$ random numbers. But in one period, the random numbers reoccur. This is obvious since the output has a period $2^{31}$ whereas the output space size is just $2^{16}$. So, we implemented a wrapper using $rand()$, such that the 16 bits of the output are left shifted by one bit and \textit{xor}'ed with the next output, this repeating 32 times to generate 48 bits. The code snippet for this is shown below. Here, u64 represents a 64 bit unsigned interger and u32 represents a 32 bit unsigned interger.
+\item The 16 bit output of $rand()$ function starts repeating after $2^{31}$ random numbers. But in one period, the random numbers reoccur. This is obvious since the output has a period $2^{31}$ whereas the output space size is just $2^{16}$. So, we implemented a wrapper using $rand()$, such that the 16 bits of the output are left shifted by one bit and \textit{xor}'ed with the next output, this repeating 32 times to generate 48 bits. The code snippet for this is shown below. Here, u64 represents a 64 bit unsigned integer and u32 represents a 32 bit unsigned integer.
 \begin{lstlisting}[frame=tb]
 u64 get_random_2(u32 bits)
 {
@@ -264,7 +266,7 @@ The following observations can be made from the above results.
 \item In column 5 of table \ref{tab:keystream-attack-results-key2}, $K_2$ is found even though the product of $M$ and $T$ is less than $2^{48}$. It is thus clear that equation \ref{eq:tmto-non-random} just indicates the worst case relation between $M$ and $T$. Thus, if the product $M \times T$ $\geq$ $2^{48}$, we can be certain that the key would be found. If $M \times T$ $<$ $2^{48}$, then we cannot be certain. In this particular case, $K_2$ is found. But, another combination of $M$ and $T$ shown in column 6 exemplifies this conclusion as $K_2$ is not found in this case.
 
 \item If the product $M \times T$ = $2^{48}$ for the non-random precomputation, then the correct key is found exactly once. However, if the product $M \times T$ = $2 \cdot 2^{48}$ (by doubling either of $M$ or $T$), then the correct key is found exactly two times. Also, the time between the second match and the first match of the key is precisely $T/2$. For the key $K_1$, output from the attack program for parameters in column 10 is shown below. The point to note here is the percentage of the worst case time for the two matches; they differ precisely by 50\%. 
-
+\newpage
 \begin{lstlisting}[frame=tb]
 Match Found! 
 Current State: eb444bbc2057  Prefix: d249629ec6a571
@@ -292,6 +294,7 @@ TIME for attack: 221
 
 \end{enumerate}
 
+\newpage
 \section{Babbage-Golic attack for short keystream}
 \label{sec:bg-tags-attack}
 
@@ -378,5 +381,5 @@ As discussed before, we expect $P_1$ to be less than the calculated value. But f
 
 \item If the time for preparing the hashtable in this attack is compared with the same during the TMTO keystream attack using non-random precomputation (results in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2}), then it is seen that the former is slightly less than the latter. This is due to the fact that here we are dealing with 32 bit prefixes, while in the keystream attack we computed prefixes of length 48 bits. The result is that the hashtable is prepared quickly in this case. 
 
-\item The number of times the correct key is found corresponds to different tags being matched in the hashtable on all occasions. The case of a tag (corresponding to the correct key) repeating and thus giving the correct key more than once does not take place. If such a case occured, then the key is counted as being found just once and not twice. For example, for column 6 in the table, correct key is found four times arising out of four different tags matching in the hashtable.
+\item The number of times the correct key is found corresponds to different tags being matched in the hashtable on all occasions. The case of a tag (corresponding to the correct key) repeating and thus giving the correct key more than once does not take place. If such a case occurred, then the key is counted as being found just once and not twice. For example, for column 6 in the table, correct key is found four times arising out of four different tags matching in the hashtable.
 \end{enumerate}
