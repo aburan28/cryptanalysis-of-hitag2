@@ -3,7 +3,7 @@
 
 \indent \textbf{\textit{Summary.}} In sections \ref{sec:bg-keystream-attack} and \ref{sec:bg-tags-attack}, we described two TMTO attacks designed particularly for stream ciphers. They take into account two set of states: one set computed during the precomputation phase, and the other set containing states traversed during the attack phase. A common state is desired to occur between these two sets, and the parameters of the attack are chosen in order to have high chances of this occurence.
 
-The attacks we describe in this and the next chapter are different from these two attacks. These attacks were originally designed for block ciphers. By making certain changes to the attack schemes, tradeoff attacks for stream ciphers are proposed. The Hellman attack is the one we consider in this chapter. First, the original attack for block ciphers is described. Then using this, Biryukov and Shamir attack is described for stream ciphers with their tradeoff equation. Further, we propose a general tradeoff equation for the attack and present results from the implementation using this general tradeoff.
+The attacks we describe in this and the next chapter are different from these two attacks. These attacks were originally designed for block ciphers. By making certain changes to the attack schemes, tradeoff attacks for stream ciphers are proposed. The Hellman attack is the one we consider in this chapter. First, the original attack for block ciphers is described. Then using this, Biryukov and Shamir attack is described for stream ciphers with their tradeoff equation. Further, we propose a general tradeoff equation for the attack and present attack results for parameters selected according to this general tradeoff equation.
 
 \section{Hellman tables for block ciphers}
 
@@ -16,12 +16,12 @@ A block cipher is an encryption algorithm, which takes in a plaintext block of $
 	\label{fig:block-cipher}
 \end{figure}
 
-We first present the idea of the attack under certain ideal assumptions. Later we build upon this idea by considering the practical problems and their mitigation in a more practical attack.
+We first present the idea of the attack under certain ideal assumptions. Later we build upon this idea by considering the practical problems and their mitigation through a more practical attack.
 
 \subsection{The ideal TMTO attack}
-In the general scenario of an attack on block ciphers, the attacker has knowledge of a particular plaintext block $P$ and the corresponding ciphertext block $C$. The goal is to find $K$, using which the attacker can decipher ciphertext corresponding to unknown plaintext. For simplicity we assume the size of $K$ to be equal to the block size of $n$ bits. Then consider the following precomputation phase.\\
+In the general scenario of an attack on block ciphers, the attacker has knowledge of a particular plaintext block $P$ and the corresponding ciphertext block $C$. The goal is to find $K$, using which the attacker can decrypt the ciphertext corresponding to unknown plaintext. For simplicity we assume the size of $K$ to be equal to the block size of $n$ bits. Then consider the following precomputation phase.\\
 
-\noindent \textit{\textbf{Precomputation phase.}} An $n$ bit value is randomly selected using a uniform distribution (and denoted by $SP$ for a starting point). Using $SP$ as a key (denoted by $K_0$), encryption of $P$ is performed. The ciphertext obtained from this encryption is then used as the key (denoted by $K_1$) for the subsequent round of encryption of $P$. This procedure is iterated over a total of $t$ encryptions, yielding the key $K_t$ at the end. The key $K_t$ is called an end point, and is represented by $EP$. Moreover, the sequence of encryptions starting from $SP$ to $EP$ is called a \emph{chain} and is illustrated in the figure \ref{fig:block-cipher-single-chain}. Equations for the $t$ encryptions are also shown below. 
+\noindent \textit{\textbf{Precomputation phase.}} An $n$ bit value is randomly selected and denoted by $SP$ for a starting point. Using $SP$ as a key (denoted by $K_0$), encryption of $P$ is performed. The ciphertext obtained from this encryption is then used as the key (denoted by $K_1$) for the subsequent round of encryption of $P$. This procedure is iterated over a total of $t$ encryptions, yielding the key $K_t$ at the end. The key $K_t$ is called an end point, and is denoted by $EP$. Moreover, the sequence of encryptions starting from $SP$ to $EP$ is called a \emph{chain} and is illustrated in the figure \ref{fig:block-cipher-single-chain}. Equations for the $t$ encryptions are also shown below. 
 
 \begin{align*}
 & & K_0 &= SP & & & &\\
@@ -40,11 +40,11 @@ In the general scenario of an attack on block ciphers, the attacker has knowledg
 	\label{fig:block-cipher-single-chain}
 \end{figure}
 
-During the precomputation phase, the goal is to cover the entire key space such that all possible keys exist in the table structure. A single chain covers a total of $t$ distinct keys. Though the chain contains a total of $(t+1)$ keys starting from $K_0$ to $K_{t}$, only the first $t$ keys are useful during the attack phase. This we shall explain later, and for the moment we note that only $t$ keys are represented in the chain.
+During the precomputation phase, the goal is to cover the entire key space such that all possible keys are used atleast once to encrypt $P$. A single chain covers a total of $t$ distinct keys. Though the chain contains a total of $(t+1)$ keys starting from $K_0$ to $K_{t}$, only the first $t$ keys are useful during the attack phase. This we shall explain later, and for the moment we note that only $t$ keys are represented in the chain.
 
 An appropriate length $t$ of the chain is chosen so that no key repeats in the chain. Repetition is not desired since once a key reappears, subsequent keys would also repeat, adding no extra information to the chain. Hence, the size of the chain is restricted, and more than one chains are created instead. 
 
-Lets say $m$ more such chains are needed to cover all possible keys. If we consider the ideal case in which each chain contains $k$ distinct keys, then we have $m$ = $2^n/t$. For each chain, we select a random starting point $SP_j$ and compute the end point $EP_j$, for $1 \leq j \leq m$, as shown in figure \ref{fig:single-chain}. Only the pairs $(SP_j,EP_j)$ are then stored in a hashtable, with $EP_j$ as the hashkey and $SP_j$ as the corresponding hashvalue. All the chains representing such a table structure are illustrated in the figure \ref{fig:naive-hellman-table}.
+Lets say $m$ more such chains are needed to cover all possible keys. If we consider the ideal case in which each chain contains $t$ distinct keys, then we have $m$ = $2^n/t$. For each chain, we select a random starting point $SP_j$ and compute the end point $EP_j$, for $1 \leq j \leq m$, as shown in figure \ref{fig:single-chain}. Only the pairs $(SP_j,EP_j)$ are then stored in a hashtable, with $EP_j$ as the hashkey and $SP_j$ as the corresponding hashvalue. All the chains representing such a table structure are illustrated in the figure \ref{fig:naive-hellman-table}. We call this arrangement as the ideal case precomputation table structure. 
 
 \begin{figure}[ht!]
 	\centering
@@ -56,21 +56,21 @@ Lets say $m$ more such chains are needed to cover all possible keys. If we consi
 \begin{figure}[ht!]
 	\centering
 		\includegraphics[width=4.5in]{./figures/naive-hellman-table.PNG}
-	\caption{An ideal case Hellman table structure}	
+	\caption{An ideal case precomputation table structure}	
 	\label{fig:naive-hellman-table}
 \end{figure}
 
-We now compute $M$ and $P$ for the precomputation phase. The size of the memory required for storing all the chains would be of the order of $m$ as for each of the $m$ chains, a constant number of elements ($SP$ and $EP$) are stored. Thus we have $M$ = $m$. Also, as there are $mt$ encryptions performed in the entire table, the precomputation time is given by $P$ = $mt$.\\
+We now compute $M$ and $P$ for the precomputation phase. The size of the memory required for storing all the chains would be of the order of $m$ as for each of the $m$ chains, a constant number of elements ($SP$ and $EP$) are stored. Thus we have $M$ = $m$. Also, as there are $mt$ encryptions performed in the entire table, the precomputation time is given by $P$ = $mt$. The assumption in the ideal case then is that precomputation covers all the possible $2^n$ keys, hence $P$ = $2^n$.\\
 
-\noindent \textit{\textbf{Attack phase.}} It is easy to see that if the required key $K$ exists among the first $t$ keys in any chain, the ciphertext $C$ would also exist. The possible locations of $K$ thus in every chain are from $K_{j,0}$ to $K_{j,t-1}$. The key $K_{j,t}$ is not considered to be a possible key since it is not used in the encryption of $P$. Or in other words, the ciphertext obtained from $K_{j,t}$ is not computed and thus not stored in the chain, hence it cannot be matched with the available ciphertext $C$. So, there are $t$ possible values for $K$ per chain. Looking at this from the perspective of $C$, there are also $t$ possible values of ciphertext in every chain that can match with $C$. These $t$ possible matches correspond to each of the $t$ possible keys, and range from $K_{j,1}$ to $K_{j,t}$.
+\noindent \textit{\textbf{Attack phase.}} It is easy to see that if the required key $K$ exists among the first $t$ keys in any chain, the ciphertext $C$ would also exist in the chain. The possible locations of $K$ thus in every chain are from $K_{j,0}$ to $K_{j,t-1}$. The key $K_{j,t}$ is not considered to be a possible key since it is not used in the encryption of $P$. Or in other words, the ciphertext obtained from $K_{j,t}$ is not computed and stored in the chain, hence it cannot be matched with the available ciphertext $C$. So, there are $t$ possible values for $K$ in every chain. Looking at this from the perspective of $C$, there are also $t$ possible ciphertexts in every chain that can match $C$. These $t$ ciphertexts correspond to each of the $t$ keys and range from $K_{j,1}$ to $K_{j,t}$.
 
-The first possibility is that $C$ lies in $t$'th column of any one of the $m$ chains. This is true only if $C$ equals some $EP_j$ stored in the hashtable. In such a case $K_{j,t-1}$ is the key we are looking for. To find this key, we retrieve $SP_j$ corresponding to $EP_j$ from the hashtable and perform $(t-1)$ encryptions on $P$ using $SP_j$ as the key for first encryption followed by the ciphertext from one encryption as key for next encryption. After $(t-1)$ encryptions the desired key $K_{t-1}$ is obtained. 
+The first possibility is that $C$ lies in $t^{th}$ column of any one of the $m$ chains. This is true only if $C$ equals some $EP_j$ stored in the hashtable. In such a case $K_{j,t-1}$ is the key we are looking for. To find this key, we retrieve $SP_j$ corresponding to $EP_j$ from the hashtable and perform $(t-1)$ encryptions on $P$, using $SP_j$ as the key for first encryption followed by the ciphertext from one encryption as key for next encryption. After $(t-1)$ encryptions the desired key $K_{j,t-1}$ is obtained. 
 
-If $C$ does not match any of the $EP_j$, the next possibility is that $C$ lies in the $(t-1)$'th column of some chain. If this is indeed the case, then $X$ = $E_{C}(P)$ must match with some $EP_j$. On a match, we know that the key $K_{j,t-2}$ is the required key. To find out $K_{j,t-2}$, we retrieve $SP_j$ correspondng to the matched $EP_j$ and perform $(t-2)$ encryptions. 
+If $C$ does not match any of the $EP_j$, the next possibility is that $C$ lies in the $(t-1)^{th}$ column of some chain. If this is indeed the case, then $X$ = $E_{C}(P)$ must match with some $EP_j$. On a match, we know that the key $K_{j,t-2}$ is the required key. To find out $K_{j,t-2}$, we retrieve $SP_j$ correspondng to the matched $EP_j$ and perform $(t-2)$ encryptions. 
 
 If none of the $EP_j$ matches with the evaluated $X$, we explore the possibility of $C$ lying in the remaining columns, one by one.
 
-If $C$ exists in any chain, then the time taken to find $K$ is the same as the length of each chain. Assuming $C$ exists in the $r$'th column (such that  $2 \leq r \leq t$, then $X$ is computed by performing $(t-r)$ encryptions in the following way.
+If $C$ exists in any chain, then the time taken to find $K$ is the same as the length of each chain. Assuming $C$ exists in the $r^{th}$ column such that  $2 \leq r \leq t$, then $X$ is computed by performing $(t-r)$ encryptions in the following way.
 
 \begin{align*}
 & & K_r &= C & & & &\\
@@ -78,7 +78,7 @@ If $C$ exists in any chain, then the time taken to find $K$ is the same as the l
 2&. &K_{r+2} &= E_{K_{r+1}}(P) & & & &\\
 & & &\vdots & & & &\\
 (t-r) &. &K_{r + (t-r)} &= E_{K_{r + (t-r-1)}}(P) & & & &\\
-& & X &= K_{r + (t - r)} & & & &\\
+& & X &= K_{r + (t - r)} = K_t & & & &\\
 \end{align*}
 
 If $X$ matches an $EP_j$, then $(r-1)$ encryptions are performed to retrieve the key $K_{r-1}$. So in all, the number of encryptions performed is $(t-r) + (r-1)$ = $(t-1)$. Thus, the attack time is of the order of $t$ and our attack parameter $T$ = $t$.\\
@@ -111,17 +111,17 @@ $K_{i+1}$ = $f(K_i)$ = $R(E_{K_i}(P))$\\
 Suppose we have $m$ chains with $t$ keys each so far in the table. A new chain is then added to the table. The total number of keys existing in the table are $mt$ while $t$ more keys are added through the new chain. We are interested in restricting $m$ and $t$ so that there is no common key between the $m$ chains and the new chain. According to the variant of the birthday paradox, the product of the sizes of these two sets should be less than or equal to the keyspace size, in order to have a high probability that no common key exists. Then, we have 
 
 \begin{center}
-$mt \times t \leq 2^k$\\
-$mt^2 \leq 2^k$\\
+$mt \times t \leq 2^n$\\
+$mt^2 \leq 2^n$\\
 \end{center}
 
 If the $<$ condition is removed, then we have an upper bound on the value of $mt^2$ called the \emph{table stopping rule} and represented by the condition 
-$mt^2 = 2^k$. 
+$mt^2 = 2^n$. 
 
-In the ideal case described above, number of keys covered in the $m$ chains is $2^k$, which implies $mt = 2^k$. If we use this equation in estimating the value of $mt^2$, it can be seen that $mt^2$ is much greater than $2^k$. This is not allowed according to the table stopping rule, and thus lots of keys would repeat in our ideal table structure. Repetition of keys gives rise to the problems of \emph{collision and merge} during the precomputation phase and \emph{false alarms} during the attack phase. We explain these two problems below.
+In the ideal case described above, number of keys covered in the $m$ chains is $2^n$, which implies $mt = 2^n$. If we use this equation in estimating the value of $mt^2$, it can be seen that $mt^2$ is much greater than $2^n$. This is not allowed according to the table stopping rule, and thus lots of keys would repeat in our ideal table structure. Repetition of keys gives rise to the problems of \emph{collision and merge} during the precomputation phase and \emph{false alarms} during the attack phase. We explain these two problems below.
 \end{enumerate}
 
-\noindent \textit{\textbf{Collision and merge.}} Consider any two chains in the precomputation table structure. If there is a common key $K_c$ existing in both the chains, then the sequence of keys appearing after $K_c$ would be the same in both chains, as shown in figure \ref{fig:collision-merge}. There would be overlapping keys in the two chains resulting in wastage of precomputation time since they add no extra information to the chains. Such a situation is called collision.\\
+\noindent \textit{\textbf{Collision and merge.}} Consider any two chains in the ideal precomputation table structure. If there is a common key $K_c$ existing in both the chains, then the sequence of keys appearing after $K_c$ would be the same in both chains, as shown in figure \ref{fig:collision-merge}. There would be overlapping keys in the two chains resulting in wastage of precomputation time since they add no extra information to the chains. Such a situation is called collision which consequently results in a merge.\\
 
 \begin{figure}[ht!]
 	\centering
@@ -131,7 +131,7 @@ In the ideal case described above, number of keys covered in the $m$ chains is $
 \end{figure}
 
 \noindent \textit{\textbf{False alarms.}} Colliding and merging chains during precomputation affect the attack phase as well. Consider the same example of the two chains colliding at $K_c$. Suppose that the required key $K$ appears in the first chain as shown in figure \ref{fig:collision-merge}. During the attack phase keys are computed starting from $C$ till one of the key matches an end point in the hashtable. 
-In the example, a match would occur at $EP_0$ since $EP_0$ is one of the keys in the path from $C$ to $EP_1$ and $EP_0$ exists in the hashtable. The hashtable returns the starting point $SP_0$ for the match, and thus a key is derived from $SP_0$ ($K_{false}$). This key is different from the desired key $K$ since it lies in a different chain, as the two chains collide and merge. A false alarm is said to have occured here.
+In the example, a match would occur at $EP_1$ since $EP_1$ is one of the keys in the path from $C$ to $EP_0$ and $EP_1$ exists in the hashtable. The hashtable returns the starting point $SP_1$ for the match, and thus a key is derived from $SP_1$ ($K_{false}$). This key is different from the desired key $K$ since it lies in a different chain. This situation occurs as the two chains collide and merge and it said to be a \textit{false alarm}.
 
 The occurence of false alarms can be easily checked and ignored. It is expected that the ciphertext obtained by encrypting $P$ under the derived key be the same as $C$. The ciphertext obtained using $K_{false}$ is not the same as $C$ as both the keys are different. This confirms that $K_{false}$ is not the right key. The only problem with false alarms is that they waste time during the attack phase and thus increase the attack time for finding the correct key.\\
 
@@ -144,11 +144,11 @@ The occurence of false alarms can be easily checked and ignored. It is expected 
 	\label{fig:collision-not-merge}
 \end{figure}
 
-As shown, the two chains terminate at different end points. As a result, when a match occurs during the attack phase, the correct end point is retrieved from the hashtable and consequently the correct key is obtained. 
+As shown, the two chains terminate at different end points. As a result, when a match occurs during the attack phase, the correct starting point is retrieved from the hashtable and consequently the correct key is obtained. 
 
 But practically, using $m$ different mapping functions for building the table has problems. Stamp and Low quote in \cite{stamp2007acb} that having $m$ mapping functions makes storage of these functions resource intensive, and thus that it's not a good idea. An apparent and more serious problem though, with having $m$ mapping functions, is that the attack phase would run for a long time. During the attack phase, the given $C$ must be evaluated for all the different mapping functions because the attacker does not know the chain in which $C$ appears. The attack time in such a case becomes proportional to $mt$. 
 
-In any case, the idea of having different mapping functions for each chain is not feasible. But, the use of mapping function provides a basis for a more practical table structure for block ciphers. 
+In any case, the idea of having different mapping functions for each chain is not feasible. But, the use of different mapping function provides a basis for a more practical table structure for block ciphers. 
 
 \subsection{The practical TMTO attack}
 
@@ -157,15 +157,15 @@ Based on various ideas gathered from the previous section, the idea of Hellman t
 \begin{enumerate}
 \item There are multiple tables in the precomputation, as compared to the previously considered one big table. The total number of tables is denoted by $r$. Each table has a different mapping function, and thus collision occuring among chains belonging to different tables do not result in a merge.
 
-\item In order to reduce the possibility of collisions occuring among chains within same tables, the size of each table is restricted in accordance with the \emph{table stopping rule}. Hence the relation $mt^2$ = $2^k$ must hold.
+\item In order to reduce the possibility of collisions occuring among chains within same tables, the size of each table is restricted in accordance with the \emph{table stopping rule}. Hence the relation $mt^2$ = $2^k$ must hold\footnote{We use $k$ here instead of $n$ since $n$ and $k$ are considered different, which is why the mapping function is used in the first place}.
 \end{enumerate}
 
 We describe in detail the precomputation and attack phase for the TMTO attack using the Hellman tables.\\
 % need some thing more here.
 
-\noindent \textit{\textbf{Precomputation phase.}} First, $r$ different random reduction functions are chosen, say \mbox{$R_1$, $R_2$, \ldots ,$R_r$}. Using each of these functions, $r$ tables are created in the same way as described for the ideal case. Each of the $r$ tables consist of $m$ chains with $t$ keys and use mapping function $f_i$. Also, for each table, a different hashtable is created such that the starting and end points of the chains from that table are stored in the corresponding hashtable. Such a table structure is shown in figure \ref{fig:hellman-tables}, which is taken from \cite{oechslin:mfc}.
+\noindent \textit{\textbf{Precomputation phase.}} First, $r$ different random reduction functions are chosen, say \mbox{$R_1$, $R_2$, \ldots , $R_r$}. Using each of these functions, $r$ tables are created in the same way as described for the ideal case. Each of the $r$ tables consist of $m$ chains with $t$ keys and use mapping function $f_i$. Also, for each table, a different hashtable is created such that the starting and end points of the chains from that table are stored in the corresponding hashtable. Such a table structure is shown in figure \ref{fig:hellman-tables}, which is taken from \cite{oechslin:mfc}.
 
-An important observation can be made from the figure: the number of computations in a chain is $(t-1)$, and not $t$ as we have been discussing. The same scene is observed in \cite{stamp2007acb} as well. With $(t-1)$ computations, $(t-1)$ keys exist in each chain. If $t$ is large as compared to 1, then $(t-1) \approx t$. Hence in these references, the number of keys in every chain is assumed to be $t$ for all analysis. On the other hand, we have assumed exactly $t$ keys per chain for the analysis and have also implemented the same.
+An important observation can be made from the figure: the number of computations in a chain is $(t-1)$, and not $t$ as we have been discussing. The same scene is observed in the discusion of Hellman tables in \cite{stamp2007acb} as well. With $(t-1)$ computations, $(t-1)$ keys exist in each chain. If $t$ is large as compared to 1, then $(t-1) \approx t$. Hence in these references, the number of keys in every chain is assumed to be $t$ for all analysis. On the other hand, we have assumed exactly $t$ keys per chain for the analysis and have also implemented the same.
 
 \begin{figure}[ht!]
 	\centering
@@ -174,7 +174,7 @@ An important observation can be made from the figure: the number of computations
 	\label{fig:hellman-tables}
 \end{figure}
 
-The equations for creating the keys in the chain $j$ of table $i$ are shown below. The mapping function is denoted by $f_i$ and the reduction function by $R_j$.
+The equations for creating the keys in the chain $j$ of table $i$ are shown below. The mapping function is denoted by $f_i$ and the reduction function by $R_i$.
 \begin{align*}
 & & K_{j,0} & = SP_j & & & &\\
 1&. &K_{j,1} & = R_i(E_{K_{j,0}}(P)) & & & &\\
@@ -189,11 +189,11 @@ The time for precomputation is proportional to the number of computations that a
 
 \noindent \textit{\textbf{Attack phase.}} During the attack phase, ciphertext $C$ is searched through each of the $r$ tables one by one. Let's consider the case in which $C$ is searched through a particular table $i$. 
 
-First, $X$ is computed using the reduction function as, $X$ = $R_i(C)$. $X$ is then matched with the end points of the table. If $X$ matches with the end point $EP_{j}$ of the $j$'th chain, it means that the desired key lies in the $(t-1)$'th column of that chain. $SP_{j}$ is retrieved from the hashtable (for table $i$) and $(t-1)$ computations are perfomed using $f_i$ to obtain the key in the $(t-1)$'th column. We call this key $K_p$, $p$ standing for the possible key. If the ciphertext derived using $K_p$ is the same as $C$, then $K_p$ is the key we are looking for. Otherwise, we know that it is a case of false alarm. 
+First, $X$ is computed using the reduction function as, $X$ = $R_i(C)$. $X$ is then matched with the end points of the table. If $X$ matches with the end point $EP_{j}$ of the $j^{th}$ chain, it means that the desired key lies in the $(t-1)^{th}$ column of that chain. $SP_{j}$ is retrieved from the hashtable (for table $i$) and $(t-1)$ computations are perfomed using $f_i$ to obtain the key in the $(t-1)^{th}$ column. We call this key $K_p$, $p$ standing for the possible key. If the ciphertext derived using $K_p$ is the same as $C$, then $K_p$ is the key we are looking for. Otherwise, we know that it is a case of false alarm. 
 
-On the other hand, if $X$ does not match with any end point, $X$ is replaced with $f_i(X)$ and again matched with the end points. If there is a match, then the possible key appears in the $(t-2)$'th column. Just as before, $SP_{j}$ is retrieved from the hashtable and $(t-2)$ computations are performed of $F_i$ to obtain $K_p$. Occurence of false alarm is checked in the same way, confirming if $K_p$ is the desired key or not. 
+On the other hand, if $X$ does not match with any end point, $X$ is replaced with $f_i(X)$ and again matched with the end points. If there is a match, then the possible key appears in the $(t-2)^{th}$ column. Just as before, $SP_{j}$ is retrieved from the hashtable and $(t-2)$ computations of $f_i$ are performed to obtain $K_p$. Occurence of false alarm is checked in the same way, confirming if $K_p$ is the desired key or not. 
 
-$X$ is iteratively replaced by $f_i(X)$ for a maximum $(t-1)$ times, after which the same search is performed on the next table. If there is a match, and if it is not a false alarm, then the correct key is and the attack is terminated. 
+$X$ is iteratively replaced by $f_i(X)$ for a maximum $(t-1)$ times, after which the same search procedure is performed on the next table. If there is a match, and if it is not a false alarm, then the correct key is obtained and the attack is terminated. 
 
 In the worst case, $K$ is found after searching through all the tables. Searching a single table requires $t$ computations in the worst case. Hence, the attack time is proportional to $rt$. This implies that the order of the attack time is $T$ = $rt$.\\
 
@@ -215,6 +215,10 @@ From the last two equations, we have $r$ = $t$. Hence, the number of tables is e
 \label{eq:hellman-block} M^{2}T = 2^k
 \end{align}
 
+\noindent \textit{\textbf{Analysis.}} So how are Hellman tables better than a brute-force or precomputed ciphertext attack? Table \ref{tab:hellman-tmto-comparison} shows the order of precomputation time, precomputation memory and attack time for these three schemes. 
+
+In the table, $c$ indicates a constant. The tradeoff attack reduces precomputation memory from $2^k$ in case of precomputed ciphertext attack to $M$. When compared with the brute-force attack, tradeoff attack reduces attack time from $2^k$ to $T$. Since both $M$ and $T$ are less than $2^k$ (from equation \ref{eq:hellman-block}), the tradeoff attack improves precomputation memory and attack time requirements. The only disadvantage of this attack, as also shown in the \mbox{table}, is in terms of the precomputation time. The tradeoff attack still requires precomputation time of the order of $2^k$.
+
 \begin{table}[ht!]
 \begin{center}
 \begin{tabular}{c|c|c|c}
@@ -228,23 +232,19 @@ TMTO using Hellman tables	&		$2^k$	& $M$ & $T$ 			\\
 \label{tab:hellman-tmto-comparison}
 \end{table}
 
-\noindent \textit{\textbf{Analysis.}} So how are Hellman tables better than a brute-force or precomputed ciphertext attack? Table \ref{tab:hellman-tmto-comparison} shows the order of precomputation time, precomputation memory and attack time for these three schemes. 
-
-In the table, $c$ indicates a constant. The tradeoff attack reduces precomputation memory from $2^k$ in case of precomputed ciphertext attack to $M$. When compared with the brute-force attack, tradeoff attack reduces attack time from $2^k$ to $T$. Since both $M$ and $T$ are less than $2^k$ (from equation \ref{eq:hellman-block}), the tradeoff attack improves precomputation memory and attack time requirements. The only disadvantage of this attack, as also shown in the \mbox{table}, is in terms of the precomputation time. The tradeoff attack still requires precomputation time of the order of $2^k$.
-
 \section{Hellman tables for stream ciphers}
 
-Hellman tables for block ciphers have been used for mounting TMTO attacks on stream ciphers by Biryukov and Shamir in \cite{biryukov2000ctm}. Stream ciphers have a different working principle, and thus certain modifications in the original Hellman tables are proposed for them. 
+Hellman tables for block ciphers have been used for mounting tradeoff attacks on stream ciphers by Biryukov and Shamir in \cite{biryukov2000ctm}. Stream ciphers have a different working principle, and thus certain modifications in the original Hellman tables are proposed for them. 
 
-Using Hellman tables an attacker can find the secret key $K$ if and only if the known plaintext $P$ is used in constructing the tables. Hence in a way, the tables are \emph{static} and cannot be re-used if a different plaintext and ciphertext pair for the same key are known. The tables can only be re-used if the same plaintext $P$ is later encrypted using a different key, say, during a different run of the protocol using the block cipher.
+Using Hellman tables an attacker can find the secret key $K$ if and only if the known plaintext $P$ is used in constructing the tables. Hence in a way, the tables are \emph{static} and cannot be re-used if a different plaintext and ciphertext pair for the same key are known. The tables can only be re-used if the same plaintext $P$ is later encrypted using a different key; say, during a different run of the protocol using the block cipher.
 
-In addition, one of the important goals while constructing the tables for block ciphers is to cover all the possible keys. This is so, because a key can be found only when it is available in one of the tables. If the key does not exist, it can never be found as the ciphertext obtained using the key would not match in the tables. If the ciphertext matches, it would only turn out to be a key which gives the same ciphertext as the correct key. 
+In addition, one of the important goals while constructing the tables for block ciphers is to cover all the possible keys. This is so, because a key can be found only when it is available in one of the tables. If the key does not exist, it can never be found as the ciphertext obtained using the key would not match in the tables. If the ciphertext matches, it would only turn out to be a different key which gives the same ciphertext as the correct key. 
 
-Tables for stream ciphers differ from those for block ciphers based on these grounds. Tables prepared for stream ciphers (as we have already seen in section \ref{sec:bg-keystream-attack}) are not bound to a particular plaintext. They are general tables with prefix to state mapping, and can be re-used any number of times for keystream from different keys. Once a match is found, the current state of the LFSR is determined and it is then reversed to obtain the initial state. After this, the specific initialization parameters are used in finding the key from the initial state.
+Tables for stream ciphers differ from those for block ciphers based on these grounds. Precomputation done for stream ciphers (as we have already seen in chapter \ref{chap:bgtmto}) are not bound to a particular plaintext. The precomputation is general in nature containing mappings from prefix to state and can be re-used any number of times for keystream from different keys. Once a match is found, the current state of the LFSR is determined and it is then reversed to obtain the initial state. After this, the specific initialization parameters are used in finding the key from the initial state.
 
-Also, stream ciphers move through a number of internal states while generating the output keystream. If the attacker is able to find any one of these internal states, the initial state is recovered and thus the key. The attacker has knowledge of \emph{data}, which comprises of subsequences of the keystream or the prefix of each of the internal state that occurs while generating the keystream. Using this data, several attempts of matching the current state in the precomputed tables can be made, thus increasing the probability of finding the key. This flexibility is not available to an attacker breaking block ciphers, since the only data known there is the ciphertext $C$. 
+Also, stream ciphers move through a number of internal states while generating the output keystream. If the attacker is able to find any one of these internal states, the initial state is recovered and thus the key. The attacker has knowledge of \emph{data}, which comprises of subsequences of the keystream or the prefix of each of the internal state that occurs while generating the keystream. Using this data, several attempts of matching the current state in the precomputed tables can be made, thus increasing the probability of finding the key. This flexibility is not available to an attacker breaking block ciphers, since the only datum known there is the ciphertext $C$. 
 
-Attacks taking into consideration the availability of data, in addition to time and memory, are called time-memory-data tradeoff attacks (or TMDTO attacks). TMDTO attacks are particularly suited to stream ciphers as a long keystream is available. Whereas in the case of block ciphers, we always have $D$ = $1$ representing the only available data $C$. Further, we describe the precomputation and attack phase for a TMDTO attack on stream ciphers.\\
+Attacks taking into consideration the availability of data, in addition to time and memory, are called time-memory-data tradeoff attacks (or TMDTO attacks). TMDTO attacks are particularly suited to stream ciphers as a long keystream is available. Whereas in the case of block ciphers, we always have $D$ = $1$ representing the only available datum $C$. From here, we describe the precomputation and attack phase for a TMDTO attack using Hellman tables on stream ciphers.\\
 
 \noindent \textit{\textbf{Precomputation phase.}} While attacking stream ciphers, the unknown part always is the current internal state and the known part is the prefix of the state. Before we discuss how the tables are organized, it is important to consider the number of states that are required to be covered by the tables, in order to have a high probability of a match. We have two set of states here; one, the states covered in the tables (number of such states is $P$) and two, the states covered while generating the keystream (the number of such states is $D$). According to equation \ref{eq:bday-paradox2}, in order to have a high probablity of a common state existing between these two sets, the product of the size of these sets must be greater than or equal to the size of the state space. 
 

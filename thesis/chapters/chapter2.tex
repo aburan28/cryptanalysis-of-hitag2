@@ -323,11 +323,13 @@ P &= P_1 \times P_2\\
 P &= M/2^{n}
 \end{align*}
 This is the probability of the correct key being found when we have one tag. Hence, for the correct key to be found atleast once, the runtime of the attack phase must be of an order of atleast $2^{n}/M$ so that we have $2^{n}/M$ tags. Hence, we can say that
-\begin{align*}
+\begin{align}
 T &\geq 2^{n}/M\\
-M \times T &\geq 2^{n}
-\end{align*}
-In practice, the product of $M$ and $T$ must be larger than $2^n$, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
+\label{eq:tmto-tags-equation} M \times T &\geq 2^{n}
+\end{align}
+In practice, the product of $M$ and $T$ must be larger than $2^n$ for the correct key to be found once, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
+
+The other important issue here is that several tags would match during the attack, thus resulting in several possible keys. The correct key is found once if $M$ and $T$ are chosen according to equation \ref{eq:tmto-tags-equation}. If the values of $M$ and $T$ are so chosen that we have $M \times T \geq 2 \cdot 2^{n}$, then the correct key is expected to be found atleast two times. Similarly, if we have $M \times T \geq 4 \cdot 2^{n}$, then we can expect to find the correct key four times, and so on. Using this idea, the correct key can be found among all the keys derived from the matched tags. 
 
 \subsection{Implementation and results}
 
@@ -341,7 +343,7 @@ The implementation module for TMTO tags attack executes the complete attack by c
 \item The attack is started. Each prepared tag is searched in the hashtable. For each match the initial state from hashtable is reversed to give a possible secret key, using the IV corresponding to the matched tag and the constant serial ID. All the keys computed using the matched tags are stored and the number of times each key repeats is noted. 
 \end{enumerate}
 
-With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key i.e.~the number of times correct key is found. The results are shown in table \ref{tab:tags-attack-results}.
+With this, the attack is complete. Keys $K_1$ and $K_2$ are used in the attack with different values of $M$ and $T$. For each chosen value of $M$ and $T$, the time for preparing the hashtable, time for preparing the tags and time for carrying out the final attack phase is noted. All the time is given in seconds. In addition, we also note the number of matches in the hashtable, and the number of these matches which use the correct key for generating the matched tag i.e.~the number of times correct key is found. The results are shown in table \ref{tab:tags-attack-results}.
 
 \begin{table}[h!]
 \begin{flushleft}
@@ -366,13 +368,15 @@ Number of times key is found		&	0 				&	2 				&	2 				&	1 				&	0 				&	4			& 3	
 The following comments are made based on these results. 
 
 \begin{enumerate}
-\item We are sure that the random function discussed in previous section has a period greater than $2^{27}$ (or just equal to, as expected). The maximum number of tags used in the attack phase is $2^{27}$, and from the results of matched tags, no tag is repeated in the entire attack duration. 
+\item We are sure that the random function discussed in previous section has a period greater than $2^{27}$ (or just equal to, as expected). The maximum number of tags used in the attack phase is $2^{27}$, and from the results of matched tags, no IV is repeated in the entire attack duration resulting in a repeating tag. 
 
-\item Consider the values in column 1 for key $K_1$. The estimated probability of getting a particular tag matched in the hashtable is $P_1$ = $M/2^{32}$ = $2^{23}/2^{32}$ = $1/2^{9}$. Then, if we have $T$ tags, the expected total number of matches is $T \times P_1$ = $2^{25} \times 1/2^{9}$ = $2^{16}$. As discussed, we expect $P_1$ to be less than the calculated value. But from the implementation results, the number of tags matched is slightly more than $2^{16}$. The reason for this is that during the attack, there would be the case when more than one state produces the same tag. If such a tag appears in the hashtable, then it is matched on all the occasions it repeats during the attack, thus increasing the total number of matches. We constantly observe this result for all the parameter combinations in the table. 
+\item Consider the values in column 1 for key $K_1$. The estimated probability of getting a particular tag matched in the hashtable is $P_1$ = $M/2^{32}$ = $2^{23}/2^{32}$ = $1/2^{9}$. Then, if we have $T$ tags, the expected total number of matches is $T \times P_1$ = $2^{25} \times 1/2^{9}$ = $2^{16}$. The number of matches seen in the table is just greater than $2^{16}$, which means our estimation was quite correct.
+ 
+As discussed before, we expect $P_1$ to be less than the calculated value. But from the implementation results, the number of tags matched is slightly more than $2^{16}$. The reason for this is that during the attack, more than one states could produce the same tag (since prefix length is just 32 bits). If the same tag appears in the hashtable, then the repeating tag is matched on all the occasions during the attack, thus increasing the total number of matches. We constantly observe this result for all the parameter combinations in the table. 
 
 \item The key is not found even once for the parameters shown in column 2 for key $K_2$. The key is expected to be found atleast two times. Though, on doubling the time $T$ for the attack, the number of matches also double and the correct key is found four times, as expected. 
 
-\item If the time for preparing the hashtable for this case is compared with the same in the case of non-random precomputation with unlimited keystream, then it is seen that the former is less than the latter. This is due to the fact that here we are dealing with 32 bit prefixes, while for unlimited keystream we computed prefixes of length 48 bits. The result is that the hashtable is prepared quickly in this case. 
+\item If the time for preparing the hashtable in this attack is compared with the same during the TMTO keystream attack using non-random precomputation (results in tables \ref{tab:keystream-attack-results-key1} and \ref{tab:keystream-attack-results-key2}), then it is seen that the former is slightly less than the latter. This is due to the fact that here we are dealing with 32 bit prefixes, while in the keystream attack we computed prefixes of length 48 bits. The result is that the hashtable is prepared quickly in this case. 
 
-\item The matching tags which give the right key are all different for all the cases shown. The case of a tag repeating and giveing the correct key more than once does not happen. If such a case occured, then the key is assumed to be found just once and not twice. For example, for column 6 in the table, correct key is found four times resulting out of match of four different tags.
+\item The number of times the correct key is found corresponds to different tags being matched in the hashtable on all occasions. The case of a tag (corresponding to the correct key) repeating and thus giving the correct key more than once does not take place. If such a case occured, then the key is counted as being found just once and not twice. For example, for column 6 in the table, correct key is found four times arising out of four different tags matching in the hashtable.
 \end{enumerate}
