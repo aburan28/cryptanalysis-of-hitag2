@@ -6,7 +6,7 @@
 
 To use Hellman tables with stream ciphers, Biryukov and Shamir proposed changes in the table structure by taking $D$ into consideration. The original idea of rainbow table has been proposed for block ciphers and thus similar changes in the table structure are needed to use them with stream ciphers. The paper \cite{erguler2005nct} by Erguler and Anarim is the only work in this direction, to be best of our knowledge. The tradeoff described in the paper was designed independently by us. Only later it came to our knowledge that the idea has already been published by Erguler and Anarim.
 
-With the availability of $D$, the number of states in the rainbow table can be reduced by the factor $D$. The number of states existing in the rainbow table is $Mt$ \footnote{The parameters $M$ and $t$ here represent the original rainbow table, and are not related with the parameters described in the general tradeoff equation in previous section}. Then either $M$ or $t$ or both should be reduced. These three possibilities are identified in the following table. 
+With the availability of $D$ now in stream ciphers, the number of states in the rainbow table can be reduced by the factor $D$. The number of states existing in the rainbow table is $Mt$\footnote{The parameters $M$ and $t$ here stand for the original rainbow table, and are not related with the parameters described in the general tradeoff equation in previous section}. Then either $M$ or $t$ or both should be reduced in order to reduce the precomputation states by $D$. These three possibilities are identified in the table \ref{tab:parameters-rainbow-table}. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -19,27 +19,33 @@ P			&	Mt/D	&	Mt/D			&	Mt/D				& Mt/D					\\
 T			&	$t^2$	&	$t^2D/2$	&	$t^2/2D$		& $t^2/2$				\\ \hline
 \end{tabular}
 \end{center} 
-\caption{Modifiying $M$ and $t$ to derive efficient rainbow table for stream ciphers}
+\caption{Modifying $M$ and $t$ to derive efficient rainbow table for stream ciphers}
 \label{tab:parameters-rainbow-table}
 \end{table}
 
-The first case for rainbow tables is reducing $M$ to $M/D$. Though memory required for the attack reduces, the time for the attack increases considerably to $t^2D/2$. It is interesting to note that for Hellman tables, the attack time depends on both $t$ and the number of tables. So, if $M$ is decreased, the number of tables decreases, thus reducing the attack time to $t^2$. On the other hand, for rainbow tables, the attack time depends just on the length of each chain. Hence, reducing the memory does not reduce the time for the attack.
+The table first shows the approach by Biryukov and Shamir, which results in the reduction of $M$ to $M/D$. Parameters $P$ and $T$ change accordingly.
 
-In the next case, we reduce $t$ to $t/D$. The problem with this option is the increased memory requirement which is $M$. 
+For rainbow table, the first possibility is reducing $M$ to $M/D$. Though the memory required for the attack reduces in this case, the time for the attack increases considerably to $t^2D/2$. 
 
-The third option is a middle way between the first two options. We reduce both $M$ and $t$ by a factor of $\sqrt{D}$. The attack time now becomes ${(t/\sqrt{D})}^2/2 \times D$ = $t^2/2$. As we see, this makes it comparable to the attack time for Hellman tables. Rainbow tables provide the same advantage for stream ciphers with this option, as they do for block ciphers i.e.~they reduce the attack time by a factor of 2. 
+It is interesting to note that for Hellman tables, the attack time depends on both $t$ and the number of tables. So, if $M$ is reduced in Hellman tables (Biryukov Shamir approach) then the number of tables decreases, thus reducing the attack time to $t^2$. On the other hand, for rainbow tables, the attack time depends just on the length of each chain. Hence, reducing the memory does not reduce the time for the attack. The first possibility is thus not efficient for us.
 
-But, the memory requirement is $\sqrt{D}$ times greater than that for Hellman tables. This is a disadvantage of using rainbow table with these parameters.
+In the next possibility, we reduce $t$ to $t/D$. The problem in this case is the increased memory requirement which is $M$ now. 
+
+The third possibility is a middle way between the first two. We reduce both $M$ and $t$ by a factor of $\sqrt{D}$. The attack time now becomes ${(t/\sqrt{D})}^2/2 \times D$ = $t^2/2$. As we see, this makes it comparable to the attack time for Hellman tables. Rainbow tables provide the same advantage for stream ciphers with this possibility, as they do for block ciphers i.e.~they reduce the attack time by a factor of 2. 
+
+But, the memory requirement is $\sqrt{D}$ times greater than that for Hellman tables. This is a minute disadvantage of using rainbow table by reducing both $M$ and $t$ by $\sqrt{D}$. To summarize, the third possibility is the best way of comparing the performance of Hellman tables with rainbow table.
 
 Let us denote the memory requirement and the number of states in each chain by $M'$ and $t'$ for the modified rainbow table. Then we have $M' = M/\sqrt{D}$ and $t' = t/\sqrt{D}$. Replacing these values in the general tradeoff equation \ref{eq:general-rainbow-stream}, we get the following tradeoff equation.
 \begin{align}
 \label{eq:tmdto-rainbow-stream} 2TM^2D^2 &= N^2
 \end{align}
-For comparing the performance of Hellman and rainbow tables using their tradeoff equations, we select the following values of the required parameters based on the third option discussed above. 
+For comparing the performance of Hellman and rainbow tables using their tradeoff equations, we select certain values of the required parameters based on the third possibility discussed above. These are shown in table \ref{tab:parameters-comparison}.
 
 \begin{table}[ht!]
 \begin{center}
 \caption{Parameters for comparison of Hellman and rainbow tables}
+\smallskip
+\smallskip
 \begin{tabular}{|c|c c||c c|}
 \hline
 			& \multicolumn{2}{c||}{$M = 2^{32}$, $t = 2^{16}$, $D = 2^{14}$} 	& \multicolumn{2}{c|}{$M = 2^{31}$, $t = 2^{17}$, $D = 2^{16}$}	\\ \hline \hline
@@ -55,7 +61,7 @@ T			&	$2^{32}$			&	$2^{31}$				&	$2^{34}$				& $2^{33}$			\\ \hline
 \label{tab:parameters-comparison}
 \end{table}
 
-The comparison of the results obtained using these parameters for Hellman and rainbow tables is shown in table \ref{tab:comparison-results-hellman-rainbow}. 
+The comparison of the results obtained using these parameters for both the tables is shown in table \ref{tab:comparison-results-hellman-rainbow}. 
 
 \begin{table}[ht!]
 \begin{center}
@@ -92,39 +98,44 @@ Number of false alarms									&	33304					&	286							&	66684						&	247						\
 
 The following comments can be made based on these results.
 \begin{enumerate}
-\item As expected, the time taken for precomputation is similar for both the table structures with the same parameter combinations, because $P$ is the same for them. But in general, the time taken for computation of rainbow table is slightly more than that for Hellman tables. The reason lies in the fact that different number of chains exist in both the tables (represented by $M$). For every new chain, the random number generator is called in order to generate the starting state. Rainbow table has more number of chains, hence the time for precomputation is slightly higher inspite of the mapping function being called the same $P$ number of times. 
+\item As expected, the time taken for precomputation is approximately the same for both the table structures with the same parameter combinations, because $P$ is the same for them. But in general, the time taken for computation of rainbow table is slightly more than that for Hellman tables. The reason lies in the fact that different number of chains exist in both the tables (represented by $M$). For every new chain, the random number generator is called in order to generate the starting state. Rainbow table has more number of chains, hence the time for precomputation is slightly higher inspite of the mapping function being called the same number of times in both the cases. 
   
-\item Attack using rainbow table is able to find the correct key much faster as compared to Hellman tables. For the second set of parameters, the correct key is found for the first time in 0.8 hours through rainbow table, whereas it takes 24 hours for the same through Hellman tables. In addition, the total time taken for matching all possible subsequences of the ksystream is almost half in rainbow table, which was as expected from the values of $T$ for the two tables.
+\item All the attacks are able to find the correct key atleast once. Attack using rainbow table is able to find the correct key much faster as compared to Hellman tables. For the second set of parameters, the correct key is found for the first time in 0.8 hours with rainbow table, whereas it takes 24 hours for the same with Hellman tables. In addition, the total time taken for matching all possible subsequences of the keystream is almost half in rainbow table, which was as expected from the values of $T$ for the two tables.
 
-\item The number of false alarms occuring in Hellman tables is extremely large as compared to the same for rainbow tables. This clearly shows that the number of collisions occuring in Hellman tables is much higher. Also, as we have seen from results in table \ref{tab:hellman-attack-results}, the collisions can be reduced by having a greater number of tables in the Hellman table structure.
+\item The number of false alarms occurring in Hellman tables is extremely large as compared to the same for rainbow tables. This clearly shows that the number of collisions occurring in Hellman tables is much higher. The use of different mapping functions for each column in rainbow table is the reason for this. Also, as we have seen from results in table \ref{tab:hellman-attack-results}, the collisions can be reduced by having a greater number of tables in the Hellman table structure.
 \end{enumerate}
+
+\newpage
 \section{Concluding remarks}
 
-In this thesis, we have implemented various tradeoff attacks on the HiTag2 stream cipher and presented the results of the same. Babbage and Golic first proposed how a time-memory tradeoff attack can be implemented on stream ciphers. In block ciphers, encryption is performed on a block of plaintext yielding a block of ciphertext. The goal in attacks on block cipher is always to successfully invert the transformation from the input to output block. In stream ciphers, this transformation was not understood until Babbage and Golic proposed that the transformation from state to the prefix must be inverted to break the stream cipher, as this determines an internal state. 
+In this thesis, we have implemented various tradeoff attacks on the HiTag2 stream cipher and presented the results of the same. Babbage and Golic first proposed how a time-memory tradeoff attack can be implemented on stream ciphers. In block ciphers, encryption is performed on a block of plaintext yielding a block of ciphertext. The goal in attacks on block cipher is always to successfully invert this transformation from input to output block. In stream ciphers, this transformation was not understood until Babbage and Golic proposed that the transformation from state to the prefix must be inverted to break the stream cipher, as this determines an internal state. 
 
-This idea by Babbage and Golic has been used in all the attacks that we implemented. The first attack assumed the availability of very long keystream from the cipher, thus huge number of internal states and corresponding prefix. The second attack assumed several shorter keystreams. In the third attack Hellman tables were used to precompute states, while in the fourth attack rainbow table was used for the same purpose. 
+This idea by Babbage and Golic has been used in all the attacks that we implemented. The first attack assumed the availability of very long keystream from the cipher, thus providing huge number of internal states and corresponding prefix. The second attack assumed several shorter keystreams. In the third attack Hellman tables were used to precompute states, while in the fourth attack rainbow table was used for the same purpose. 
 
-In the first two attacks, the tradeoff equation contains the parameters $M$ and $T$. In these attacks, the hashtable stores each of the (state, prefix) pairs computed during the precomputation. Hence, the order of memory requirement and precomputation time are equal. Similarly, the attack time depends only on the keystream available, as the time taken to search one prefix in the hashtable is constant. Though we do not see $D$ in the equation, it is clear how $D$ affects the tradeoff through $T$.
+In the first two attacks, the tradeoff equation contains the parameters $M$ and $T$. In these attacks, the hashtable stores each of the (state, prefix) pairs computed during the precomputation. Hence, the order of memory requirement and precomputation time are equal. Similarly, the attack time depends only on the keystream available, as the time taken to search one prefix in the hashtable is constant. Though we do not see $D$ in the tradeoff equation for the two TMTO attacks, it is clear how $D$ affects the tradeoff through $T$.
 
-In the last two attacks, three parameters $M$, $T$ and $D$ appear in the tradeoff equation. In these attacks, the hashtable does not store all the precomputed elements, which leads to $M$ being less than $P$. As a result, $P$ does not only depend on $M$ but also on the factor $t$. In addition, the time for the attack is no more equal to $D$ and depends on an additional factor $t$. 
+In the two TMDTO attacks, three parameters $M$, $T$ and $D$ appear in the tradeoff equation. In these attacks, the hashtable does not store all the precomputed elements, which leads to $M$ being less than $P$. As a result, $P$ does not only depend on $M$ but also on the factor $t$. In addition, the time for the attack is no more equal to $D$ and depends on an additional factor $t$. 
 
-In all attacks though, the main idea has been about two different sets of states and finding a collision between them; one set computed during the precomputation phase and the other occuring during the attack phase, represented by $P$ and $D$ respectively. The birthday paradox helps in deriving the relation $P \times D \geq N$, which is used as the basis for all the attacks. 
+In all attacks though, the main idea has been about two different sets of states and finding a collision between them; one set computed during the precomputation phase and the other occurring during the attack phase, represented by $P$ and $D$ respectively. The birthday paradox helps in deriving the relation $P \cdot D \geq N$, which is used as the basis for all the attacks. 
 
-The results from the implementation of the four attacks have been interesting. The TMTO attacks provide very good results, in terms of requirements for $M$ and $T$, which are doable on a personal computer. As from the results as well, within minutes of starting the attack the correct key can be obtained. But, the big question is that would such long keystream or so many tags be practically available to the attacker? This is a big assumption.
+The results from the implementation of the four attacks have been interesting. The TMTO attacks provide very good results, in terms of requirements for $M$ and $T$, which are feasible on a personal computer. Also from the results we can see that the correct key can be obtained within minutes of starting the attack. But, the big question is that would such long keystream or so many tags be practically available to the attacker? This is a big assumption for the TMTO attacks.
 
-The TMDTO attacks in general spend more time on the precomputation phase, and assume lower length of cipher output. Hence, the time required in preparing the hashtables is very high. The attack time also increases as $T$ depends on both $D$ and the length of each chain. Moreover we also see that Hellman tables with greater number of tables give us a better result than with smaller number of tables. 
+The TMDTO attacks in general spend more time on the precomputation phase, and assume smaller length of available keystream. Hence, the time required in preparing the hashtables is very high. The attack time also increases as $T$ depends on both $D$ and the length of each chain. Moreover we also see that Hellman tables with greater number of tables give us a better result than with smaller number of tables. 
 
-In any way, the bottom line of the thesis is that HiTag2 stream cipher is very weak. Considering the figures of the attack time from all the results, with availability of a sufficient length of keystream, HiTag2 can be broken fairly easily. The results clearly show that 48 bits of internal state is well within the reach of modern personal computers, and with better configurations at hand, breaking the cipher is not a difficult task for attackers.
+These observations have been possible in TMDTO attacks by varying the parameters according to the general tradeoff equation. We think this to be a contribution by us in the analysis of TMDTO attacks.
+
+The conclusion of the thesis is that HiTag2 stream cipher is very weak. Considering the figures of the attack time from all the results, with availability of a sufficient length of keystream, HiTag2 can be broken fairly easily. The results clearly show that 48 bits of internal state is well within the reach of modern personal computers, and with better configurations at hand, breaking the cipher is not a difficult task for attackers. Ofcourse, there also is a huge scope for improving the efficiency of the attacks, which can be achieved through some of the ways discussed in the next section. 
+
 \section{Future work}
 
-The four attacks have been carried out in limited time, hence there is a lot of scope for improving the efficiency of the attacks. The last two attacks especially were time consuming, which resulted in a less number of results for them. Also there are many open research possibilities on the ideas concerned with these attacks. All of this is summarized in the following points. 
+The four attacks have been carried out in limited time, hence there is a lot of scope for future work. The most important way in which this work can be extended is by improving the attack and varying the parameters so that the HiTag2 internal state can be found more faster than now. The last two attacks were especially time consuming, which resulted in a less number of results for them. So more work needs to be done on improving them. Also there are many open research possibilities on the ideas concerned with these attacks. All of this is summarized in the following points. 
 
 \begin{enumerate}
-\item As part of the task to break HiTag2, we have implemented attacks which assume the availability of keystream from the cipher. The part that remains is capturing the keystream in practice from the devices implementing and running this cipher. A eavesdropping device needs to be build for this purpose. Once the keystream is captured, the secret key can be found using our attacks on a personal computer. The Crypto1 stream cipher is broken completely according to this philosophy as both the protocol and the cipher working are published through different works. 
+\item As part of the task to break HiTag2, we have implemented attacks which assume the availability of keystream from the cipher. The part that remains is capturing the keystream in practice from the devices implementing and running this cipher. An eavesdropping device needs to be built for this purpose. Once the keystream is captured, the secret key can be found using our attacks on a personal computer. The Crypto-1 stream cipher is broken completely according to this philosophy as both the protocol and the cipher working are published through different works. 
 
 \item We have seen the results of the first two attacks with prefix length of 56 bits. These results indicate that 56 bits is the desirable length of prefix. The two TMDTO attacks have been implemented with just 48 bits of prefix, and it is expected that with 56 bits of prefix, the results would be more sound. Hence, more experiments need to be carried out with the longer prefix length.
 
-\item Once we consider 56 bits of prefix for the TMDTO attacks, a reduction function needs to be in place. In our implementation, the reduction function is a simple xor of the 48 bit prefix with the table number (in Hellman tables) or the function number (in rainbow table), as the prefix length and state size are same. According to \cite{email-karsten}, the reduction function must be such that all the 56 bits of prefix must be accounted for computing the 48 bits of next state. With such a good reduction function, it is expected that the number of false alarms observed will be reduced. So, more work needs to be done to increase the efficiency of both the table structures.
+\item Once we consider 56 bits of prefix for the TMDTO attacks, a reduction function needs to be in place. In our implementation, the reduction function is a simple \textit{xor} of the 48 bit prefix with either the table number (in Hellman tables) or the function number (in rainbow table), as the prefix length and state size are same. According to \cite{email-karsten}, the reduction function must be such that all the 56 bits of prefix must be accounted for computing the 48 bits of next state. With such a good reduction function, it is expected that the number of false alarms observed will reduce. So, more work needs to be done to increase the efficiency of both the table structures.
 
-%\item We still need to analyze how the number of collisions in the Hellman and rainbow table can be reduced. Nohl provides us some insight into o
+\item A very simple hash function is used in the hashtable. We have not noted the degree of collisions in the hashtable. If there are more collisions, then the search time increases. An efficient hash function should be chosen and the attacks run using them can improve the overall attack time. 
 \end{enumerate}

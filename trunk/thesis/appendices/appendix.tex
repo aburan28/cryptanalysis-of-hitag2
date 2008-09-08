@@ -221,3 +221,41 @@ int main(void)
 }			
 \end{lstlisting}
 
+\chapter{Size of precomputation files}
+\label{app:size-precomp-files}
+
+Sizes of the precomputation files for Hellman tables is given below. 
+\begin{table}[ht!]
+\begin{center}
+\caption{Precomputation file sizes for Hellman tables}
+\smallskip
+\smallskip
+\begin{tabular}{|p{3.5cm}||c|c|c|c|c|c|c|}
+\hline
+m																				&	$2^{12}$ 	&	$2^{14}$ 	&	$2^{14}$ 	&	$2^{14}$ 	&	$2^{14}$ 	&	$2^{16}$ 	&	$2^{16}$	\\ 
+t	  																		&	$2^{12}$ 	&	$2^{10}$ 	&	$2^{12}$ 	&	$2^{17}$ 	&	$2^{17}$ 	&	$2^{16}$ 	&	$2^{16}$	\\ 
+r	  																		&	$2^{8}$ 	&	$2^{8}$ 	&	$2^{6}$ 	&	$2^{1}$	 	&	$2^{2}$ 	&	$2^{1}$ 	&	$2^{2}$		\\ \hline \hline
+Precomputation file size (MB)						&	30.4 			&	121 			&	30.4 			&	0.95			&	1.9	 			&	3.8 			&	7.61			\\ \hline
+\end{tabular}
+\smallskip
+\end{center}
+\label{tab:file-sizes-hellman}
+\end{table}
+
+
+\noindent Sizes of the precomputation files for rainbow table is given below. 
+\begin{table}[ht!]
+\begin{center}
+\caption{Precomputation file sizes for rainbow table}
+\smallskip
+\smallskip
+\begin{tabular}{|p{3.5cm}||c|c|c|c|c|c|c|}
+\hline
+M																				&	$2^{23}$ 	&	$2^{24}$ 	&	$2^{24}$ 	&	$2^{25}$ 	\\ 
+t	  																		&	$2^{9}$ 	&	$2^{8}$ 	&	$2^{9}$ 	&	$2^{9}$ 	\\ \hline \hline 
+Precomputation file size (MB)						&	243 			&	487 			&	487 			&	974				\\ \hline
+\end{tabular}
+\smallskip
+\end{center}
+\label{tab:file-sizes-rainbow}
+\end{table}

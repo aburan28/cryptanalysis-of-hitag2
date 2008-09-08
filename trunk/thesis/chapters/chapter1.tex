@@ -400,7 +400,9 @@ Hash tables are data structures designed with the purpose of searching through d
 
 Every entry in hashtable is a pair of elements (instead of one element); one element is the \emph{value} to be stored, and the other element is a unique identifier for the value and called the \emph{key}. The hashtable is an array of such (key, value) pairs. In a normal array, pairs would be stored starting from the index 0 of the array, with one pair at each index. But in a hashtable pairs are stored in an order which makes searching more efficient at a later stage. 
 
-The index at which a particular pair is stored depends on the key and additionally on a \textit{hash function}. A hash of the key is computed and reduced to the domain of the indices (if required). The pair is then stored at that index. While searching a value in the hashtable, the key of the value needs to be provided. Hash of the key is computed and thus the index of the pair is known using which the value is retrieved from the array. As a result for searching, each element of the table is not checked. If the value being searched exists in the hashtable, then a non-null pair is returned for the key, otherwise a null pair is returned. Of course, this holds only if the key is not an identifier for any other value.
+The index at which a particular pair is stored depends on the key and additionally on a \textit{hash function}. A hash of the key is computed and reduced to the domain of the indices using the \textit{modular} function. The pair is then stored at that index. While searching a value in the hashtable, the key of the value needs to be provided. Hash of the key is computed and thus the index of the pair is known using which the value is directly retrieved from the array. 
+
+Clearly while searching, each element of the table is not checked. If the value being searched exists in the hashtable, then a non-null pair is returned for the key, otherwise a null pair is returned. But this holds only if the key is not an identifier for any other value.
 
 But this is just the ideal case, and there is the problem of collision which needs to be considered. Collision occurs if the same hash value (thus the same index) is computed for two different keys. In such a case, two different (key, value) pairs would contend to be stored at the same index, thus colliding. 
 
@@ -410,7 +412,7 @@ As can be seen, searching through the separate chains takes more time which lead
 
 The implementation of the hash table for our results is done by Christopher Clark and taken from the web source \cite{hash-table-impl}, with due acknowledgment. 
 
-In the further part of the thesis, we shall refer to key as hashkey and value as hashvalue. This is to avoid confusion of the secret key with the key in the (key, value) pair. 
+In the further part of the thesis, we shall refer to key as \textit{hashkey} and value as \textit{hashvalue}. This is to avoid confusion of the secret key with the key in the (key, value) pair. 
 
 \section{Motivation and organization}
 
