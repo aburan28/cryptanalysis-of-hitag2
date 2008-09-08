@@ -502,3 +502,41 @@ TIME since starting attack: 44847
 
 TIME for attack: 46229
 COUNT of false alarms: 133694
+
+-----------------------------------------
+Time of attack: Fri Sep  5 12:09:55 2008
+-----------------------------------------
+
+**** Secret key used: 0xd4e98d3da2f2 ****
+
+
+Attack type: TMDTO HELLMAN ATTACK
+m = 2 power 12
+t = 2 power 12
+D = 2 power 16
+M = 2 power 20
+T = 2 power 36
+P = 2 power 32
+r = 2 power 8
+prefix_bits = 48
+Current Time: Fri Sep  5 12:09:56 2008
+
+
+Preparing Hashtable ...
+TIME for preparing hashtable: 0 
+
+Preparing Keystream ...
+Keystream made available ...
+TIME for preparing keystream: 0 
+
+Attacking ...
+Match!
+Status:- D: 40681, Table number: 251, Column number: 1567
+Found prefix: 227373690741444
+Found Current State: 3cb8fce3d7f5
+Found Initial State: ca6c290836f2
+Found Key: da2fc2f036f2
+TIME since starting attack: 53299
+
+TIME for attack: 85835
+COUNT of false alarms: 2102
