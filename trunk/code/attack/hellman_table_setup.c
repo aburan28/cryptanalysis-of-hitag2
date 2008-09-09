@@ -1,3 +1,7 @@
+/*
+	This C program is used to prepare the precomputation file for TMDTO_HELLMAN ATTACK
+*/	
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h> 		/* for memcmp */

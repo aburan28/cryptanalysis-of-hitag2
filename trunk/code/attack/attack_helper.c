@@ -1,3 +1,4 @@
+/*****************************************************************************/
 #include<stdio.h>
 #include <math.h>		/* for power function */
 #include <time.h>
@@ -11,35 +12,21 @@
 u64 get_random(u32 bits)
 {
 	u32 i = 0;
-	u64 random_number = 0;
-	u64 rand_out = 0;
-
-	for(i = 0; i < bits/16; i++)
-	{
-		rand_out = rand();
-		random_number = (random_number << 16) ^ rand_out;
-	}
-
-	return random_number;
+ 	u64 random_number = 0;
+ 	u64 rand_out = 0;
+ 
+ 	/* output of rand() function is 16 bits on Solaris, so loop runs for (bits - 16) times 
+ 	 * size of random_number is finally equal to 'bits' 
+ 	 */
+ 	 
+ 	for(i = 0; i < bits - 16; i++)
+ 	{
+ 		rand_out = rand();
+ 		random_number = (random_number << 1) ^ rand_out;
+ 	}
+ 
+ 	return random_number;
 }
-
-// u64 get_random(u32 bits)
-// {
-// 	u32 i = 0;
-// 	u64 random_number = 0;
-// 	u64 rand_out = 0;
-// 
-// 	/* output of rand() function is 16 bits, so loop runs for (bits - 16) times 
-// 	 * so random_number is finally of size 'bits' */
-// 	 
-// 	for(i = 0; i < bits - 16; i++)
-// 	{
-// 		rand_out = rand();
-// 		random_number = (random_number << 1) ^ rand_out;
-// 	}
-// 
-// 	return random_number;
-// }
 
 void prepare_tags(u64 * c_tags)
 {
@@ -84,10 +71,10 @@ void mapping_function(u64 * state, u32 i)
 {
 	u64 prefix = 0;
 
-	/* do the function f(state) - gives prefix of that state */
+	/* do the function prefix(state) - gives prefix of that state */
 	prefix = hitag2_prefix(state, prefix_bits);
 
-	/* do the permutation function (prefix to state) */
+	/* do the reduction function R_i (prefix to state) */
 	*state = prefix ^ ((u64) i);
 }
 
@@ -109,7 +96,7 @@ void initialize_matrix()
 		transition_matrix[i + 1][i] = 1;
 	}
 
-	/* tap bits 0,2,3,6,7,8,16,22,23,26,30,41,42,43,46,47 */
+	/* Tap bits of HiTag2: 0,2,3,6,7,8,16,22,23,26,30,41,42,43,46,47 */
 
 	transition_matrix[0][47 - 0] = 1;
 	transition_matrix[0][47 - 2] = 1;
@@ -139,7 +126,6 @@ void initialize_matrix()
 	square_matrix_2n();
 }
 
-/***********************************************************************************************************/
 void square_matrix_2n()
 {
 	u64 i = 0;
@@ -157,12 +143,13 @@ void square_matrix_2n()
 	u64 matrix_1[N];
 	u64 matrix_2[N];
 
+	/* If d is the distance between two states in non-random precomputation, then d = 2^48/M (refer thesis)
+	 * The number of times U is squared is log2(d), which is represented by square_order */
 	square_order = (u32) (N - log2(M));
 
-	// For time_index number of times, square the matrix transition_matrix_2n
 	for(i = 0; i < square_order; i++)
 	{
-		//convert the matrix into array of u64
+		/* convert the matrix into array of u64 array */
 		for(j = 0; j < N; j++)
 		{
 			for(k = 0; k < N; k++)
@@ -182,7 +169,7 @@ void square_matrix_2n()
 			l_temp = 0;
 		}
 
-		//transpose of the matrix transition_matrix_2n
+		/* transpose of the matrix transition_matrix_2n */
 		for(j = 0; j < N; j++)
 		{
 			for(k = 0; k < N; k++)
@@ -196,7 +183,7 @@ void square_matrix_2n()
 			}
 		}
 
-		//convert the transposed matrix into u64 array
+		/* convert the transposed matrix into u64 array */
 		for(j = 0; j < N; j++)
 		{
 			for(k = 0; k < N; k++)
@@ -217,14 +204,13 @@ void square_matrix_2n()
 			l_temp = 0;
 		}
 
-		//perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the matrix
+		/* perform operations on the two u64 arrays and save the resultant value in the corresponding cell of the new matrix */
 		for(j = 0; j < N; j++)
 		{
 			for(k = 0; k < N; k++)
 			{
-				// AND of the two rows
+				/* AND of the two rows */
 				l_temp = matrix_1[j] & matrix_2[k];
-
 
 				l_xor = zero;
 
@@ -242,8 +228,6 @@ void square_matrix_2n()
 	}
 }
 
-
-/***********************************************************************************************************/
 void compute_new_state(u64 * state_ptr)
 {
 	u64 j, k;
@@ -256,7 +240,7 @@ void compute_new_state(u64 * state_ptr)
 	u64 state = *state_ptr;
 	u64 new_state = 0;
 
-	//convert the transition_matrix_2n matrix into u64 array
+	/* convert the transition_matrix_2n matrix into u64 array */
 	for(j = 0; j < N; j++)
 	{
 		for(k = 0; k < N; k++)
@@ -279,7 +263,7 @@ void compute_new_state(u64 * state_ptr)
 
 	for(k = 0; k < N; k++)
 	{
-		// AND of the two rows
+		/* AND of the two rows */
 		l_temp = matrix_2[k] & state;
 
 		l_xor = zero;

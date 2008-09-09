@@ -1,13 +1,6 @@
 /*
-	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
-	Used parameters:
-	Key	= 4F 4E 4D 49 4B 52
-	Serial	= 49 43 57 69
-
-	Available Keystream: 32 bit tags
-
-	"D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6"
-*/
+	This attack module is used to mount a TMDTO_HELLMAN_ATTACK on the HiTag2 stream cipher
+*/	
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -29,7 +22,6 @@ equalkeys(void *k1, void *k2)
 {
     return (0 == memcmp(k1,k2,sizeof(struct key)));
 }
-
 
 static unsigned int
 hashfromkey(void *ky)
@@ -69,7 +61,7 @@ int tmdto_hellman_attack()
 	struct hashtable *h = NULL;
 	struct hashtable * hashtable_array[r];
 
-	/* open the file pointer */
+	/* CHANGE the name of the precomutation file to be opened for the attack */
 	fp = fopen("../tables/hellman_table_12_12_8.dat", "r");
 	if(fp == NULL)
 	{
