@@ -1,8 +1,6 @@
 /*
-	This program is used to mount a time-memory tradeoff attack on the HiTag2 stream cipher
-	TMTO_tags_attack
+	This attack module is used to mount a TMTO_TAGS_ATTACK on the HiTag2 stream cipher
 */	
-
 
 #include <stdio.h>
 #include <stdlib.h>

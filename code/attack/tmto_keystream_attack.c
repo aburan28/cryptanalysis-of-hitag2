@@ -1,7 +1,6 @@
 /*
- *	This program is used to execute a Babbage-Golic time-memory
- *	tradeoff attack on the HiTag2 stream cipher
- */
+	This attack module is used to mount a TMTO_KEYSTREAM_ATTACK on the HiTag2 stream cipher
+*/	
 
 #include <stdio.h>
 #include <stdlib.h>

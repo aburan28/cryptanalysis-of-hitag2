@@ -3,19 +3,6 @@
 // No warranties or guarantees of any kind.
 // This code is released into the public domain by its author.
 
-// Basic macros:
-
-
-// "MIKRON"		=  O  N  M  I  K  R
-// Key			= 4F 4E 4D 49 4B 52		- Secret 48-bit key
-// Serial		= 49 43 57 69			- Serial number of the tag, transmitted in clear
-// Random		= 65 6E 45 72			- Random IV, transmitted in clear
-//~28~DC~80~31	= D7 23 7F CE			- Authenticator value = inverted first 4 bytes of the keystream
-
-// The code below must print out "D7 23 7F CE 8C D0 37 A9 57 49 C1 E6 48 00 8A B6".
-// The inverse of the first 4 bytes is sent to the tag to authenticate.
-// The rest is encrypted by XORing it with the subsequent keystream.
-
 #include<stdio.h>
 #include "common.h"
 #include "hitag2.h"

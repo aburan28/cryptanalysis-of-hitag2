@@ -1,7 +1,6 @@
 /*
-	This program is used to execute a time-memory tradeoff attack on the HiTag2 stream cipher
-	TMDTO_RAINBOW_ATTACK
-*/
+	This attack module is used to mount a TMDTO_RAINBOW_ATTACK on the HiTag2 stream cipher
+*/	
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -60,7 +59,7 @@ int tmdto_rainbow_attack()
 	struct key * k = NULL;
 	struct hashtable *h = NULL;
 
-	/* open the file pointer */
+	/* CHANGE the name of the precomutation file to be opened for the attack */
 	fp = fopen("../tables/rainbow_table_M23_t9.dat", "r");
 	if(fp == NULL)
 	{
@@ -99,8 +98,7 @@ int tmdto_rainbow_attack()
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing hashtable: %d ", sec_diff);
 
-	/*---------- Prepare a long keystream --------------*/
-	
+	/* Prepare a long keystream */
 	printf("\n\nPreparing Keystream ...");
 
 	time(&time1);
@@ -112,8 +110,7 @@ int tmdto_rainbow_attack()
 	sec_diff = difftime(time2,time1);
 	printf("\nTIME for preparing keystream: %d ", sec_diff);
 
-	/*------------------ Starting Attack ---------------*/
-	
+	/* Starting Attack */
 	printf("\n\nAttacking ...");
 	
 	time(&time1);
@@ -198,7 +195,6 @@ int tmdto_rainbow_attack()
 				}
 			}
 		}
-		
 	}
 
 	if(matched == 0)

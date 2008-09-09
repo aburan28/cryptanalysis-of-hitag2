@@ -29,4 +29,4 @@ tidy:
 	rm *.o
 
 clean: tidy
-	rm -f attack_dispatcher
+	rm -f attack_dispatcher hellman_table_setup rainbow_table_setup
