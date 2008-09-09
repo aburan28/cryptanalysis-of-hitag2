@@ -111,7 +111,7 @@ $K_{i+1}$ = $f(K_i)$ = $R(E_{K_i}(P))$\\
 Suppose we have $m$ chains with $t$ keys each so far in the table. A new chain is then added to the table. The total number of keys existing in the table are $mt$ while $t$ more keys are added through the new chain. We are interested in restricting $m$ and $t$ so that there is no common key between the $m$ chains and the new chain. According to the variant of the birthday paradox, the product of the sizes of these two sets should be less than or equal to the keyspace size, in order to have a high probability that no common key exists. Then, we have 
 
 \begin{center}
-$mt \times t \leq 2^n$\\
+$mt \cdot t \leq 2^n$\\
 $mt^2 \leq 2^n$\\
 \end{center}
 

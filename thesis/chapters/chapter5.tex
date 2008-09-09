@@ -102,7 +102,7 @@ The following comments can be made based on these results.
   
 \item All the attacks are able to find the correct key atleast once. Attack using rainbow table is able to find the correct key much faster as compared to Hellman tables. For the second set of parameters, the correct key is found for the first time in 0.8 hours with rainbow table, whereas it takes 24 hours for the same with Hellman tables. In addition, the total time taken for matching all possible subsequences of the keystream is almost half in rainbow table, which was as expected from the values of $T$ for the two tables.
 
-\item The number of false alarms occurring in Hellman tables is extremely large as compared to the same for rainbow tables. This clearly shows that the number of collisions occurring in Hellman tables is much higher. The use of different mapping functions for each column in rainbow table is the reason for this. Also, as we have seen from results in table \ref{tab:hellman-attack-results}, the collisions can be reduced by having a greater number of tables in the Hellman table structure.
+\item The number of false alarms occurring in Hellman tables is extremely large as compared to the same for rainbow tables. This clearly shows that the number of collisions occurring in Hellman tables is much higher. The use of different mapping functions for each column in rainbow table is the reason for less collisions observed in that case. Also, as we have seen from results in table \ref{tab:hellman-attack-results}, the collisions can be reduced by having a greater number of tables in the Hellman table structure.
 \end{enumerate}
 
 \newpage
@@ -122,7 +122,7 @@ The results from the implementation of the four attacks have been interesting. T
 
 The TMDTO attacks in general spend more time on the precomputation phase, and assume smaller length of available keystream. Hence, the time required in preparing the hashtables is very high. The attack time also increases as $T$ depends on both $D$ and the length of each chain. Moreover we also see that Hellman tables with greater number of tables give us a better result than with smaller number of tables. 
 
-These observations have been possible in TMDTO attacks by varying the parameters according to the general tradeoff equation. We think this to be a contribution by us in the analysis of TMDTO attacks.
+These observations have been possible in TMDTO attacks by varying the parameters according to the general tradeoff equation. We think this to be a contribution of the thesis to the analysis of TMDTO attacks.
 
 The conclusion of the thesis is that HiTag2 stream cipher is very weak. Considering the figures of the attack time from all the results, with availability of a sufficient length of keystream, HiTag2 can be broken fairly easily. The results clearly show that 48 bits of internal state is well within the reach of modern personal computers, and with better configurations at hand, breaking the cipher is not a difficult task for attackers. Ofcourse, there also is a huge scope for improving the efficiency of the attacks, which can be achieved through some of the ways discussed in the next section. 
 
@@ -137,5 +137,5 @@ The four attacks have been carried out in limited time, hence there is a lot of 
 
 \item Once we consider 56 bits of prefix for the TMDTO attacks, a reduction function needs to be in place. In our implementation, the reduction function is a simple \textit{xor} of the 48 bit prefix with either the table number (in Hellman tables) or the function number (in rainbow table), as the prefix length and state size are same. According to \cite{email-karsten}, the reduction function must be such that all the 56 bits of prefix must be accounted for computing the 48 bits of next state. With such a good reduction function, it is expected that the number of false alarms observed will reduce. So, more work needs to be done to increase the efficiency of both the table structures.
 
-\item A very simple hash function is used in the hashtable. We have not noted the degree of collisions in the hashtable. If there are more collisions, then the search time increases. An efficient hash function should be chosen and the attacks run using them can improve the overall attack time. 
+\item A very simple hash function is used in the hashtable. We have not noted the degree of collisions in the hashtable. If there are more collisions, then the search time increases. An efficient hash function should be chosen since running the attacks using them can improve the overall attack time. 
 \end{enumerate}
