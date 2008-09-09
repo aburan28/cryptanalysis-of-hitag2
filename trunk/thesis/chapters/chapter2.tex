@@ -113,7 +113,7 @@ s_{1}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[width=5in]{./figures/hitag2-update-function.png}
-	\caption{Update function $U$ in HiTag2}	
+	\caption{Update function $U$ for HiTag2}	
 	\label{fig:hitag2-update-function}
 \end{figure}
 
@@ -322,17 +322,17 @@ $P_2$ = $2^{32}/2^n$
 \end{center}
 The overall probability of finding the correct state is given by $P$, such that
 \begin{align*}
-P &= P_1 \times P_2\\
+P &= P_1 \cdot P_2\\
 P &= M/2^{n}
 \end{align*}
 This is the probability of the correct key being found when we have one tag. Hence, for the correct key to be found atleast once, the runtime of the attack phase must be of an order of atleast $2^{n}/M$ so that we have $2^{n}/M$ tags. Hence, we can say that
 \begin{align}
 T &\geq 2^{n}/M\\
-\label{eq:tmto-tags-equation} M \times T &\geq 2^{n}
+\label{eq:tmto-tags-equation} M \cdot T &\geq 2^{n}
 \end{align}
 In practice, the product of $M$ and $T$ must be larger than $2^n$ for the correct key to be found once, since we considered the best case probability while calculating $P_1$. Practically, $P_1$ would be less than its value in the above equation, which would lead to a lower $P$. With lower $P$, $T$ would have to increased if we want to find the correct state. The equation for $P$ just gives us an approximate value of $M$ and $T$, and it is much probable that the attack is successful for higher values of the two parameters.
 
-The other important issue here is that several tags would match during the attack, thus resulting in several possible keys. The correct key is found once if $M$ and $T$ are chosen according to equation \ref{eq:tmto-tags-equation}. If the values of $M$ and $T$ are so chosen that we have $M \times T \geq 2 \cdot 2^{n}$, then the correct key is expected to be found atleast two times. Similarly, if we have $M \times T \geq 4 \cdot 2^{n}$, then we can expect to find the correct key four times, and so on. Using this idea, the correct key can be found among all the keys derived from the matched tags. 
+The other important issue here is that several tags would match during the attack, thus resulting in several possible keys. The correct key is expected to be found only once if $M$ and $T$ are chosen according to equation \ref{eq:tmto-tags-equation}. If the values of $M$ and $T$ are so chosen that we have $M \cdot T \geq 2 \cdot 2^{n}$, then the correct key is expected to be found atleast two times. Similarly, if we have $M \cdot T \geq 4 \cdot 2^{n}$, then we can expect to find the correct key four times, and so on. Using this idea, the correct key is determined from among all the keys derived from the matched tags. 
 
 \subsection{Implementation and results}
 
