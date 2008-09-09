@@ -83,9 +83,26 @@ This program performs the precomputation of the rainbow table given the paramete
 It stores the table in a .dat file in the directory ./tables/ with the name of the file as "rainbow_<M>_<t>.dat".
 
 
+**********************************
+STEPS FOR PRECOMPUTING THE TABLES
+**********************************
+(all the following commands are run from the directory ./attack/)
+
+For creating a new Hellman or rainbow precomputation file, the programs "hellman_table_setup.c" and "rainbow_table_setup.c" can be used respectively. The parameters of the precomputation phase are replaced with the desired parameters in these files. These programs use functions from the HiTag2 library (to get prefix for a state), hence they are compiled using the following shell command:
+
+% gcc -o hellman_table_setup hellman_table_setup.c hitag2.c
+% gcc -o rainbow_table_setup rainbow_table_setup.c hitag2.c
+
+After compilation, they can be run using:
+
+% ./hellman_table_setup
+% ./rainbow_table_setup
+
+
 ******************************
 STEPS FOR RUNNING THE ATTACKS
 ******************************
+(all the following commands are run from the directory ./attack/)
 
 1. The first step is to change the attack parameters in the file "attack_dispatcher.c" corresponding to the specific attack to be run.
 
@@ -109,5 +126,3 @@ NOTES
 1. The attack program is guaranteed to run on Linux or Solaris operating systems. Compilation cannot be guaranteed on Windows. Still, if "gcc" and the "mingw32-make" utility is available on Windows, then the "attack_dispatcher" executable can be compiled. However, the output of the attack program would be restricted to 32 bit values, and hence only 32 bits of the 48 bit values (state or prefix) would be printed on the DOS prompt. This is due to an error in the "printf" function while displaying 64 bit values, which works fine only on 64-bit architectures like Solaris.
 
 2. We have not been able to improve the reliability of the attack program. Hence, not many checks are performed in the program and in some cases the program might not give the appropriate error messages before terminating.
- 
- 
